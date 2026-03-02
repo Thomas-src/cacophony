@@ -13,7 +13,9 @@ public class User implements Subscriber {
     public User(String name, HashPassword hashPassword, List<Subscriber> subscribers) {
         this.name = name;
         this.hashPassword = hashPassword;
-        this.subscribers.addAll(subscribers);
+        if(subscribers != null) {
+            this.subscribers.addAll(subscribers);
+        }
     }
     public String getName() {
         return name;

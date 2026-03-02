@@ -3,3 +3,5 @@
 2026-02-16 15:26:08 [main] INFO  org.example.Main - Hello World
 
 2026-03-02 14:34:04 [main] INFO  org.helmo.Main - Hello World
+2026-03-02 16:14:37 [main] INFO  org.helmo.Main - name
+2026-03-02 16:17:00 [main] INFO  org.helmo.Main - name

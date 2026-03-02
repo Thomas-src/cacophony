@@ -1,9 +1,10 @@
 plugins {
-    id("java")
+    application
 }
 
 group = "org.helmo"
 version = "unspecified"
+
 
 repositories {
     mavenCentral()
@@ -16,6 +17,14 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.23.1")
     implementation("org.apache.logging.log4j:log4j-core:2.23.1")
     implementation("com.google.code.gson:gson:2.13.2")
+
+    implementation(project(":Node:Infrastructures"))
+    implementation(project(":Node:Views"))
+    implementation(project(":Node:Domains"))
+}
+
+application {
+    mainClass.set("org.helmo.Main")
 }
 
 tasks.test {
