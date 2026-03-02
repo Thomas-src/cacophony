@@ -10,11 +10,13 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/Node" />
+            <option value="$PROJECT_DIR$/Node/App" />
             <option value="$PROJECT_DIR$/Node/Domain" />
             <option value="$PROJECT_DIR$/Node/Domains" />
             <option value="$PROJECT_DIR$/Node/Infrastructures" />
             <option value="$PROJECT_DIR$/Node/Views" />
             <option value="$PROJECT_DIR$/Speaker" />
+            <option value="$PROJECT_DIR$/Speaker/App" />
             <option value="$PROJECT_DIR$/Speaker/Domains" />
             <option value="$PROJECT_DIR$/Speaker/Domains/Infrastructures" />
             <option value="$PROJECT_DIR$/Speaker/Infrastructures" />
