@@ -5,8 +5,6 @@ import static org.helmo.Grammar.*;
 import java.util.regex.Pattern;
 
 
-
-
 public class Message {
 
     // --- COMMANDES DU PROTOCOLE ---
