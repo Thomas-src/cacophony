@@ -4,12 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+
+/**
+ * La classe User représente un utilisateur du système. Chaque User a un nom, un HashPassword qui contient le mot de passe hashé et les méthodes pour vérifier les challenges, et une liste de Subscribers qui sont abonnés à ce User.
+ * Un User peut être abonné à d'autres Users, et d'autres Users ou Tags peuvent être abonnés à lui. La classe fournit des méthodes pour vérifier les réponses aux challenges, gérer les abonnements, et vérifier si un Subscriber est déjà abonné.
+ */
 public class User implements Subscriber {
     private final String name;
     private final HashPassword hashPassword;
 
     private final List<Subscriber> subscribers = new ArrayList<Subscriber>();
 
+
+    /**
+     * Constructeur de l'objet User.
+     * @param name Le nom du User.
+     * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
+     * @param subscribers Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
+     */
     public User(String name, HashPassword hashPassword, List<Subscriber> subscribers) {
         this.name = name;
         this.hashPassword = hashPassword;
@@ -17,14 +29,39 @@ public class User implements Subscriber {
             this.subscribers.addAll(subscribers);
         }
     }
+
+
+    /**
+     *
+     * @return
+     */
     public String getName() {
         return name;
     }
 
-    public boolean isValidChallenge(String challenge) {
-        return hashPassword.checkPassword(challenge);
+    /**
+     * Retourne le HashPassword de l'utilisateur.
+     * @return
+     */
+    public HashPassword getHashPassword() {
+        return hashPassword;
     }
 
+    /**
+     * Vérifie si la réponse du client correspond au challenge généré par le serveur.
+     * @param clientResponse Le hexadécimal que le client a envoyé en réponse au challenge.
+     * @param challenge Le challenge de 22 caractères envoyé au client.
+     * @return vrai si la réponse du client est correcte, faux sinon.
+     */
+    public boolean verifyChallengeResponse(String clientResponse, String challenge) {
+        return getHashPassword().checkChallenge(clientResponse, challenge);
+    }
+
+    /**
+     * Vérifie si un Subscriber est déjà abonné à ce User.
+     * @param subscriber Le Subscriber à vérifier.
+     * @return vrai si le Subscriber est déjà abonné, faux sinon.
+     */
     public boolean isSubscribed(Subscriber subscriber) {
         Objects.requireNonNull(subscriber);
         return subscribers.contains(subscriber);
