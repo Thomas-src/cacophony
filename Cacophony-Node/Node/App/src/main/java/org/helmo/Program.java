@@ -3,10 +3,10 @@ package org.helmo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.server.Server;
+import org.helmo.services.IOnboarding;
+import org.helmo.services.OnboardingService;
+import org.helmo.views.IViewServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -18,7 +18,11 @@ public class Program {
     public static void main(String[] args) {
 
         try (PrintStream cout = new PrintStream(System.out)){
-            Runnable server = new Server(cout);
+            // Création des services
+            IOnboarding onboardingService = new OnboardingService(new ViewServer(cout));
+
+            // Création du serveur + demarrage
+            Runnable server = new Server(onboardingService);
             server.run();
         }
     }
