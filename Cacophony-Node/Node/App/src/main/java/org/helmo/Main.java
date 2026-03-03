@@ -21,7 +21,5 @@ public class Main {
             Runnable server = new Server(cout);
             server.run();
         }
-
-
     }
 }
