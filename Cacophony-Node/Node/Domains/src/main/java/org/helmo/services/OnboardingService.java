@@ -13,6 +13,12 @@ public class OnboardingService implements IOnboarding{
     @Override
     public String onNewOnboarding(String message) {
         view.showMessage("Nouvelle tentative d'inscription : " + message);
+        // TODO -> Lire les utilisateurs deja inscrit
+        // TODO -> Comparer avec celui-ci
+        // TODO -> Si pas deja dedans,
+        // TODO -> Inscrire dans un JSON le nouvel utilisateur + return "ok"
+        // TODO -> Sinon return "err" (cf machine à états)
+
         return "";
     }
 }
