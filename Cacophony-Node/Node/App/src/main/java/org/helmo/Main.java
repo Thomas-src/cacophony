@@ -18,7 +18,8 @@ public class Main {
     public static void main(String[] args) {
 
         try (PrintStream cout = new PrintStream(System.out)){
-            new Server(cout);
+            Runnable server = new Server(cout);
+            server.run();
         }
     }
 }
