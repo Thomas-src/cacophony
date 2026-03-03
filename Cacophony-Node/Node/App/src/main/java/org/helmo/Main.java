@@ -20,7 +20,5 @@ public class Main {
         try (PrintStream cout = new PrintStream(System.out)){
             new Server(cout);
         }
-
-
     }
 }

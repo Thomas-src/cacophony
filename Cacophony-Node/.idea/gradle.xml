@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Grammar" />
             <option value="$PROJECT_DIR$/Node" />
             <option value="$PROJECT_DIR$/Node/App" />
             <option value="$PROJECT_DIR$/Node/Domains" />
