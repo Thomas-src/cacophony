@@ -2,11 +2,9 @@ package org.helmo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.repository.ConfigReaderException;
 import org.helmo.server.Server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
@@ -15,8 +13,11 @@ public class Main {
     private static final Logger LOGGER = LogManager.getLogger();
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ConfigReaderException {
 
+        var config = new JsonConfigReaderNode();
+
+        System.out.println(config.getConfig().getCurrentDomain());
         try (PrintStream cout = new PrintStream(System.out)){
             new Server(cout);
         }

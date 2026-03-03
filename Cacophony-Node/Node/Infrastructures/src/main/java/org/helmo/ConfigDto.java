@@ -1,8 +1,15 @@
 package org.helmo;
 
-public record ConfigDto(String name, String token) {
-    public ConfigDto(String name, String token) {
-        this.name = name;
-        this.token = token;
-    }
+import java.util.List;
+
+public record ConfigDto(String currentDomain,
+                        int saltSizeInBytes,
+                        String multicastAddress,
+                        int multicastPort,
+                        int unicastPort,
+                        int relayPort,
+                        String networkInterface,
+                        String base64AES,
+                        boolean tls
+                        ) {
 };
