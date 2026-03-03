@@ -11,7 +11,7 @@ import java.io.PrintStream;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
+public class Program {
     private static final Logger LOGGER = LogManager.getLogger();
 
 
