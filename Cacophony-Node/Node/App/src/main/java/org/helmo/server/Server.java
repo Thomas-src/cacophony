@@ -54,9 +54,9 @@ public class Server implements IServer {
                 String line;
 
                 while ((line = fromClient.readLine()) != null) {
-                    LOGGER.info("MESSAGE - " + line);
+                    LOGGER.info("MESSAGE FROM " + client.getInetAddress() + " => " + line);
 
-                    if (line.toLowerCase().startsWith("ONBOARDING")) {
+                    if (line.toUpperCase().startsWith("ONBOARDING")) {
                         onboardingService.onNewOnboarding(line);
                     }
 
