@@ -17,6 +17,11 @@ public class Tag implements ISubscriber {
 
     @Override
     public String getName() {
+        return name.split("@")[0];
+    }
+
+    @Override
+    public String getFullName() {
         return name;
     }
 

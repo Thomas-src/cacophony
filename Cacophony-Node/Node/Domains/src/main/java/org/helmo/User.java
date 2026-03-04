@@ -12,8 +12,7 @@ import java.util.Objects;
 public class User implements ISubscriber {
     private final String name;
     private final HashPassword hashPassword;
-
-    private final List<ISubscriber> subscribers = new ArrayList<ISubscriber>();
+    private final List<ISubscriber> subscribers = new ArrayList<>();
 
 
     /**
@@ -31,19 +30,18 @@ public class User implements ISubscriber {
     }
 
 
-    /**
-     *
-     * @return
-     */
+   @Override
     public String getName() {
+        return name.split("@")[0];
+    }
+
+    @Override
+    public String getFullName() {
         return name;
     }
 
-    /**
-     * Retourne le HashPassword de l'utilisateur.
-     * @return
-     */
-    public HashPassword getHashPassword() {
+
+    private HashPassword getHashPassword() {
         return hashPassword;
     }
 
@@ -75,9 +73,8 @@ public class User implements ISubscriber {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return name.equals(user.name);
+        if (!(o instanceof User user)) return false;
+        return getFullName().equals(user.getFullName());
     }
 
     @Override
@@ -88,5 +85,30 @@ public class User implements ISubscriber {
     @Override
     public List<ISubscriber> getSubscribers() {
         return List.copyOf(subscribers);
+    }
+
+    /**
+     * Généré par ia
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("User {")
+                .append("name='").append(name).append('\'')
+                .append(", fullname='").append(getFullName()).append('\'');
+
+        if (subscribers.isEmpty()) {
+            sb.append(", subscribers=[]");
+        } else {
+            sb.append(", subscribers=[");
+            for (int i = 0; i < subscribers.size(); i++) {
+                sb.append(subscribers.get(i).getName());
+                if (i < subscribers.size() - 1) sb.append(", ");
+            }
+            sb.append("]");
+        }
+
+        sb.append('}');
+        return sb.toString();
     }
 }
