@@ -1,4 +1,8 @@
 package org.helmo;
 
-public record TagDto() {
-}
+import java.util.List;
+
+public record TagDto(
+        String tag,
+        List<String> subscribers
+) {}

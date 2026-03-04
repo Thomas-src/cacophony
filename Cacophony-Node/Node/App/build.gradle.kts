@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":Node:Infrastructures"))
     implementation(project(":Node:Views"))
     implementation(project(":Node:Domains"))
+
 }
 
 application {

@@ -2,51 +2,54 @@ package org.helmo.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Config;
+import org.helmo.repository.ConfigReaderException;
+import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.services.IOnboarding;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
-public class Server implements Runnable {
+public class Server implements IServer {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final IConfigReaderRepository configReader;
 
     // Services
-    IOnboarding onboardingService;
-
-    private static final int PORT = 5002; // 130013 ?
+    private final IOnboarding onboardingService;
     private boolean stop = false;
-    private boolean isSarted = false;
+    private boolean isStarted = false;
     private boolean isConnected = false;
     ServerSocket listener;
     Socket client;
 
-    public Server(IOnboarding onboardingService) {
+    public Server(IOnboarding onboardingService, IConfigReaderRepository configReader) {
         this.onboardingService = onboardingService;
+        this.configReader = configReader;
     }
 
 
     @Override
     public void run() {
         try {
-            listener = new ServerSocket(PORT);
-            isSarted = true;
+            Config config = configReader.getConfig();
+            listener = new ServerSocket(config.getMulticastPort());
+            isStarted = true;
 
-            LOGGER.info("Server listening on port " + PORT);
+            LOGGER.info(config.toString());
+            LOGGER.info("Server listening on port " + config.getMulticastPort());
 
             while (!stop) {
                 client = listener.accept();
                 isConnected = true;
                 LOGGER.info("Accepted connection from " + client.getInetAddress().getHostName());
 
-                BufferedReader fromClient = new BufferedReader(
-                        new InputStreamReader(client.getInputStream(), Charset.forName("UTF-8")));
+                BufferedReader fromClient = new BufferedReader(new InputStreamReader(client.getInputStream(), StandardCharsets.UTF_8));
 
-                PrintWriter toClient = new PrintWriter(
-                        new OutputStreamWriter(client.getOutputStream(), Charset.forName("UTF-8")), true);
+                PrintWriter toClient = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8), true);
 
-                toClient.println("WELCOME node1.swilabus.xyz 1234567890123456789012");
+                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
 
                 String line;
 
@@ -65,7 +68,21 @@ public class Server implements Runnable {
 
         } catch (IOException e) {
             throw new RuntimeException();
+        } catch (ConfigReaderException e) {
+            LOGGER.info("Impossible de lire la config, fin du serveur");
         }
     }
 
+
+    @Override
+    public void stopServer() {
+        stop = true;
+        try {
+            if (listener != null) {
+                listener.close();
+            }
+        } catch (IOException ex) {
+            LOGGER.error("Une erreur s'est produite lors de l'arrêt du serveur",ex);
+        }
+    }
 }

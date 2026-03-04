@@ -10,6 +10,8 @@ public record ConfigDto(String currentDomain,
                         int relayPort,
                         String networkInterface,
                         String base64AES,
-                        boolean tls
+                        boolean tls,
+                        List<UserDto> users,
+                        List<TagDto> tags
                         ) {
 };

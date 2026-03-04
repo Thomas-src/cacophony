@@ -9,11 +9,11 @@ import java.util.Objects;
  * La classe User représente un utilisateur du système. Chaque User a un nom, un HashPassword qui contient le mot de passe hashé et les méthodes pour vérifier les challenges, et une liste de Subscribers qui sont abonnés à ce User.
  * Un User peut être abonné à d'autres Users, et d'autres Users ou Tags peuvent être abonnés à lui. La classe fournit des méthodes pour vérifier les réponses aux challenges, gérer les abonnements, et vérifier si un Subscriber est déjà abonné.
  */
-public class User implements Subscriber {
+public class User implements ISubscriber {
     private final String name;
     private final HashPassword hashPassword;
 
-    private final List<Subscriber> subscribers = new ArrayList<Subscriber>();
+    private final List<ISubscriber> subscribers = new ArrayList<ISubscriber>();
 
 
     /**
@@ -22,7 +22,7 @@ public class User implements Subscriber {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public User(String name, HashPassword hashPassword, List<Subscriber> subscribers) {
+    public User(String name, HashPassword hashPassword, List<ISubscriber> subscribers) {
         this.name = name;
         this.hashPassword = hashPassword;
         if(subscribers != null) {
@@ -62,18 +62,31 @@ public class User implements Subscriber {
      * @param subscriber Le Subscriber à vérifier.
      * @return vrai si le Subscriber est déjà abonné, faux sinon.
      */
-    public boolean isSubscribed(Subscriber subscriber) {
+    public boolean isSubscribed(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber);
         return subscribers.contains(subscriber);
     }
-
-    public void subscribe(Subscriber subscriber) {
+    @Override
+    public void subscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber);
         subscribers.add(subscriber);
     }
-    public void unsubscribe(Subscriber subscriber) {
-        Objects.requireNonNull(subscriber);
-        subscribers.remove(subscriber);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return name.equals(user.name);
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public List<ISubscriber> getSubscribers() {
+        return List.copyOf(subscribers);
+    }
 }

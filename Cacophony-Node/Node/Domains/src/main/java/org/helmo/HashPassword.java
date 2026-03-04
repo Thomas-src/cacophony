@@ -8,7 +8,7 @@ import java.security.NoSuchAlgorithmException;
  * Cette classe encapsule la logique de vérification du challenge pour l'authentification.
  * Elle prend en entrée un hash bcrypt stocké (représentant le mot de passe de l'utilisateur) et fournit une méthode pour vérifier la réponse du client au challenge.
  */
-public record HashPassword(String storedBcryptHash) {
+public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcryptSalt) {
 
     /**
      * Vérifie si la réponse du client au challenge est correcte en suivant les étapes suivantes :

@@ -3,26 +3,22 @@ package org.helmo;
 
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.repository.ConfigReaderException;
-import org.helmo.repository.ConfigRepository;
+import org.helmo.repository.IConfigReaderRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Logger;
 
 
-public class JsonConfigReaderNode implements ConfigRepository {
+public class JsonConfigReaderNode implements IConfigReaderRepository {
     private static final String FILE_NAME = "Node/config-node.json";
-    private final Gson gson;
-    private final Path configPath;
-    private static final Logger LOGGER = (Logger) LogManager.getLogger();
-    public JsonConfigReaderNode() {
-        this.gson = new Gson();
-        this.configPath = Paths.get(FILE_NAME);
-    }
+    private static final Gson gson = new Gson();;
+    private static final Path configPath = Paths.get(FILE_NAME);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
     public Config getConfig() throws ConfigReaderException {
@@ -36,7 +32,7 @@ public class JsonConfigReaderNode implements ConfigRepository {
 
             return JsonMapper.fromDto(dto);
         }  catch (IOException ex) {
-            LOGGER.severe("Impossible de charger la configuration\n"+ ex);
+            LOGGER.error("Impossible de charger la configuration", ex);
             throw new ConfigReaderException("Impossible de charger la configuration");
         }
     }
