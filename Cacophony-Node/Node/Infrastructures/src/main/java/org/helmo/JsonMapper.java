@@ -7,6 +7,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class JsonMapper {
+    // Liste vide réutilisable représentant "aucun tag" associé à un utilisateur,
+    // afin d'éviter de recréer une nouvelle liste vide à chaque fois.
+    private static final List<String> EMPTY_USER_TAGS = List.of();
 
     public static Config fromDto(ConfigDto dto) {
         validate(dto);
@@ -105,5 +108,25 @@ public class JsonMapper {
         }
             // utilisateur externe au node
         return new RemoteUser(fullName);
+    }
+
+    public static UserDto toUserDto(User user) {
+        HashPassword hashPassword = user.getHashPassword();
+        return new UserDto(
+                user.getName(),
+                hashPassword.storedBcryptHash(),
+                hashPassword.bcryptRound(),
+                hashPassword.bcryptSalt(),
+                user.getSubscribers().stream().map(ISubscriber::getFullName).toList(),
+                EMPTY_USER_TAGS
+        );
+    }
+
+    public static TagDto toTagDto(Tag tag) {
+        return new TagDto(
+                tag.getName(),
+                tag.getSubscribers().stream().map(ISubscriber::getFullName).toList()
+        );
+
     }
 }

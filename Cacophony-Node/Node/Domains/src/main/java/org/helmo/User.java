@@ -41,7 +41,7 @@ public class User implements ISubscriber {
     }
 
 
-    private HashPassword getHashPassword() {
+    HashPassword getHashPassword() {
         return hashPassword;
     }
 
