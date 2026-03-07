@@ -3,6 +3,7 @@ package org.helmo.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.Exception.OnboardingException;
 import org.helmo.repository.ConfigReaderException;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.services.IOnboarding;
@@ -57,7 +58,9 @@ public class Server implements IServer {
                     LOGGER.info("MESSAGE FROM " + client.getInetAddress() + " => " + line);
 
                     if (line.toUpperCase().startsWith("ONBOARDING")) {
-                        onboardingService.onNewOnboarding(line);
+                        String response = onboardingService.onNewOnboarding(line);
+                        toClient.println(response);
+                        LOGGER.info("Response to an onboarding from server to " + client.getInetAddress() + " => " + response);
                     }
 
                 }
@@ -70,6 +73,8 @@ public class Server implements IServer {
             throw new RuntimeException();
         } catch (ConfigReaderException e) {
             LOGGER.info("Impossible de lire la config, fin du serveur");
+        } catch (OnboardingException e) {
+            throw new RuntimeException(e);
         }
     }
 
