@@ -27,12 +27,19 @@ public class OnboardingService implements IOnboarding{
         this.userRepository = userRepository;
     }
 
+    /**
+     * Permet l'inscription ou non d'un nouvel utilisateur. Prend en paramètre la demande d'inscription, compare ce potentiel nouvel utilisateur avec ceux déjà enregistré, l'inscrit si c'est possbile
+     * @param message
+     * @return le message "OK" si l'inscription peut se faire, "ERR" sinon
+     * @throws OnboardingException
+     */
     @Override
     public String onNewOnboarding(String message) throws OnboardingException {
         LOGGER.info("New Onboarding request received");
 
         Client client = Client.newClientFromOnboarding(message);
 
+        // Ici j'ai découtert user apres avoir fait ma version de client donc j'ai utilisé un peu les deux, ce serait bien de merge les deux
         try {
             for (User user : userRepository.getUsers()) {
                 if (user.getName().equals(client.getName())) {
@@ -47,6 +54,7 @@ public class OnboardingService implements IOnboarding{
         } catch (UserReaderException | UserSaveException e) {
             throw new OnboardingException("Impossible d'inscrire l'utilisateur" + client.getName() + "\nException enfant => " + e);
         }
+
         LOGGER.info("Onboarding OK");
         return OK_MESSAGE;
     }
