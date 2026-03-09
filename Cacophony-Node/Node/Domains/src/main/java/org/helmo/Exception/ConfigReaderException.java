@@ -1,4 +1,4 @@
-package org.helmo.repository;
+package org.helmo.Exception;
 
 public class ConfigReaderException extends Exception {
     public ConfigReaderException(String message) {

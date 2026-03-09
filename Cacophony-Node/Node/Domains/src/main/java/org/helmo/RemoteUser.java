@@ -22,7 +22,7 @@ public class RemoteUser implements ISubscriber {
         return name;
     }
     public String getFullName() {
-        return name;
+        return fullname;
     }
 
     @Override

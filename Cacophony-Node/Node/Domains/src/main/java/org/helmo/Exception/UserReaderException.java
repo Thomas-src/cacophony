@@ -1,4 +1,4 @@
-package org.helmo.repository;
+package org.helmo.Exception;
 
 public class UserReaderException extends Exception {
     public UserReaderException(String message) {

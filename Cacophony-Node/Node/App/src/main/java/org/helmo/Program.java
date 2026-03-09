@@ -2,7 +2,7 @@ package org.helmo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.helmo.repository.ConfigReaderException;
+import org.helmo.Exception.ConfigReaderException;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.server.IServer;
 import org.helmo.server.ServerFactory;
@@ -36,7 +36,7 @@ public class Program {
             try (PrintStream cout = new PrintStream(System.out)){
                 // Création des services
                 IConfigReaderRepository configReader = new JsonConfigReaderNode();
-                IOnboarding onboardingService = new OnboardingService(new ViewServer(cout), new JsonUserRepository(configReader.getConfig()));
+                IOnboarding onboardingService = new OnboardingService(new JsonUserRepository(configReader.getConfig()));
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(onboardingService, configReader);

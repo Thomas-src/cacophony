@@ -1,4 +1,4 @@
-package org.helmo.repository;
+package org.helmo.Exception;
 
 public class UserSaveException extends Exception {
     public UserSaveException(String message) {

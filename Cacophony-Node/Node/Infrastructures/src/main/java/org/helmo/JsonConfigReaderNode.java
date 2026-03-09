@@ -4,7 +4,7 @@ package org.helmo;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.helmo.repository.ConfigReaderException;
+import org.helmo.Exception.ConfigReaderException;
 import org.helmo.repository.IConfigReaderRepository;
 
 import java.io.BufferedReader;
@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 public class JsonConfigReaderNode implements IConfigReaderRepository {
     private static final String FILE_NAME = "Node/config-node.json";
-    private static final Gson gson = new Gson();;
+    private static final Gson gson = new Gson();
     private static final Path configPath = Paths.get(FILE_NAME);
     private static final Logger LOGGER = LogManager.getLogger();
 

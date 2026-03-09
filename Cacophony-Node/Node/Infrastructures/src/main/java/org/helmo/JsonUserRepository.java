@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Exception.UserReaderException;
+import org.helmo.Exception.UserSaveException;
 import org.helmo.repository.*;
 
 import java.io.BufferedReader;

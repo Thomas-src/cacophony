@@ -4,9 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.OnboardingException;
-import org.helmo.repository.ConfigReaderException;
+import org.helmo.Exception.ConfigReaderException;
+import org.helmo.MessageBuilder;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.services.IOnboarding;
+import org.helmo.services.RandomService;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -50,7 +52,8 @@ public class Server implements IServer {
 
                 PrintWriter toClient = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8), true);
 
-                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
+                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), RandomService.generateRandomString(22));
+                toClient.println(welcomeMessage);
 
                 String line;
 

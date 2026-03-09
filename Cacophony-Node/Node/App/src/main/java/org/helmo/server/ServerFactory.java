@@ -1,7 +1,7 @@
 package org.helmo.server;
 
 import org.helmo.Config;
-import org.helmo.repository.ConfigReaderException;
+import org.helmo.Exception.ConfigReaderException;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.services.IOnboarding;
 

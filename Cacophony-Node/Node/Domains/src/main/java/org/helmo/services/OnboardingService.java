@@ -7,8 +7,8 @@ import org.helmo.HashPassword;
 import org.helmo.User;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
-import org.helmo.repository.UserReaderException;
-import org.helmo.repository.UserSaveException;
+import org.helmo.Exception.UserReaderException;
+import org.helmo.Exception.UserSaveException;
 import org.helmo.views.IViewServer;
 
 import java.util.List;
@@ -18,12 +18,9 @@ public class OnboardingService implements IOnboarding{
 
     private final static String ERROR_MESSAGE = "ERR";
     private final static String OK_MESSAGE = "OK";
-
-    private final IViewServer view;
     private final IUserRepository userRepository;
 
-    public OnboardingService(IViewServer viewServer,  IUserRepository userRepository) {
-        this.view = viewServer;
+    public OnboardingService(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -43,7 +40,7 @@ public class OnboardingService implements IOnboarding{
         try {
             for (User user : userRepository.getUsers()) {
                 if (user.getName().equals(client.getName())) {
-                    LOGGER.info("User with name " + user.getName() + " already exists");
+                    LOGGER.info("User with name {} already exists", user.getName());
                     return ERROR_MESSAGE;
                 }
             }

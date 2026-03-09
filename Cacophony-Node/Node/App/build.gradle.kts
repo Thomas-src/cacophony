@@ -22,6 +22,7 @@ dependencies {
     implementation(project(":Node:Views"))
     implementation(project(":Node:Domains"))
 
+    implementation(project(":Grammar"))
 }
 
 application {
