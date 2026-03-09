@@ -1,4 +1,4 @@
-package org.helmo;
+package org.helmo.client;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

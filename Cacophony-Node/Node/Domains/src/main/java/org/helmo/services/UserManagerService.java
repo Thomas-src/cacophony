@@ -1,6 +1,6 @@
 package org.helmo.services;
 
-import org.helmo.User;
+import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
 
@@ -13,7 +13,7 @@ public class UserManagerService  {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsers() throws UserReaderException {
+    public List<Client> getUsers() throws UserReaderException {
         return userRepository.getUsers();
     }
 }

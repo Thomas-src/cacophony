@@ -1,4 +1,6 @@
-package org.helmo;
+package org.helmo.client;
+
+import org.helmo.ISubscriber;
 
 import java.util.ArrayList;
 import java.util.List;

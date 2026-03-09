@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.TagSaveException;
 import org.helmo.Exception.UserReaderException;
+import org.helmo.client.Client;
+import org.helmo.client.Tag;
 import org.helmo.repository.*;
 import org.helmo.services.UserManagerService;
 
@@ -52,8 +54,8 @@ public class JsonTagRepository implements ITagRepository {
                         return List.of();
                     }
 
-                    List<User> users = userService.getUsers();
-                    Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getName, u -> u));
+                    List<Client> clients = userService.getUsers();
+                    Map<String, Client> userMap = clients.stream().collect(Collectors.toMap(Client::getName, u -> u));
                     return JsonMapper.mapTags(dto, userMap, config.getCurrentDomain());
                 }
             } catch (IOException ex) {

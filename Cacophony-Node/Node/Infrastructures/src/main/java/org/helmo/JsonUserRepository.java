@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
+import org.helmo.client.Client;
 import org.helmo.repository.*;
 
 import java.io.BufferedReader;
@@ -36,7 +37,7 @@ public class JsonUserRepository implements IUserRepository {
     }
 
     @Override
-    public List<User> getUsers() throws UserReaderException {
+    public List<Client> getUsers() throws UserReaderException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -58,7 +59,7 @@ public class JsonUserRepository implements IUserRepository {
     }
 
     @Override
-    public void saveUsers(User user) throws UserSaveException {
+    public void saveUsers(Client client) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -71,7 +72,7 @@ public class JsonUserRepository implements IUserRepository {
                         existingUserDtos = new ArrayList<>(existingDto.users());
                     }
                 }
-                UserDto newUserDto = JsonMapper.toUserDto(user);
+                UserDto newUserDto = JsonMapper.toUserDto(client);
                 String newUserJson = gson.toJson(newUserDto);
                 boolean updated = false;
                 for (int i = 0; i < existingUserDtos.size(); i++) {
