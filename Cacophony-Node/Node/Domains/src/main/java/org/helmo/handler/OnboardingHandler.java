@@ -1,7 +1,8 @@
-package org.helmo.services;
+package org.helmo.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
@@ -9,14 +10,14 @@ import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 
 
-public class OnboardingService implements IOnboarding{
+public class OnboardingHandler implements CommandHandler{
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final static String ERROR_MESSAGE = "ERR";
     private final static String OK_MESSAGE = "OK";
     private final IUserRepository userRepository;
 
-    public OnboardingService(IUserRepository userRepository) {
+    public OnboardingHandler(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -27,12 +28,11 @@ public class OnboardingService implements IOnboarding{
      * @throws OnboardingException
      */
     @Override
-    public String onNewOnboarding(String message) throws OnboardingException {
+    public String handle(String message) throws HandlerException {
         LOGGER.info("New Onboarding request received");
 
         Client client = Client.newClientFromOnboarding(message);
 
-        // Ici j'ai découtert user apres avoir fait ma version de client donc j'ai utilisé un peu les deux, ce serait bien de merge les deux
         try {
             for (Client user : userRepository.getUsers()) {
                 if (user.getName().equals(client.getName())) {
@@ -43,7 +43,7 @@ public class OnboardingService implements IOnboarding{
 
             userRepository.saveUsers(client);
         } catch (UserReaderException | UserSaveException e) {
-            throw new OnboardingException("Impossible d'inscrire l'utilisateur" + client.getName() + "\nException enfant => " + e);
+            throw new HandlerException("Impossible d'inscrire l'utilisateur" + client.getName() + "\nException enfant => " + e);
         }
 
         LOGGER.info("Onboarding OK");

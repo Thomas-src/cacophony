@@ -3,11 +3,11 @@ package org.helmo.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
-import org.helmo.Exception.OnboardingException;
 import org.helmo.Exception.ConfigReaderException;
 import org.helmo.MessageBuilder;
+import org.helmo.handler.CommandMenu;
+import org.helmo.handler.OnboardingHandler;
 import org.helmo.repository.IConfigReaderRepository;
-import org.helmo.services.IOnboarding;
 import org.helmo.services.RandomService;
 
 import java.io.*;
@@ -20,15 +20,15 @@ public class Server implements IServer {
     private final IConfigReaderRepository configReader;
 
     // Services
-    private final IOnboarding onboardingService;
+    private final CommandMenu menu;
     private boolean stop = false;
     private boolean isStarted = false;
     private boolean isConnected = false;
     ServerSocket listener;
     Socket client;
 
-    public Server(IOnboarding onboardingService, IConfigReaderRepository configReader) {
-        this.onboardingService = onboardingService;
+    public Server(CommandMenu menu, IConfigReaderRepository configReader) {
+        this.menu = menu;
         this.configReader = configReader;
     }
 
@@ -61,13 +61,7 @@ public class Server implements IServer {
 
                 while ((line = fromClient.readLine()) != null) {
                     LOGGER.info("MESSAGE FROM " + client.getInetAddress() + " => " + line);
-
-                    if (line.toUpperCase().startsWith("ONBOARDING")) {
-                        String response = onboardingService.onNewOnboarding(line);
-                        toClient.println(response);
-                        LOGGER.info("Response to an onboarding from server to " + client.getInetAddress() + " => " + response);
-                    }
-
+                    menu.execute(line);
                 }
 
                 client.close();
@@ -78,8 +72,6 @@ public class Server implements IServer {
             throw new RuntimeException();
         } catch (ConfigReaderException e) {
             LOGGER.info("Impossible de lire la config, fin du serveur");
-        } catch (OnboardingException e) {
-            throw new RuntimeException(e);
         }
     }
 

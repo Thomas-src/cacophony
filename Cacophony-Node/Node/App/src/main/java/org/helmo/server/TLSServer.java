@@ -2,8 +2,9 @@ package org.helmo.server;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.handler.CommandMenu;
+import org.helmo.handler.OnboardingHandler;
 import org.helmo.repository.IConfigReaderRepository;
-import org.helmo.services.IOnboarding;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -14,21 +15,20 @@ public class TLSServer implements IServer {
     private final IConfigReaderRepository configReader;
 
     // Services
-    private final IOnboarding onboardingService;
+    private final CommandMenu menu;
     private boolean stop = false;
     private boolean isStarted = false;
     private boolean isConnected = false;
     ServerSocket listener;
     Socket client;
 
-    public TLSServer(IOnboarding onboardingService, IConfigReaderRepository configReader) {
-        this.onboardingService = onboardingService;
+    public TLSServer(CommandMenu menu, IConfigReaderRepository configReader) {
+        this.menu = menu;
         this.configReader = configReader;
     }
 
     @Override
     public void run() {
-
     }
 
     @Override

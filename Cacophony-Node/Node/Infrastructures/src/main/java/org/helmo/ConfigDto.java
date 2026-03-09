@@ -1,6 +1,5 @@
 package org.helmo;
 
-import java.util.List;
 
 public record ConfigDto(String currentDomain,
                         int saltSizeInBytes,
@@ -10,8 +9,6 @@ public record ConfigDto(String currentDomain,
                         int relayPort,
                         String networkInterface,
                         String base64AES,
-                        boolean tls,
-                        List<UserDto> users,
-                        List<TagDto> tags
+                        boolean tls
                         ) {
 };
