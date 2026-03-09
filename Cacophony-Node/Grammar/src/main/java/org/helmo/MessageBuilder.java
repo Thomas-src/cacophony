@@ -9,6 +9,8 @@ import static org.helmo.Grammar.*;
  * Les messages sont formatés selon les règles définies dans la grammaire, avec les espaces et les nouvelles lignes appropriés.
  */
 public class MessageBuilder {
+    private static final String SP = " ";
+    private static final String NEWLINE = "\\r\\n";
 
     // welcome = "WELCOME" sp domain sp random_string newline
 
@@ -19,7 +21,7 @@ public class MessageBuilder {
      * @return
      */
     public static String buildWelcome(String domain, String randomString) {
-        return "WELCOME " + SP + domain + SP + randomString + NEWLINE;
+        return "WELCOME " + domain + SP + randomString + NEWLINE;
     }
 
     // user = "USER" sp user newlineµ

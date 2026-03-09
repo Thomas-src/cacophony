@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class Grammar {
 
     // Caractères de base
-    public static final String SP = "\\x20"; // %d32 (Espace)
+    public static final String SP = "\\x32"; // %d32 (Espace)
     public static final String NEWLINE = "\\r\\n"; // %d13 %d10
     public static final String DIGIT = "\\d"; // %d48-57
     public static final String LETTER = "[A-Za-z]"; // %d65-90 / %d97-122
