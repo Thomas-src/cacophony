@@ -1,8 +1,12 @@
 package org.helmo;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.ConfigReaderException;
+import org.helmo.Exception.ServerException;
 import org.helmo.handler.AuthentificateHandler;
 import org.helmo.handler.CommandMenu;
+import org.helmo.handler.MessageHandler;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.repository.IUserRepository;
 import org.helmo.server.IServer;
@@ -12,28 +16,8 @@ import org.helmo.handler.OnboardingHandler;
 import java.io.PrintStream;
 
 public class Program {
-
+    private static final Logger LOGGER = LogManager.getLogger();
     public static void main(String[] args) {
-              /* // Pour tester l'appel aux fichiers
-              var configReader = new JsonConfigReaderNode();
-            var reader = new JsonUserRepository(configReader.getConfig());
-
-            var users = reader.getUsers();
-            users.forEach(user -> {
-                LOGGER.info("User: "+user.toString());
-            });
-            var reader2 = new JsonTagRepository(configReader.getConfig(), new UserManagerService(reader));
-            var tags = reader2.getTags();
-            tags.forEach(tag -> {
-                LOGGER.info("Tag: " + tag.getName());
-                tag.getSubscribers().forEach(subscriber ->
-                LOGGER.info("  Subscriber: " + subscriber.toString())
-            );
-        });
-            */
-
-
-
 
             try (PrintStream cout = new PrintStream(System.out)){
                 // Création des services
@@ -43,12 +27,13 @@ public class Program {
                 CommandMenu menu = new CommandMenu();
                 menu.add("ONBOARDING", new OnboardingHandler(userRepository));
                 menu.add("USER", new AuthentificateHandler(userRepository));
+                menu.add("SEND", new MessageHandler());
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(menu, configReader);
                 server.run();
-            } catch (ConfigReaderException e) {
-                throw new RuntimeException(e);
+            } catch (ConfigReaderException | ServerException e) {
+                LOGGER.error("Le serveur n'a pas pu démarrer",e);
             }
     }
 }

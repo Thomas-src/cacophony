@@ -4,10 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
+import org.helmo.Grammar;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
+
+import java.util.regex.Pattern;
 
 
 public class OnboardingHandler implements CommandHandler{
@@ -48,5 +51,10 @@ public class OnboardingHandler implements CommandHandler{
 
         LOGGER.info("Onboarding OK");
         return OK_MESSAGE;
+    }
+
+    @Override
+    public Pattern getPattern() {
+        return Grammar.P_USER_AT_DOMAIN;
     }
 }
