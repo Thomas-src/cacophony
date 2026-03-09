@@ -3,15 +3,11 @@ package org.helmo.services;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.OnboardingException;
-import org.helmo.HashPassword;
-import org.helmo.User;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
-import org.helmo.views.IViewServer;
 
-import java.util.List;
 
 public class OnboardingService implements IOnboarding{
     private static final Logger LOGGER = LogManager.getLogger();
@@ -38,16 +34,14 @@ public class OnboardingService implements IOnboarding{
 
         // Ici j'ai découtert user apres avoir fait ma version de client donc j'ai utilisé un peu les deux, ce serait bien de merge les deux
         try {
-            for (User user : userRepository.getUsers()) {
+            for (Client user : userRepository.getUsers()) {
                 if (user.getName().equals(client.getName())) {
                     LOGGER.info("User with name {} already exists", user.getName());
                     return ERROR_MESSAGE;
                 }
             }
-            HashPassword hpsw = new HashPassword(client.getHashPsw(), client.getRotation(), client.getSalt());
-            User user = new User(client.getName(), hpsw , List.of());
 
-            userRepository.saveUsers(user);
+            userRepository.saveUsers(client);
         } catch (UserReaderException | UserSaveException e) {
             throw new OnboardingException("Impossible d'inscrire l'utilisateur" + client.getName() + "\nException enfant => " + e);
         }

@@ -1,5 +1,9 @@
 package org.helmo;
 
+import org.helmo.client.Client;
+import org.helmo.client.HashPassword;
+import org.helmo.client.Tag;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,16 +36,16 @@ public class JsonMapper {
         // todo si besoin de vérifier d'autres éléments
     }
 
-    public static List<User> mapUsers(UsersDto dto, String currentDomain) {
+    public static List<Client> mapUsers(UsersDto dto, String currentDomain) {
         List<UserDto> userDtos = dto.users() == null ? List.of() : dto.users();
-        List<User> users = userDtos.stream().map(JsonMapper::createUser).toList();
-        Map<String, User> userMap = users.stream().collect(Collectors.toMap(User::getName, u -> u));
+        List<Client> clients = userDtos.stream().map(JsonMapper::createUser).toList();
+        Map<String, Client> userMap = clients.stream().collect(Collectors.toMap(Client::getName, u -> u));
         resolveUserSubscribers(userDtos, userMap, currentDomain);
-        return users;
+        return clients;
     }
 
-    private static User createUser(UserDto dto) {
-        return new User(
+    private static Client createUser(UserDto dto) {
+        return new Client(
                 dto.login(),
                 new HashPassword(
                         dto.bcryptHash(),
@@ -52,7 +56,7 @@ public class JsonMapper {
         );
     }
 
-    public static List<Tag> mapTags(TagsDto dto, Map<String, User> userMap, String currentDomain) {
+    public static List<Tag> mapTags(TagsDto dto, Map<String, Client> userMap, String currentDomain) {
         List<TagDto> tagDtos = dto.tags() == null ? List.of() : dto.tags();
         List<Tag> tags = tagDtos.stream().map(JsonMapper::createTag).toList();
         Map<String, Tag> tagMap = tags.stream().collect(Collectors.toMap(Tag::getName, t -> t));
@@ -63,21 +67,21 @@ public class JsonMapper {
     private static Tag createTag(TagDto dto) {
         return new Tag(dto.tag(), new ArrayList<>());
     }
-    private static void resolveUserSubscribers(List<UserDto> userDtos, Map<String, User> userMap, String currentDomain) {
+    private static void resolveUserSubscribers(List<UserDto> userDtos, Map<String, Client> userMap, String currentDomain) {
         for (UserDto userDto : userDtos) {
-            User user = userMap.get(userDto.login());
+            Client client = userMap.get(userDto.login());
             if (userDto.subscribers() != null) {
                 for (String subscriberName : userDto.subscribers()) {
                     ISubscriber subscriber = resolveSubscriber(subscriberName, currentDomain, userMap);
                     if (subscriber != null) {
-                        user.subscribe(subscriber);
+                        client.subscribe(subscriber);
                     }
                 }
             }
         }
     }
 
-    private static void resolveTagSubscribers(List<TagDto> tagDtos, Map<String, Tag> tagMap, Map<String, User> userMap, String currentDomain) {
+    private static void resolveTagSubscribers(List<TagDto> tagDtos, Map<String, Tag> tagMap, Map<String, Client> userMap, String currentDomain) {
         for (TagDto tagDto : tagDtos) {
             Tag tag = tagMap.get(tagDto.tag());
 
@@ -92,7 +96,7 @@ public class JsonMapper {
         }
     }
 
-    private static ISubscriber resolveSubscriber(String fullName, String currentDomain, Map<String, User> userMap) {
+    private static ISubscriber resolveSubscriber(String fullName, String currentDomain, Map<String, Client> userMap) {
         if (fullName == null) {
             return null;
         }
@@ -110,14 +114,14 @@ public class JsonMapper {
         return new RemoteUser(fullName);
     }
 
-    public static UserDto toUserDto(User user) {
-        HashPassword hashPassword = user.getHashPassword();
+    public static UserDto toUserDto(Client client) {
+        HashPassword hashPassword = client.getHashPassword();
         return new UserDto(
-                user.getName(),
+                client.getName(),
                 hashPassword.storedBcryptHash(),
                 hashPassword.bcryptRound(),
                 hashPassword.bcryptSalt(),
-                user.getSubscribers().stream().map(ISubscriber::getFullName).toList(),
+                client.getSubscribers().stream().map(ISubscriber::getFullName).toList(),
                 EMPTY_USER_TAGS
         );
     }

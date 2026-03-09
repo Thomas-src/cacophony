@@ -1,10 +1,10 @@
 package org.helmo.repository;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
-import org.helmo.User;
+import org.helmo.client.Client;
 import java.util.List;
 
 public interface IUserRepository {
-    List<User> getUsers() throws UserReaderException;
-    void saveUsers(User user) throws UserSaveException;
+    List<Client> getUsers() throws UserReaderException;
+    void saveUsers(Client client) throws UserSaveException;
 }

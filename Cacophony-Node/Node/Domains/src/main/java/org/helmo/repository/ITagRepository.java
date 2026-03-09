@@ -2,7 +2,7 @@ package org.helmo.repository;
 
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.TagSaveException;
-import org.helmo.Tag;
+import org.helmo.client.Tag;
 
 import java.util.List;
 
