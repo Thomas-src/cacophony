@@ -19,7 +19,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
 
     implementation(project(":Node:Infrastructures"))
-    implementation(project(":Node:Views"))
     implementation(project(":Node:Domains"))
 
     implementation(project(":Grammar"))

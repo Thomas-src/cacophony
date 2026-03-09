@@ -19,7 +19,7 @@ public class MessageBuilder {
      * @return
      */
     public static String buildWelcome(String domain, String randomString) {
-        return "WELCOME" + SP + domain + SP + randomString + NEWLINE;
+        return "WELCOME" + ' ' + domain + ' ' + randomString;
     }
 
     // user = "USER" sp user newlineµ
