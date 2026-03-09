@@ -71,7 +71,7 @@ public class Client implements ISubscriber {
     }
 
 
-    HashPassword getHashPassword() {
+    public HashPassword getHashPassword() {
         return hashPassword;
     }
 

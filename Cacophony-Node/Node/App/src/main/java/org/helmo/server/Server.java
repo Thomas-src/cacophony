@@ -52,10 +52,10 @@ public class Server implements IServer {
 
                 PrintWriter toClient = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8), true);
 
-//                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), RandomService.generateRandomString(22));
-//                toClient.println(welcomeMessage);
+                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), RandomService.generateRandomString(22));
+                toClient.println(welcomeMessage);
 
-                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
+//                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
 
                 String line;
 
