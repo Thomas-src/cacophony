@@ -10,7 +10,7 @@ import static org.helmo.Grammar.*;
  */
 public class MessageBuilder {
     private static final String SP = " ";
-    private static final String NEWLINE = "\\r\\n";
+    private static final String NEWLINE = "\r\n";
 
     // welcome = "WELCOME" sp domain sp random_string newline
 
