@@ -3,6 +3,7 @@ package org.helmo.server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.Exception.ServerException;
 import org.helmo.MessageBuilder;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
@@ -37,12 +38,12 @@ public abstract class AbstractServer implements IServer {
             isStarted = true;
 
             LOGGER.info(config.toString());
-            LOGGER.info("Server listening on port " + config.getUnicastPort());
+            LOGGER.info("Server listening on port {}", config.getUnicastPort());
 
             while (!stop) {
                 client = listener.accept();
                 isConnected = true;
-                LOGGER.info("Accepted connection from " + client.getInetAddress().getHostName());
+                LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
 
                 BufferedReader fromClient = new BufferedReader(new InputStreamReader(client.getInputStream(), StandardCharsets.UTF_8));
 
@@ -57,13 +58,13 @@ public abstract class AbstractServer implements IServer {
 
                 try {
                     while ((line = fromClient.readLine()) != null) {
-                        LOGGER.info("MESSAGE FROM " + client.getInetAddress() + " => " + line);
+                        LOGGER.info("MESSAGE FROM {} => {}", client.getInetAddress(), line);
                         String message = menu.execute(line);
-                        LOGGER.info("MESSAGE OUT " + client.getInetAddress() + " => " + line);
+                        LOGGER.info("MESSAGE OUT {} => {}", client.getInetAddress(), line);
                         toClient.println(message);
                     }
                 } catch (IOException e) {
-                    LOGGER.info("Client "+client.getInetAddress()+" s'est déconnecté");
+                    LOGGER.info("Client {} s'est déconnecté", client.getInetAddress());
                 } finally {
                     try {
                         client.close();
@@ -95,5 +96,5 @@ public abstract class AbstractServer implements IServer {
         }
     }
 
-    abstract ServerSocket createServerSocket(int port) throws IOException;
+    abstract ServerSocket createServerSocket(int port) throws ServerException;
 }

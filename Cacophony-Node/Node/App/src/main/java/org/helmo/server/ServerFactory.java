@@ -10,8 +10,8 @@ import org.helmo.repository.IConfigReaderRepository;
 
 
 public class ServerFactory {
-
     private static final Logger LOGGER = LogManager.getLogger();
+
     public static IServer createServer(CommandMenu menu, IConfigReaderRepository configReader) throws ServerException {
         try {
             Config config = configReader.getConfig();
@@ -20,7 +20,7 @@ public class ServerFactory {
             } else {
                 return new Server(menu, config);
             }
-        }catch (ConfigReaderException e) {
+        } catch (ConfigReaderException e) {
             LOGGER.error(e.getMessage());
             throw new ServerException(e.getMessage());
         }
