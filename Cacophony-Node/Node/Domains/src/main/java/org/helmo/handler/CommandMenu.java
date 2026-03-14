@@ -2,6 +2,7 @@ package org.helmo.handler;
 
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
+import org.helmo.client.ClientSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class CommandMenu {
         handlers.put(command.toUpperCase(), handler);
     }
 
-    public String execute(String command) throws HandlerException {
+    public String execute(String command, ClientSession session) throws HandlerException {
         String cmd = command.split(" ")[0].toUpperCase();
 
         CommandHandler handler = handlers.get(cmd);
@@ -21,6 +22,6 @@ public class CommandMenu {
         if (handler == null) {
             return MessageBuilder.buildError();
         }
-        return handler.handle(command);
+        return handler.handle(command, session);
     }
 }

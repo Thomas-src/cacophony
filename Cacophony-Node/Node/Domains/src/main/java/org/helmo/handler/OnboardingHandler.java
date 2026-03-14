@@ -6,6 +6,7 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
 import org.helmo.Grammar;
 import org.helmo.client.Client;
+import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
@@ -31,7 +32,7 @@ public class OnboardingHandler implements CommandHandler{
      * @throws OnboardingException
      */
     @Override
-    public String handle(String message) throws HandlerException {
+    public String handle(String message, ClientSession session) throws HandlerException {
         LOGGER.info("New Onboarding request received");
 
         Client client = Client.newClientFromOnboarding(message);

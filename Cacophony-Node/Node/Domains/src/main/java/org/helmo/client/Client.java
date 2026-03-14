@@ -29,10 +29,6 @@ public class Client implements ISubscriber {
         actual.name = args[1];
         actual.subscribers = List.of(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
 
-        for (int i = 0; i < args.length; i++) {
-            System.out.println("Argument " + args[i]);
-        }
-
         String[] split = message.split("\\$");
 
         var rotation = Integer.parseInt(split[2]);

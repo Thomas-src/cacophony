@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.MessageBuilder;
+import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
 
@@ -49,8 +50,11 @@ public abstract class AbstractServer implements IServer {
 
                 PrintWriter toClient = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8), true);
 
-                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), RandomService.generateRandomString(22));
+                String rdmString = RandomService.generateRandomString(22);
+                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), rdmString);
                 toClient.println(welcomeMessage);
+
+                ClientSession session = new ClientSession(rdmString);
 
 //                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
 
@@ -59,8 +63,8 @@ public abstract class AbstractServer implements IServer {
                 try {
                     while ((line = fromClient.readLine()) != null) {
                         LOGGER.info("MESSAGE FROM {} => {}", client.getInetAddress(), line);
-                        String message = menu.execute(line);
-                        LOGGER.info("MESSAGE OUT {} => {}", client.getInetAddress(), line);
+                        String message = menu.execute(line, session);
+                        LOGGER.info("MESSAGE OUT {} => {}", client.getInetAddress(), message);
                         toClient.println(message);
                     }
                 } catch (IOException e) {
