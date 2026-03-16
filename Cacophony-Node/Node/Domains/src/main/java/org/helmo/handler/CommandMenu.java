@@ -19,14 +19,12 @@ public class CommandMenu {
             Pattern pattern = entry.getKey();
             CommandHandler handler = entry.getValue();
 
-            System.out.println("TEST PATTERN: " + pattern);
-
             if (pattern.matcher(command).matches()) {
                 return handler.handle(command, session);
             }
         }
 
-        return MessageBuilder.buildError("Command not found " + command);
+        return MessageBuilder.buildError(" ");
     }
 
 }
