@@ -1,5 +1,8 @@
 package org.helmo.client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +12,8 @@ import java.security.NoSuchAlgorithmException;
  * Elle prend en entrée un hash bcrypt stocké (représentant le mot de passe de l'utilisateur) et fournit une méthode pour vérifier la réponse du client au challenge.
  */
 public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcryptSalt) {
+    private static final Logger LOGGER = LogManager.getLogger();
+
 
     /**
      * Vérifie si la réponse du client au challenge est correcte en suivant les étapes suivantes :
@@ -25,7 +30,8 @@ public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcr
     public boolean checkChallenge(String clientResponse, String challenge) {
         try {
             // 1. Concaténer le challenge avec le hash bcrypt stocké
-            String secretCombination = challenge + this.storedBcryptHash;
+//            String secretCombination = challenge + this.storedBcryptHash;
+            String secretCombination = challenge + this.toString(); // /!\ Ici on doit utiliser la chaine complète avec le $2b$14$<sel><hash> /!\
 
             // 2. Calculer le hash SHA3-256 de la concaténation
             MessageDigest digest = MessageDigest.getInstance("SHA3-256");
@@ -68,5 +74,13 @@ public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcr
     @Override
     public String storedBcryptHash() {
         return storedBcryptHash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("$2b$").append(bcryptRound).append("$").append(bcryptSalt).append(storedBcryptHash);
+        return sb.toString();
     }
 }

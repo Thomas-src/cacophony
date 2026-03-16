@@ -4,17 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.ConfigReaderException;
 import org.helmo.Exception.ServerException;
-import org.helmo.handler.AuthentificateHandler;
-import org.helmo.handler.CommandMenu;
-import org.helmo.handler.MessageHandler;
+import org.helmo.handler.*;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.repository.IUserRepository;
 import org.helmo.server.IServer;
 import org.helmo.server.ServerFactory;
-import org.helmo.handler.OnboardingHandler;
 
 import java.io.PrintStream;
-
 
 public class Program {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -26,9 +22,10 @@ public class Program {
                 IUserRepository userRepository = new JsonUserRepository(configReader.getConfig());
 
                 CommandMenu menu = new CommandMenu();
-                menu.add(Message.P_CMD_WELCOME, new OnboardingHandler(userRepository));
-                menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
-                menu.add(Message.P_CMD_MSG, new MessageHandler());
+                menu.add("ONBOARDING", new OnboardingHandler(userRepository));
+                menu.add("USER", new AuthentificateHandler(userRepository));
+                menu.add("RESPONSE", new ResponseChallengeHandler());
+                menu.add("SEND", new MessageHandler());
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(menu, configReader);

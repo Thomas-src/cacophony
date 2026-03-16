@@ -2,14 +2,22 @@ package org.helmo.handler;
 
 import org.helmo.Exception.HandlerException;
 import org.helmo.Grammar;
-import org.helmo.MessageBuilder;
+import org.helmo.client.ClientSession;
 
 import java.util.regex.Pattern;
 
 public class MessageHandler implements CommandHandler {
     @Override
-    public String handle(ClientState state, String message) throws HandlerException {
+    public String handle(String message, ClientSession session) throws HandlerException {
+        if (!validate(message)) {
+            return "ERR"; // message invalide
+        }
 
-        return MessageBuilder.buildError();
+        return "ERR";
+    }
+
+    @Override
+    public Pattern getPattern() {
+        return Grammar.P_MESSAGE;
     }
 }
