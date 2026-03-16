@@ -7,7 +7,8 @@ public class ClientSession {
     private String bcryptHash;
     private boolean authenticated = false;
     private Client client;
-    private boolean shouldClose = false;
+
+    private boolean shouldKeepOpen = true;
 
     public void setClient(Client client) {
         this.client = client;
@@ -49,12 +50,15 @@ public class ClientSession {
         return authenticated;
     }
 
-    public boolean shouldClose() {
-        return shouldClose;
+
+
+
+    public boolean isShouldKeepOpen() {
+        return shouldKeepOpen;
     }
-    
-    public void setShouldClose(boolean shouldClose) {
-        this.shouldClose = shouldClose;
+
+    public void setShouldKeepOpen(boolean shouldKeepOpen) {
+        this.shouldKeepOpen = shouldKeepOpen;
     }
 
 

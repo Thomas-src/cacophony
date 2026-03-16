@@ -45,7 +45,7 @@ public class ClientHandler implements Runnable {
 
             String line;
 
-            while ((line = fromClient.readLine()) != null) {
+            while ( session.isShouldKeepOpen() && (line = fromClient.readLine()) != null ) {
 
                 LOGGER.info("MESSAGE FROM {} => {}", client.getInetAddress(), line);
 
@@ -55,12 +55,6 @@ public class ClientHandler implements Runnable {
 
                 toClient.println(response);
 
-                // Si la session est marquée pour fermeture,
-                // on sort de la boucle. La connexion sera fermée dans le bloc finally.
-                if (session.shouldClose()) {
-                    LOGGER.info("Client starting to deconnect");
-                    break;
-                }
             }
 
         } catch (IOException e) {
