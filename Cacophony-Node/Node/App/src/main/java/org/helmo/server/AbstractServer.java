@@ -6,6 +6,7 @@ import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
+import org.helmo.handler.ClientHandler;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
 
@@ -46,40 +47,9 @@ public abstract class AbstractServer implements IServer {
                 isConnected = true;
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
 
-                BufferedReader fromClient = new BufferedReader(new InputStreamReader(client.getInputStream(), StandardCharsets.UTF_8));
-
-                PrintWriter toClient = new PrintWriter(new OutputStreamWriter(client.getOutputStream(), StandardCharsets.UTF_8), true);
-
-                String rdmString = RandomService.generateRandomString(22);
-                String welcomeMessage =  MessageBuilder.buildWelcome(config.getCurrentDomain(), rdmString);
-                toClient.println(welcomeMessage);
-
-                ClientSession session = new ClientSession(rdmString);
-
-//                toClient.println("WELCOME "+ config.getCurrentDomain() +" 1234567890123456789012");
-
-                String line;
-
-                try {
-                    while ((line = fromClient.readLine()) != null) {
-                        LOGGER.info("MESSAGE FROM {} => {}", client.getInetAddress(), line);
-                        String message = menu.execute(line, session);
-                        LOGGER.info("MESSAGE OUT {} => {}", client.getInetAddress(), message);
-                        toClient.println(message);
-                    }
-                } catch (IOException e) {
-                    LOGGER.info("Client {} s'est déconnecté", client.getInetAddress());
-                } finally {
-                    try {
-                        client.close();
-                    } catch (IOException ex) {
-                        LOGGER.error("Erreur lors de la fermeture du client", ex);
-                    }
-                    isConnected = false;
-                }
-
-                client.close();
-                isConnected = false;
+                ClientHandler clientHandler = new ClientHandler(client, menu, config);
+                Thread thread = new Thread(clientHandler);
+                thread.start();
             }
 
         }catch (IOException e) {
