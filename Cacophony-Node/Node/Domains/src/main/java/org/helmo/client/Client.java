@@ -55,6 +55,11 @@ public class Client implements ISubscriber {
         }
     }
 
+    public static Client Of(Client client) {
+        Objects.requireNonNull(client);
+        return new Client(client.getName(), client.hashPassword, client.subscribers);
+    }
+
 
    @Override
     public String getName() {

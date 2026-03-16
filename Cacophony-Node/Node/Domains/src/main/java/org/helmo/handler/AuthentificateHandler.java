@@ -10,7 +10,6 @@ import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
 
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class AuthentificateHandler implements  CommandHandler{
@@ -57,8 +56,5 @@ public class AuthentificateHandler implements  CommandHandler{
         return response;
     }
 
-    @Override
-    public Pattern getPattern() {
-        return Grammar.P_USER_AT_DOMAIN;
-    }
+
 }

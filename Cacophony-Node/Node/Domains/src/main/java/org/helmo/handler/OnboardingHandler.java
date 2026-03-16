@@ -53,9 +53,4 @@ public class OnboardingHandler implements CommandHandler{
         LOGGER.info("Onboarding OK");
         return OK_MESSAGE;
     }
-
-    @Override
-    public Pattern getPattern() {
-        return Grammar.P_USER_AT_DOMAIN;
-    }
 }
