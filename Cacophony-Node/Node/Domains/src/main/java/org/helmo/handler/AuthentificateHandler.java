@@ -2,6 +2,7 @@ package org.helmo.handler;
 
 import org.helmo.Exception.HandlerException;
 import org.helmo.Grammar;
+import org.helmo.MessageBuilder;
 import org.helmo.repository.IUserRepository;
 
 import java.util.regex.Pattern;
@@ -15,8 +16,12 @@ public class AuthentificateHandler implements  CommandHandler{
     }
 
     @Override
-    public String handle(String message) throws HandlerException {
-        return "ERR";
+    public String handle(ClientState state,String message) throws HandlerException {
+        if(state.isConnected()) { // si authentifié problème => pas sur authentification
+            return MessageBuilder.buildError();
+        }
+
+        return MessageBuilder.buildError();
     }
 
     @Override

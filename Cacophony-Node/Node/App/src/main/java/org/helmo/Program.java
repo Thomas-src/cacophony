@@ -15,6 +15,7 @@ import org.helmo.handler.OnboardingHandler;
 
 import java.io.PrintStream;
 
+
 public class Program {
     private static final Logger LOGGER = LogManager.getLogger();
     public static void main(String[] args) {
@@ -25,9 +26,9 @@ public class Program {
                 IUserRepository userRepository = new JsonUserRepository(configReader.getConfig());
 
                 CommandMenu menu = new CommandMenu();
-                menu.add("ONBOARDING", new OnboardingHandler(userRepository));
-                menu.add("USER", new AuthentificateHandler(userRepository));
-                menu.add("SEND", new MessageHandler());
+                menu.add(Message.P_CMD_WELCOME, new OnboardingHandler(userRepository));
+                menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
+                menu.add(Message.P_CMD_MSG, new MessageHandler());
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(menu, configReader);

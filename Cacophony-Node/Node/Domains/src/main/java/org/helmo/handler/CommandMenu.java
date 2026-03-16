@@ -3,24 +3,25 @@ package org.helmo.handler;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
 
 public class CommandMenu {
-    private final Map<String, CommandHandler> handlers = new HashMap<>();
+    private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>(); // ordre important
 
-    public void add(String command, CommandHandler handler) {
-        handlers.put(command.toUpperCase(), handler);
+    public void add(Pattern command, CommandHandler handler) {
+        handlers.put(command, handler);
     }
 
-    public String execute(String command) throws HandlerException {
-        String cmd = command.split(" ")[0].toUpperCase();
-
-        CommandHandler handler = handlers.get(cmd);
-
-        if (handler == null) {
-            return MessageBuilder.buildError();
+    public String execute(ClientState state, String command) throws HandlerException {
+        for (var entry : handlers.entrySet()) {
+            Pattern pattern = entry.getKey();
+            CommandHandler handler = entry.getValue();
+            if (pattern.matcher(command).matches()) {
+                return handler.handle(state, command);
+            }
         }
-        return handler.handle(command);
+
+        return MessageBuilder.buildError();
     }
 }
