@@ -54,15 +54,22 @@ public class ClientHandler implements Runnable {
                 LOGGER.info("MESSAGE OUT {} => {}", client.getInetAddress(), response);
 
                 toClient.println(response);
+
+                // Si la session est marquée pour fermeture,
+                // on sort de la boucle. La connexion sera fermée dans le bloc finally.
+                if (session.shouldClose()) {
+                    LOGGER.info("Client starting to deconnect");
+                    break;
+                }
             }
 
         } catch (IOException e) {
             LOGGER.info("Client {} disconnected", client.getInetAddress());
         } finally {
             try {
-                client.close();
+                if (client != null && !client.isClosed()) client.close();
             } catch (IOException e) {
-                LOGGER.error("Error closing client", e);
+                LOGGER.error("Error closing client socket", e);
             }
         }
     }

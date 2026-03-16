@@ -26,6 +26,7 @@ public class Program {
                 menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
                 menu.add(Message.P_CMD_MSG, new MessageHandler());
                 menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
+                menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(menu, configReader);
