@@ -22,10 +22,10 @@ public class Program {
                 IUserRepository userRepository = new JsonUserRepository(configReader.getConfig());
 
                 CommandMenu menu = new CommandMenu();
-                menu.add("ONBOARDING", new OnboardingHandler(userRepository));
-                menu.add("USER", new AuthentificateHandler(userRepository));
-                menu.add("RESPONSE", new ResponseChallengeHandler());
-                menu.add("SEND", new MessageHandler());
+                menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userRepository));
+                menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
+                menu.add(Message.P_CMD_MSG, new MessageHandler());
+                menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
 
                 // Création du serveur + demarrage
                 IServer server = ServerFactory.createServer(menu, configReader);
