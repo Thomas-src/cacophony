@@ -55,12 +55,4 @@ public class Grammar {
     public static final Pattern P_TAG_AT_DOMAIN = Pattern.compile("^" + TAG_AT_DOMAIN + "$");
     public static final Pattern P_MESSAGE = Pattern.compile("^" + MESSAGE + "$");
 
-    // Exemple d'utilisation
-//    public static void main(String[] args) {
-//        String testEmail = "user123@domain.com";
-//        String testBcrypt = "$2b$10$abcdefghijklmnopqrstuvwxyz1234567890!@#[]";
-//
-//        System.out.println("Valid Email: " + P_USER_AT_DOMAIN.matcher(testEmail).matches());
-//        System.out.println("Valid Bcrypt: " + P_BCRYPT.matcher(testBcrypt).matches());
-//    }
 }

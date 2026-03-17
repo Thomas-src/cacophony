@@ -1,6 +1,7 @@
 package org.helmo.client;
 
 import org.helmo.ISubscriber;
+import org.helmo.subscriber.IUserSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.Objects;
 public class Client implements ISubscriber {
     private String name;
     private HashPassword hashPassword;
-    private List<ISubscriber> subscribers = new ArrayList<>();
-
+    private List<IUserSubscriber> subscribers = new ArrayList<>();
+    private String fullName;
 
     public Client() {
     }
@@ -49,19 +50,14 @@ public class Client implements ISubscriber {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public Client(String name, HashPassword hashPassword, List<ISubscriber> subscribers) {
+    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain) {
         this.name = name;
         this.hashPassword = hashPassword;
+        this.fullName = name+'@'+domain;
         if (subscribers != null) {
             this.subscribers.addAll(subscribers);
         }
     }
-
-    public static Client Of(Client client) {
-        Objects.requireNonNull(client);
-        return new Client(client.getName(), client.hashPassword, new ArrayList<>(client.subscribers));
-    }
-
 
     @Override
     public String getName() {
@@ -70,7 +66,7 @@ public class Client implements ISubscriber {
 
     @Override
     public String getFullName() {
-        return name;
+        return fullName;
     }
 
 
@@ -100,8 +96,7 @@ public class Client implements ISubscriber {
         return subscribers.contains(subscriber);
     }
 
-    @Override
-    public void subscribe(ISubscriber subscriber) {
+    public void subscribe(IUserSubscriber subscriber) {
         Objects.requireNonNull(subscriber);
         subscribers.add(subscriber);
     }
@@ -118,15 +113,10 @@ public class Client implements ISubscriber {
         return name.hashCode();
     }
 
-    @Override
-    public List<ISubscriber> getSubscribers() {
-        return List.copyOf(subscribers);
+    public List<IUserSubscriber> getSubscribers() {
+        return subscribers;
     }
 
-    @Override
-    public boolean isLocal() {
-        return true;
-    }
 
     /**
      * Généré par ia
@@ -143,7 +133,7 @@ public class Client implements ISubscriber {
         } else {
             sb.append(", subscribers=[");
             for (int i = 0; i < subscribers.size(); i++) {
-                sb.append(subscribers.get(i).getName());
+                sb.append(subscribers.get(i).getFullName());
                 if (i < subscribers.size() - 1) sb.append(", ");
             }
             sb.append("]");

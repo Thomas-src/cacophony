@@ -1,15 +1,17 @@
 package org.helmo.services;
 
-import org.helmo.ISubscriber;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
+import org.helmo.subscriber.IUserSubscriber;
 
 import java.util.List;
 
-public class UserManagerService  {
+public class UserManagerService {
     private final IUserRepository userRepository;
-
+    private static final Logger LOGGER = LogManager.getLogger();
     public UserManagerService(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -18,11 +20,15 @@ public class UserManagerService  {
         return userRepository.getUsers();
     }
 
-    public List<ISubscriber> getUserSubscribers(String username) throws UserReaderException {
+    public List<IUserSubscriber> getUserSubscribers(String username) throws UserReaderException {
+
+        LOGGER.info(getUsers().stream().filter(u -> u.getFullName().equals(username)).findFirst().get().toString());
+
         return getUsers().stream()
-                .filter(u -> u.getName().equals(username))
+                .filter(u -> u.getFullName().equals(username))
                 .findFirst()
-                .map(Client::getSubscribers)
-                .orElseThrow(() -> new UserReaderException("User not found"));
+                .map(Client::getSubscribers) //todo probleme ici
+                .orElseThrow(() -> new UserReaderException("User not found: " + username));
     }
 }
+

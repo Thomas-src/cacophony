@@ -1,4 +1,4 @@
-package org.helmo;
+package org.helmo.dto;
 
 
 public record ConfigDto(String currentDomain,

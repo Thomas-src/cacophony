@@ -18,6 +18,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
 
     implementation(project(":Node:Domains"))
+    implementation(project(":Grammar"))
 }
 
 tasks.test {

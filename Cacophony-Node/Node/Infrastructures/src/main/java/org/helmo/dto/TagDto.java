@@ -1,4 +1,4 @@
-package org.helmo;
+package org.helmo.dto;
 
 import java.util.List;
 

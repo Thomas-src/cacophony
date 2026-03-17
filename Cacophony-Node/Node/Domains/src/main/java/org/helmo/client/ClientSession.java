@@ -40,7 +40,7 @@ public class ClientSession {
     }
 
     public void authenticate() {
-        ActiveSession.add(client.getName(), thread);
+        ActiveSession.add(getUserFullName(), thread);
         authenticated = true;
     }
 

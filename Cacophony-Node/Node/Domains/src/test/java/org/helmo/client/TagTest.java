@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TagTest {
-
+/*
     private Tag tag;
     private ISubscriber subscriber1;
     private ISubscriber subscriber2;
@@ -67,4 +67,6 @@ class TagTest {
         assertNotNull(tagWithNullSubscribers.getSubscribers());
         assertEquals(0, tagWithNullSubscribers.getSubscribers().size());
     }
+
+ */
 }

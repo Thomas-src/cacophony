@@ -10,6 +10,7 @@ import org.helmo.client.ClientSession;
 import org.helmo.server.ActiveSession;
 import org.helmo.server.threads.WestThread;
 import org.helmo.services.UserManagerService;
+import org.helmo.subscriber.IUserSubscriber;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -33,14 +34,14 @@ public class SendHandler implements CommandHandler {
         Set<String> localSubscribers  = new LinkedHashSet<>();
         Set<String> remoteSubscribers  = new LinkedHashSet<>();
 
-
         try {
-            LOGGER.info(userManagerService.getUserSubscribers(session.getUsername()));
-            for(ISubscriber subscriber : userManagerService.getUserSubscribers(session.getUsername())) {
+            List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(session.getUserFullName());
+            LOGGER.info("L'utilisateur {} possède {} abonnés",session.getUsername(),subscribers.size());
+            for(IUserSubscriber subscriber : subscribers) {
                // todo continuer ici (trouve aucun abonné)
-                LOGGER.info("Subscriber " + subscriber.getFullName());
+                LOGGER.info("Vérification Subscriber {}", subscriber.getFullName());
                if(subscriber.isLocal()) {
-                   localSubscribers.add(subscriber.getName());
+                   localSubscribers.add(subscriber.getFullName());
                } else {
                    remoteSubscribers.add(subscriber.getFullName());
                }

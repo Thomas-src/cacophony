@@ -27,21 +27,4 @@ public class Tag implements ISubscriber {
         return name;
     }
 
-    @Override
-    public void subscribe(ISubscriber subscriber) {
-        subscribers.add(subscriber);
-    }
-    @Override
-    public boolean isSubscribed(ISubscriber subscriber) {
-        return subscribers.contains(subscriber);
-    }
-    @Override
-    public List<ISubscriber> getSubscribers() {
-        return List.copyOf(subscribers);
-    }
-
-    @Override
-    public boolean isLocal() {
-        return false; // todo implémenter vérification si tag est local ou non
-    }
 }

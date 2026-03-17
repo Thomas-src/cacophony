@@ -8,6 +8,9 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.client.Client;
+import org.helmo.dto.UserDto;
+import org.helmo.dto.UsersDto;
+import org.helmo.mapper.JsonUserMapper;
 import org.helmo.repository.*;
 
 import java.io.BufferedReader;
@@ -46,7 +49,7 @@ public class JsonUserRepository implements IUserRepository {
                     if (dto == null) {
                         return List.of();
                     }
-                    return JsonMapper.mapUsers(dto, config.getCurrentDomain());
+                    return JsonUserMapper.mapUsers(dto, config.getCurrentDomain());
                 }
             } catch (IOException ex) {
                 LOGGER.error("Impossible de charger le fichier users", ex);
@@ -72,7 +75,7 @@ public class JsonUserRepository implements IUserRepository {
                         existingUserDtos = new ArrayList<>(existingDto.users());
                     }
                 }
-                UserDto newUserDto = JsonMapper.toUserDto(client);
+                UserDto newUserDto = JsonUserMapper.toUserDto(client);
                 String newUserJson = gson.toJson(newUserDto);
                 boolean updated = false;
                 for (int i = 0; i < existingUserDtos.size(); i++) {

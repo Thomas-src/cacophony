@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.ConfigReaderException;
+import org.helmo.dto.ConfigDto;
+import org.helmo.mapper.JsonConfigMapper;
 import org.helmo.repository.IConfigReaderRepository;
 
 import java.io.BufferedReader;
@@ -30,7 +32,7 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
                 throw new ConfigReaderException("Configuration vide ou invalide");
             }
 
-            return JsonMapper.fromDto(dto);
+            return JsonConfigMapper.ConfigfromDto(dto);
         }  catch (IOException ex) {
             LOGGER.error("Impossible de charger la configuration", ex);
             throw new ConfigReaderException("Impossible de charger la configuration");

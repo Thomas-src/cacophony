@@ -13,25 +13,29 @@ public class ActiveSession {
 
     private static final Map<String, WestThread> sessions = new ConcurrentHashMap<String, WestThread>();
 
-    public static void add(String name, WestThread wt) {
+    public static void add(String fullName, WestThread wt) {
         Objects.requireNonNull(wt, "WestThread is null");
-        if (name != null && !name.isBlank()) {
-            sessions.put(name, wt); // todo que faire si le user se connecte avec +2 appareils ?
+        if (fullName != null && !fullName.isBlank()) {
+            sessions.put(fullName, wt); // todo que faire si le user se connecte avec +2 appareils ?
         }
     }
 
-    public static void remove(String name) {
-        if (name != null && !name.isBlank()) {
-            sessions.remove(name);
+    public static void remove(String fullName) {
+        if (fullName != null && !fullName.isBlank()) {
+            sessions.remove(fullName);
         }
     }
 
-    public static void send(String name, String message) {
-        if (name != null && !name.isBlank()) {
-            if(!sessions.containsKey(name)) {
-                LOGGER.info("Le client {} n'est pas connecté", name);
+    public static void send(String fullName, String message) {
+        LOGGER.info(sessions.keySet().toString());
+        LOGGER.info("Tentative d'envoie de message au client {}, message : {}", fullName, message);
+        if (fullName != null && !fullName.isBlank()) {
+            if(!sessions.containsKey(fullName)) {
+                LOGGER.info("Le client {} n'est pas connecté", fullName);
+            } else {
+                sessions.get(fullName).send(message);
+
             }
-             sessions.get(name).send(message);
         }
     }
 }

@@ -69,7 +69,8 @@ public class WestThread extends Thread {
     }
     public synchronized void send(String message) {
         if (toClient != null && !socket.isClosed()) {
-            toClient.print(message);
+            toClient.println(message);
+            toClient.flush();
         }
     }
 

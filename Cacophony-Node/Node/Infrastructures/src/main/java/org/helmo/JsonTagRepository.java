@@ -10,6 +10,9 @@ import org.helmo.Exception.TagSaveException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.client.Client;
 import org.helmo.client.Tag;
+import org.helmo.dto.TagDto;
+import org.helmo.dto.TagsDto;
+import org.helmo.mapper.JsonTagMapper;
 import org.helmo.repository.*;
 import org.helmo.services.UserManagerService;
 
@@ -40,7 +43,6 @@ public class JsonTagRepository implements ITagRepository {
         Objects.requireNonNull(config);
         this.config = config;
         this.userService = userService;
-
     }
 
     @Override
@@ -56,7 +58,7 @@ public class JsonTagRepository implements ITagRepository {
 
                     List<Client> clients = userService.getUsers();
                     Map<String, Client> userMap = clients.stream().collect(Collectors.toMap(Client::getName, u -> u));
-                    return JsonMapper.mapTags(dto, userMap, config.getCurrentDomain());
+                    return JsonTagMapper.mapTags(dto, userMap, config.getCurrentDomain());
                 }
             } catch (IOException ex) {
                 LOGGER.error("Impossible de charger le fichier tag", ex);
@@ -89,7 +91,7 @@ public class JsonTagRepository implements ITagRepository {
                     tagsDtos = new ArrayList<>(existingDto.tags());
                 }
 
-                TagDto newTagDto = JsonMapper.toTagDto(tag);
+                TagDto newTagDto = JsonTagMapper.toTagDto(tag);
                 int existingIndex = tagsDtos.indexOf(newTagDto);
                 if (existingIndex >= 0) {
                     tagsDtos.set(existingIndex, newTagDto);
