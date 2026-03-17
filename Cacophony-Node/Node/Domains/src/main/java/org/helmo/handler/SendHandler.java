@@ -33,14 +33,17 @@ public class SendHandler implements CommandHandler {
         if(!session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
+
         String message = args.getFirst();
         Set<String> localSubscribers  = new LinkedHashSet<>();
         Set<String> remoteSubscribers  = new LinkedHashSet<>();
-
         try {
             List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(session.getUserFullName());
-            LOGGER.info("L'utilisateur {} possède {} abonnés",session.getUsername(),subscribers.size());
-            addUsers(subscribers, localSubscribers, remoteSubscribers);
+            if(subscribers != null) {
+                LOGGER.info("L'utilisateur {} possède {} abonnés",session.getUsername(),subscribers.size());
+                addUsers(subscribers, localSubscribers, remoteSubscribers);
+            }
+
 
         } catch (UserReaderException e) {
             throw new HandlerException("Impossible de lire le fichier des utilisateurs");
@@ -48,7 +51,7 @@ public class SendHandler implements CommandHandler {
 
         // todo attention pas envoyer msg à l'envoyeur
        // 1. obtenir tous les tags (internes / externes du message)
-        // vérifier si utilisateur abonnés à ces tags sinon supprimer
+        // vérifier si utilisateur abonnés à ces tags sinon annuler
 
         List<String> tags = extractTags(message);
         LOGGER.info("Tags du message: {}", tags);
@@ -56,16 +59,18 @@ public class SendHandler implements CommandHandler {
             for(String tag : tags) {
                 // todo 1. vérifier si l'utilisateur est abonné au tag
                 List<IUserSubscriber> subscribers = tagManagerService.getTagSubscriber(tag);
-                addUsers(subscribers, localSubscribers, remoteSubscribers);
+                if(subscribers != null) {
+                    LOGGER.info("Le tag {} possède {} abonnés",tag,subscribers.size());
+                    addUsers(subscribers, localSubscribers, remoteSubscribers);
+                }
             }
         } catch (TagReaderException e) {
             throw new HandlerException("Impossible de lire le fichier des tags");
         }
 
-
-        // ajouter tous les abonnés locaux dans un seul set (éviter collision) tags
-        // ajouter tous les abonnés externes dans un seul set (éviter collision) tags
-
+        // Supprimé le client de la liste si jamais
+        localSubscribers.remove(session.getUserFullName());
+        remoteSubscribers.remove(session.getUserFullName());
         // 2. Pour abonnés locaux appel via WestThread
         String localSubscriberResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for(String localSubscriber : localSubscribers) {

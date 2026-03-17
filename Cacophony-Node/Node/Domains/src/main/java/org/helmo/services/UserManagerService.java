@@ -1,7 +1,5 @@
 package org.helmo.services;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
@@ -24,7 +22,7 @@ public class UserManagerService {
                 .filter(u -> u.getFullName().equals(username))
                 .findFirst()
                 .map(Client::getSubscribers)
-                .orElseThrow(() -> new UserReaderException("User not found: " + username));
+                .orElse(null);
     }
 }
 
