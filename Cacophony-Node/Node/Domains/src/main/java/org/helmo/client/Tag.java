@@ -25,4 +25,7 @@ public class Tag {
         return name;
     }
 
+    public List<IUserSubscriber> getSubscribers() {
+        return subscribers;
+    }
 }

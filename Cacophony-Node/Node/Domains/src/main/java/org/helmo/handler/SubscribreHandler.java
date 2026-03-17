@@ -6,6 +6,8 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
 
+import java.util.List;
+
 public class SubscribreHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -16,7 +18,7 @@ public class SubscribreHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(String message, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, ClientSession session) throws HandlerException {
         return "";
     }
 }
