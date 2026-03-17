@@ -16,16 +16,15 @@ public class ClientSession {
     public void setClient(Client client) {
         this.client = client;
     }
-    public void setWestThread(WestThread thread) {
-        this.thread = thread;
-    }
 
     public Client getClient() {
         return client;
     }
 
-    public ClientSession(String randomString) {
+    public ClientSession(String randomString, WestThread thread, String domain ) {
         this.randomString = randomString;
+        this.thread = thread;
+        this.domain = domain;
     }
 
     public String getRandomString() {

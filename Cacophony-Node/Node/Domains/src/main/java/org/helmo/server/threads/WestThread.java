@@ -3,6 +3,7 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
@@ -42,8 +43,7 @@ public class WestThread extends Thread {
             String randomChallenge = RandomService.generateRandomString(22);
             toClient.println(MessageBuilder.buildWelcome(config.getCurrentDomain(), randomChallenge));
 
-            ClientSession session = new ClientSession(randomChallenge);
-            session.setWestThread(this);
+            ClientSession session = new ClientSession(randomChallenge, this, config.getCurrentDomain());
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
@@ -52,8 +52,11 @@ public class WestThread extends Thread {
                 LOGGER.info("MESSAGE OUT {} => {}", socket.getInetAddress(), response);
                 toClient.println(response);
             }
-
-        } catch (IOException e) {
+        } catch (HandlerException e) {
+            LOGGER.info("Une erreur s'est produite",e);
+            toClient.println(MessageBuilder.buildError());
+        }
+         catch (IOException e) {
             LOGGER.info("Client {} disconnected", socket.getInetAddress());
         } finally {
             try {
@@ -70,7 +73,6 @@ public class WestThread extends Thread {
     public synchronized void send(String message) {
         if (toClient != null && !socket.isClosed()) {
             toClient.println(message);
-            toClient.flush();
         }
     }
 

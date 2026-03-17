@@ -9,7 +9,7 @@ import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.TagSaveException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.client.Client;
-import org.helmo.client.Tag;
+import org.helmo.tag.InternalTag;
 import org.helmo.dto.TagDto;
 import org.helmo.dto.TagsDto;
 import org.helmo.mapper.JsonTagMapper;
@@ -46,7 +46,7 @@ public class JsonTagRepository implements ITagRepository {
     }
 
     @Override
-    public List<Tag> getTags() throws TagReaderException {
+    public List<InternalTag> getTags() throws TagReaderException {
         synchronized (TAGS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -74,7 +74,7 @@ public class JsonTagRepository implements ITagRepository {
     }
 
     @Override
-    public void saveTag(Tag tag) throws TagSaveException {
+    public void saveTag(InternalTag internalTag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -91,7 +91,7 @@ public class JsonTagRepository implements ITagRepository {
                     tagsDtos = new ArrayList<>(existingDto.tags());
                 }
 
-                TagDto newTagDto = JsonTagMapper.toTagDto(tag);
+                TagDto newTagDto = JsonTagMapper.toTagDto(internalTag);
                 int existingIndex = tagsDtos.indexOf(newTagDto);
                 if (existingIndex >= 0) {
                     tagsDtos.set(existingIndex, newTagDto);

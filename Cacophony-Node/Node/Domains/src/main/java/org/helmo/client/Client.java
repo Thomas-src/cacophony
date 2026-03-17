@@ -1,6 +1,8 @@
 package org.helmo.client;
 
 import org.helmo.subscriber.IUserSubscriber;
+import org.helmo.tag.ITag;
+import org.helmo.tag.InternalTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +17,16 @@ public class Client  {
     private String name;
     private HashPassword hashPassword;
     private List<IUserSubscriber> subscribers = new ArrayList<>();
+    private List<ITag> internalTags = new ArrayList<>();
     private String fullName;
 
     public Client() {
     }
 
     public static Client newClientFromOnboarding(List<String> args) {
-
-
         Client actual = new Client();
         actual.name = args.getFirst();
         actual.subscribers = new ArrayList<>(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
-
 
         int rotation = Integer.parseInt(args.get(2).split("\\$")[2]);
         var saltLength = Integer.parseInt(args.get(1));
@@ -45,12 +45,15 @@ public class Client  {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain) {
+    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain,  List<ITag> internalTags) {
         this.name = name;
         this.hashPassword = hashPassword;
         this.fullName = name+'@'+domain;
         if (subscribers != null) {
             this.subscribers.addAll(subscribers);
+        }
+        if (internalTags != null) {
+            this.internalTags.addAll(internalTags);
         }
     }
 
@@ -99,6 +102,10 @@ public class Client  {
         return subscribers;
     }
 
+    public List<ITag> getTags() {
+        return internalTags;
+    }
+
 
     /**
      * Généré par ia
@@ -117,6 +124,16 @@ public class Client  {
             for (int i = 0; i < subscribers.size(); i++) {
                 sb.append(subscribers.get(i).getFullName());
                 if (i < subscribers.size() - 1) sb.append(", ");
+            }
+            sb.append("]");
+        }
+        if (internalTags.isEmpty()) {
+            sb.append(", tags=[]");
+        } else {
+            sb.append(", tags=[");
+            for (int i = 0; i < internalTags.size(); i++) {
+                sb.append(internalTags.get(i).getFullName());
+                if (i < internalTags.size() - 1) sb.append(", ");
             }
             sb.append("]");
         }
