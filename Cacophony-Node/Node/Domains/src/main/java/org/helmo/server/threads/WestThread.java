@@ -28,7 +28,7 @@ public class WestThread extends Thread {
         this.socket = socket;
         this.menu = menu;
         this.config = config;
-        setName("WestThread " + socket.getRemoteSocketAddress() + ":" + socket.getLocalPort());
+        setName("WestThread");
     }
 
     @Override

@@ -6,32 +6,31 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.Grammar;
-import org.helmo.Message;
+import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
-import org.helmo.subscriber.NativeUser;
 
 import java.util.List;
 
-public class SubscribreHandler implements CommandHandler {
+public class SubscribeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final IUserRepository userRepository;
 
-    public SubscribreHandler(IUserRepository userRepository) {
+    public SubscribeHandler(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public String handle(List<String> args, ClientSession session) throws HandlerException {
         LOGGER.info("\n===========\n" + args.toString() + "\n===========");
-
-        if (args.size() < 2) {
+        LOGGER.info("\n===========\nSize:" + args.size() + "\n===========");
+        if (args.isEmpty()) {
             throw new HandlerException("Demande invalide");
         }
 
-        String target = args.get(1);
+        String target = args.getFirst();
         String response = "";
 
         if (Grammar.P_TAG_AT_DOMAIN.matcher(target).matches()) {
@@ -47,7 +46,7 @@ public class SubscribreHandler implements CommandHandler {
 
 
     private String userSubscribe(String target, ClientSession session) {
-        LOGGER.info("SUBSCRIBE");
+        LOGGER.info("SUBSCRIBE USER");
         List<Client> clients;
         String targetName = target.split("@")[0];
         try {
@@ -60,12 +59,13 @@ public class SubscribreHandler implements CommandHandler {
                 }
             }
         } catch (UserReaderException | UserSaveException e) {
-            return "ERR";
+            return MessageBuilder.buildError();
         }
-        return "OK";
+        return MessageBuilder.buildOk();
     }
 
     private String tagSubscribe(String target) {
-        return "ERR";
+        LOGGER.info("SUBSCRIBE TAG");
+        return MessageBuilder.buildError();
     }
 }
