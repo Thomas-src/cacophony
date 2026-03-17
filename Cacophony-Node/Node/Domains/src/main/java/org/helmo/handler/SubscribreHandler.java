@@ -24,16 +24,14 @@ public class SubscribreHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(String message, ClientSession session) throws HandlerException {
-        LOGGER.info("\n===========\n" + message + "\n===========");
+    public String handle(List<String> args, ClientSession session) throws HandlerException {
+        LOGGER.info("\n===========\n" + args.toString() + "\n===========");
 
-        String[] request = message.trim().split("\\s+");
-
-        if (request.length < 2) {
+        if (args.size() < 2) {
             throw new HandlerException("Demande invalide");
         }
 
-        String target = request[1];
+        String target = args.get(1);
         String response = "";
 
         if (Grammar.P_TAG_AT_DOMAIN.matcher(target).matches()) {
@@ -49,6 +47,7 @@ public class SubscribreHandler implements CommandHandler {
 
 
     private String userSubscribe(String target, ClientSession session) {
+        LOGGER.info("SUBSCRIBE");
         List<Client> clients;
         String targetName = target.split("@")[0];
         try {
