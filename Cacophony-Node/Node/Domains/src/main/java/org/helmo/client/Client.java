@@ -28,10 +28,10 @@ public class Client  {
         actual.subscribers = new ArrayList<>(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
 
 
-        var rotation = Integer.parseInt(args.get(1));
-        var saltLength = 22;
-        var salt = args.get(2).substring(0, saltLength);
-        var hashpassword =args.get(2).substring(saltLength);
+        int rotation = Integer.parseInt(args.get(2).split("\\$")[2]);
+        var saltLength = Integer.parseInt(args.get(1));
+        var salt = args.get(2).split("\\$")[3].substring(0, saltLength);
+        var hashpassword =args.get(2).split("\\$")[3].substring(saltLength);
 
         actual.hashPassword = new HashPassword(hashpassword, rotation, salt);
 
