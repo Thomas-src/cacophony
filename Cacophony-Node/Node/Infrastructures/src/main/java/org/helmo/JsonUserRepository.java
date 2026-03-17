@@ -103,6 +103,75 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    @Override
+    public void addSubscribersFor(Client client, String sub) throws UserSaveException {
+        synchronized (USERS_FILE_LOCK) {
+            try {
+                ensureStorage();
+
+                List<UserDto> existingUserDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
+                    if (existingDto == null || existingDto.users() == null) {
+                        existingUserDtos = new ArrayList<>();
+                    } else {
+                        existingUserDtos = new ArrayList<>(existingDto.users());
+                    }
+                }
+
+                boolean found = false;
+
+                // 2. Trouver le bon utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+
+                    // On compare avec le login (attention: client.getName() sans domaine)
+                    if (user.login().equals(client.getName())) {
+
+                        List<String> subscribers = user.subscribers() != null
+                                ? new ArrayList<>(user.subscribers())
+                                : new ArrayList<>();
+
+                        // 3. Ajouter le subscriber s'il n'existe pas déjà
+                        if (!subscribers.contains(sub)) {
+                            subscribers.add(sub);
+                        }
+
+                        // 4. Recréer le UserDto (record = immuable)
+                        UserDto updatedUser = new UserDto(
+                                user.login(),
+                                user.bcryptHash(),
+                                user.bcryptRound(),
+                                user.bcryptSalt(),
+                                subscribers,
+                                user.userTags()
+                        );
+
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", client.getName());
+                    return;
+                }
+
+                // 5. Réécrire le fichier
+                UsersDto updatedDto = new UsersDto(existingUserDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de l'ajout d'un subscriber", ex);
+                throw new UserSaveException("Erreur lors de l'ajout d'un subscriber");
+            }
+        }
+    }
+
     private void ensureStorage() throws IOException {
         if (Files.notExists(configPath)) {
             Path parent = configPath.getParent();

@@ -27,7 +27,7 @@ public class Message {
 
     // subscribe = "SUBSCRIBE" sp (user_at_domain / tag_at_domain) newline
     // Utilisation d'un groupe non capturant (?: ... | ... ) pour le OU logique
-    public static final String CMD_SUBSCRIBE = "SUBSCRIBE" + SP + "(:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
+    public static final String CMD_SUBSCRIBE = "SUBSCRIBE" + SP + "(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
 
     // send = "SEND" sp message newline
     public static final String CMD_SEND = "SEND" + SP + "(" + MESSAGE + ")";

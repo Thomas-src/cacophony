@@ -11,6 +11,7 @@ public class ClientSession {
     private String bcryptHash;
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
+    private String domain;
 
     public void setClient(Client client) {
         this.client = client;
@@ -61,5 +62,11 @@ public class ClientSession {
         ActiveSession.remove(client.getName());
     }
 
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
+    public String getDomain() {
+        return domain;
+    }
 }
