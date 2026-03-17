@@ -17,17 +17,18 @@ public class Client implements ISubscriber {
     private List<ISubscriber> subscribers = new ArrayList<>();
 
 
-    public Client() {};
+    public Client() {
+    }
 
     public static Client newClientFromOnboarding(String message) {
-        if(message==null || !message.toUpperCase().startsWith("ONBOARDING")) {
+        if (message == null || !message.toUpperCase().startsWith("ONBOARDING")) {
             return null;
         }
 
-        String[]  args = message.split(" ");
-        Client actual =  new Client();
+        String[] args = message.split(" ");
+        Client actual = new Client();
         actual.name = args[1];
-        actual.subscribers = List.of(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
+        actual.subscribers = new ArrayList<>(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
 
         String[] split = message.split("\\$");
 
@@ -43,25 +44,26 @@ public class Client implements ISubscriber {
 
     /**
      * Constructeur de l'objet User.
-     * @param name Le nom du User.
+     *
+     * @param name         Le nom du User.
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
-     * @param subscribers Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
+     * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
     public Client(String name, HashPassword hashPassword, List<ISubscriber> subscribers) {
         this.name = name;
         this.hashPassword = hashPassword;
-        if(subscribers != null) {
+        if (subscribers != null) {
             this.subscribers.addAll(subscribers);
         }
     }
 
     public static Client Of(Client client) {
         Objects.requireNonNull(client);
-        return new Client(client.getName(), client.hashPassword, client.subscribers);
+        return new Client(client.getName(), client.hashPassword, new ArrayList<>(client.subscribers));
     }
 
 
-   @Override
+    @Override
     public String getName() {
         return name.split("@")[0];
     }
@@ -78,8 +80,9 @@ public class Client implements ISubscriber {
 
     /**
      * Vérifie si la réponse du client correspond au challenge généré par le serveur.
+     *
      * @param clientResponse Le hexadécimal que le client a envoyé en réponse au challenge.
-     * @param challenge Le challenge de 22 caractères envoyé au client.
+     * @param challenge      Le challenge de 22 caractères envoyé au client.
      * @return vrai si la réponse du client est correcte, faux sinon.
      */
     public boolean verifyChallengeResponse(String clientResponse, String challenge) {
@@ -88,6 +91,7 @@ public class Client implements ISubscriber {
 
     /**
      * Vérifie si un Subscriber est déjà abonné à ce User.
+     *
      * @param subscriber Le Subscriber à vérifier.
      * @return vrai si le Subscriber est déjà abonné, faux sinon.
      */
@@ -95,6 +99,7 @@ public class Client implements ISubscriber {
         Objects.requireNonNull(subscriber);
         return subscribers.contains(subscriber);
     }
+
     @Override
     public void subscribe(ISubscriber subscriber) {
         Objects.requireNonNull(subscriber);
@@ -116,6 +121,11 @@ public class Client implements ISubscriber {
     @Override
     public List<ISubscriber> getSubscribers() {
         return List.copyOf(subscribers);
+    }
+
+    @Override
+    public boolean isLocal() {
+        return true;
     }
 
     /**

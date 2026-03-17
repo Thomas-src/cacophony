@@ -9,6 +9,7 @@ import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.repository.IUserRepository;
 import org.helmo.server.IServer;
 import org.helmo.server.ServerFactory;
+import org.helmo.services.UserManagerService;
 
 import java.io.PrintStream;
 
@@ -21,14 +22,15 @@ public class Program {
                 IConfigReaderRepository configReader = new JsonConfigReaderNode();
                 IUserRepository userRepository = new JsonUserRepository(configReader.getConfig());
 
+                UserManagerService userManagerService = new UserManagerService(userRepository);
                 CommandMenu menu = new CommandMenu();
                 menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userRepository));
                 menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
-                menu.add(Message.P_CMD_MSG, new MessageHandler());
+                menu.add(Message.P_CMD_SEND, new SendHandler(userManagerService));
                 menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
                 menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
 
-                // Création du serveur + demarrage
+                // Création du serveur + démarrage
                 IServer server = ServerFactory.createServer(menu, configReader);
                 server.run();
             } catch (ConfigReaderException | ServerException e) {

@@ -1,5 +1,7 @@
 package org.helmo.handler;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
@@ -8,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 public class CommandMenu {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>();
 
     public void add(Pattern command, CommandHandler handler) {
@@ -24,7 +27,8 @@ public class CommandMenu {
             }
         }
 
-        return MessageBuilder.buildError(" ");
+        LOGGER.warn("Command {} not found", command);
+        return MessageBuilder.buildError();
     }
 
 }

@@ -8,4 +8,5 @@ public interface ISubscriber {
     void subscribe(ISubscriber subscriber);
     boolean isSubscribed(ISubscriber subscriber);
      List<ISubscriber> getSubscribers();
+     boolean isLocal();
 }

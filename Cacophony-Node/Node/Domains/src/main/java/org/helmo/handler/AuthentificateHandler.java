@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
+import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
@@ -24,6 +25,10 @@ public class AuthentificateHandler implements  CommandHandler{
 
     @Override
     public String handle(String message, ClientSession session) throws HandlerException {
+        if(session.isAuthenticated()) {
+            return MessageBuilder.buildError();
+        }
+
         String username = message.split(" ")[1].trim();
         Client user = null;
 
@@ -48,7 +53,6 @@ public class AuthentificateHandler implements  CommandHandler{
 
         String fullhash = user.getHashPassword().toString();
 
-        session.setUsername(username);
         session.setBcryptHash(fullhash);
 
         String response = "CHALLENGE " + user.getHashPassword().bcryptRound() + " " + user.getHashPassword().bcryptSalt();

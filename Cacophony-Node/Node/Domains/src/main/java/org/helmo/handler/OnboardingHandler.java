@@ -5,20 +5,19 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
 import org.helmo.Grammar;
+import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.client.ClientSession;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
+import org.helmo.server.ActiveSession;
 
 import java.util.regex.Pattern;
 
 
 public class OnboardingHandler implements CommandHandler{
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private final static String ERROR_MESSAGE = "ERR";
-    private final static String OK_MESSAGE = "OK";
     private final IUserRepository userRepository;
 
     public OnboardingHandler(IUserRepository userRepository) {
@@ -34,23 +33,25 @@ public class OnboardingHandler implements CommandHandler{
     @Override
     public String handle(String message, ClientSession session) throws HandlerException {
         LOGGER.info("New Onboarding request received");
-
+        if(session.isAuthenticated()) {
+            return MessageBuilder.buildError();
+        }
         Client client = Client.newClientFromOnboarding(message);
 
         try {
             for (Client user : userRepository.getUsers()) {
                 if (user.getName().equals(client.getName())) {
                     LOGGER.info("User with name {} already exists", user.getName());
-                    return ERROR_MESSAGE;
+                    return MessageBuilder.buildError();
                 }
             }
-
             userRepository.saveUsers(client);
         } catch (UserReaderException | UserSaveException e) {
             throw new HandlerException("Impossible d'inscrire l'utilisateur" + client.getName() + "\nException enfant => " + e);
         }
-
         LOGGER.info("Onboarding OK");
-        return OK_MESSAGE;
+        session.setClient(client);
+        session.authenticate();
+        return MessageBuilder.buildOk();
     }
 }

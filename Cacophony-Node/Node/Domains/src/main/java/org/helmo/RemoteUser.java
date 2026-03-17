@@ -42,6 +42,11 @@ public class RemoteUser implements ISubscriber {
     }
 
     @Override
+    public boolean isLocal() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("RemoteUser {")

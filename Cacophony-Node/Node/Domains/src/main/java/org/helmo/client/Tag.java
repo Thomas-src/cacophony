@@ -19,7 +19,7 @@ public class Tag implements ISubscriber {
 
     @Override
     public String getName() {
-        return name.split("@")[0];
+        return name;
     }
 
     @Override
@@ -38,5 +38,10 @@ public class Tag implements ISubscriber {
     @Override
     public List<ISubscriber> getSubscribers() {
         return List.copyOf(subscribers);
+    }
+
+    @Override
+    public boolean isLocal() {
+        return false; // todo implémenter vérification si tag est local ou non
     }
 }

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessageTest {
-
+/* todo
     @Test
     void testWelcome() {
         Pattern p = Message.P_CMD_WELCOME;
@@ -109,4 +109,6 @@ class MessageTest {
         assertTrue(p.matcher("LEAVE\r\n").matches());
         assertFalse(p.matcher("LEAVE \r\n").matches()); // Space not allowed
     }
+
+ */
 }

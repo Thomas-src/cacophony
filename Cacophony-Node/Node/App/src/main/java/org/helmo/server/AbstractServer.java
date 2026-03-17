@@ -4,28 +4,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
-import org.helmo.MessageBuilder;
-import org.helmo.client.ClientSession;
-import org.helmo.handler.ClientHandler;
 import org.helmo.handler.CommandMenu;
-import org.helmo.services.RandomService;
+import org.helmo.server.threads.WestThread;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 
 public abstract class AbstractServer implements IServer {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Config config;
 
-    // Services
+    private final Config config;
     private final CommandMenu menu;
     private boolean stop = false;
     private boolean isStarted = false;
-    private boolean isConnected = false;
-    ServerSocket listener;
-    Socket client;
+    private ServerSocket  listener;
 
     public AbstractServer(CommandMenu menu, Config config) {
         this.menu = menu;
@@ -43,12 +36,9 @@ public abstract class AbstractServer implements IServer {
             LOGGER.info("Server listening on port {}", config.getUnicastPort());
 
             while (!stop) {
-                client = listener.accept();
-                isConnected = true;
+                Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-
-                ClientHandler clientHandler = new ClientHandler(client, menu, config);
-                Thread thread = new Thread(clientHandler);
+                WestThread thread = new WestThread(client, menu, config);
                 thread.start();
             }
 
@@ -60,14 +50,19 @@ public abstract class AbstractServer implements IServer {
 
     @Override
     public void stopServer() {
-        stop = true;
-        try {
-            if (listener != null) {
-                listener.close();
+        if(isStarted) {
+            stop = true;
+            LOGGER.info("Serveur fermé");
+            try {
+                if (listener != null) {
+                    listener.close();
+                }
+            } catch (IOException ex) {
+                LOGGER.error("Une erreur s'est produite lors de l'arrêt du serveur",ex);
             }
-        } catch (IOException ex) {
-            LOGGER.error("Une erreur s'est produite lors de l'arrêt du serveur",ex);
+            isStarted = false;
         }
+
     }
 
     abstract ServerSocket createServerSocket(int port) throws ServerException;

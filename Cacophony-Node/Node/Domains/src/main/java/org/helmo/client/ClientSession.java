@@ -1,17 +1,22 @@
 package org.helmo.client;
 
+import org.helmo.server.ActiveSession;
+import org.helmo.server.threads.WestThread;
+
 public class ClientSession {
 
-    private String randomString;
-    private String username;
+    private final String randomString;
+    private Client client;
+    private WestThread thread;
     private String bcryptHash;
     private boolean authenticated = false;
-    private Client client;
-
     private boolean shouldKeepOpen = true;
 
     public void setClient(Client client) {
         this.client = client;
+    }
+    public void setWestThread(WestThread thread) {
+        this.thread = thread;
     }
 
     public Client getClient() {
@@ -26,39 +31,34 @@ public class ClientSession {
         return randomString;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public void setBcryptHash(String bcryptHash) {
         this.bcryptHash = bcryptHash;
     }
 
-    public String getBcryptHash() {
-        return bcryptHash;
-    }
-
     public String getUsername() {
-        return username;
+        return client.getName();
     }
 
-    public void authenticate(){
+    public void authenticate() {
+        ActiveSession.add(client.getName(), thread);
         authenticated = true;
     }
 
-    public boolean isAuthenticated(){
+    public boolean isAuthenticated() {
         return authenticated;
     }
 
-
-
+    public String getUserFullName() {
+        return client.getFullName();
+    }
 
     public boolean isShouldKeepOpen() {
         return shouldKeepOpen;
     }
 
-    public void setShouldKeepOpen(boolean shouldKeepOpen) {
-        this.shouldKeepOpen = shouldKeepOpen;
+    public void closeSession() {
+        this.shouldKeepOpen = false;
+        ActiveSession.remove(client.getName());
     }
 
 
