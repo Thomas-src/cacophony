@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 
 
 public class JsonConfigReaderNode implements IConfigReaderRepository {
-    private static final String FILE_NAME = "Node/config-node.json";
+    private static final String FILE_NAME = System.getProperty("config.file", "config-node.json");
     private static final Gson gson = new Gson();
     private static final Path configPath = Paths.get(FILE_NAME);
     private static final Logger LOGGER = LogManager.getLogger();
