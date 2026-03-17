@@ -7,4 +7,6 @@ import java.util.List;
 public interface IUserRepository {
     List<Client> getUsers() throws UserReaderException;
     void saveUsers(Client client) throws UserSaveException;
+
+    void addSubscribersFor(Client name, String sub) throws UserSaveException;
 }
