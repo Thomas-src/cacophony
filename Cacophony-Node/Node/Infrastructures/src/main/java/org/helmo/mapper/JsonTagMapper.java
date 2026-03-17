@@ -1,7 +1,5 @@
 package org.helmo.mapper;
 
-import org.helmo.ISubscriber;
-import org.helmo.subscriber.RemoteUser;
 import org.helmo.client.Client;
 import org.helmo.client.Tag;
 import org.helmo.dto.TagDto;

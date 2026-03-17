@@ -4,11 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.UserReaderException;
-import org.helmo.ISubscriber;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
 import org.helmo.server.ActiveSession;
-import org.helmo.server.threads.WestThread;
 import org.helmo.services.UserManagerService;
 import org.helmo.subscriber.IUserSubscriber;
 
@@ -27,10 +25,11 @@ public class SendHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(String message, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, ClientSession session) throws HandlerException {
         if(!session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
+        String message = args.getFirst();
         Set<String> localSubscribers  = new LinkedHashSet<>();
         Set<String> remoteSubscribers  = new LinkedHashSet<>();
 
@@ -55,37 +54,17 @@ public class SendHandler implements CommandHandler {
         // vérifier si utilisateur abonnés à ces tags sinon supprimer
 
         List<String> tags = extractTags(message);
-        // ajouter tous les abonnés locaux dans un seul set (éviter collision) users
-        // ajouter tous les abonnés externes dans un seul set (éviter collision) users
         // ajouter tous les abonnés locaux dans un seul set (éviter collision) tags
         // ajouter tous les abonnés externes dans un seul set (éviter collision) tags
 
         // 2. Pour abonnés locaux appel via WestThread
-
-
-
-
         String localSubscriberResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
-
         for(String localSubscriber : localSubscribers) {
                ActiveSession.send(localSubscriber,localSubscriberResponse);
         }
         // 3. Pour abonnés externes envoie msg au EastThread
 
-
-//-------
-        // 1. Gérer les messages
-        //      - Lister les tags
-
-        //      - Vérifier l'existence des tags locaux
-
-        // 2. Obtenir les subscribers
-
-        // 3. notification locales (WestThread)
-
-        // 4. notification speaker (eastThread)
-
-        // 5. message de retour
+        // message de retour
         return MessageBuilder.buildOk();
     }
 

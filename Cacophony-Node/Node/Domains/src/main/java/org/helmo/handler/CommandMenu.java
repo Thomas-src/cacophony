@@ -6,7 +6,9 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class CommandMenu {
@@ -22,8 +24,15 @@ public class CommandMenu {
             Pattern pattern = entry.getKey();
             CommandHandler handler = entry.getValue();
 
-            if (pattern.matcher(command).matches()) {
-                return handler.handle(command, session);
+            var matcher = pattern.matcher(command);
+            // Extraitre les arguments
+            if (matcher.matches()) {
+                List<String> args = new ArrayList<>();
+                for (int i = 1; i <= matcher.groupCount(); i++) {
+                    args.add(matcher.group(i));
+                }
+
+                return handler.handle(args, session);
             }
         }
 

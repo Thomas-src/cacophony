@@ -29,18 +29,15 @@ public class JsonUserMapper {
         List<IUserSubscriber> subscribers = new ArrayList<>();
         if (dto.subscribers() != null) {
             for (String subscriberName : dto.subscribers()) {
-                LOGGER.info("User {} subscribers : {}", dto.login(),subscriberName);
                 if (subscriberName != null && !subscriberName.isBlank()) {
                     Matcher matcher = Grammar.P_USER_AT_DOMAIN.matcher(subscriberName);
                     if (matcher.matches()) {
                         // todo modifier
                         String domain = subscriberName.substring(subscriberName.indexOf("@") + 1);
                         if (domain.equals(currentDomain)) {
-                            LOGGER.info("User {} subscribers : {} match le domaine courant", dto.login(),subscriberName);
-                            subscribers.add(new NativeUser(subscriberName));
+                              subscribers.add(new NativeUser(subscriberName));
                         } else {
-                            LOGGER.info("User {} subscribers : {} match un autre domaine", dto.login(),subscriberName);
-                            subscribers.add(new RemoteUser(subscriberName));
+                             subscribers.add(new RemoteUser(subscriberName));
                         }
                     } else {
                         // si pas de domaine => utilisateur interne
@@ -48,8 +45,6 @@ public class JsonUserMapper {
                     }
                 }
             }
-
-            LOGGER.info("User {} subscribers : {}", dto.login(), subscribers);
             return new Client(
                     dto.login(),
                     new HashPassword(dto.bcryptHash(), dto.bcryptRound(), dto.bcryptSalt()),
