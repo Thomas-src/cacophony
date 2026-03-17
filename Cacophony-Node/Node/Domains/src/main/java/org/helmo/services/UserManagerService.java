@@ -11,7 +11,6 @@ import java.util.List;
 
 public class UserManagerService {
     private final IUserRepository userRepository;
-    private static final Logger LOGGER = LogManager.getLogger();
     public UserManagerService(IUserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -21,13 +20,10 @@ public class UserManagerService {
     }
 
     public List<IUserSubscriber> getUserSubscribers(String username) throws UserReaderException {
-
-        LOGGER.info(getUsers().stream().filter(u -> u.getFullName().equals(username)).findFirst().get().toString());
-
         return getUsers().stream()
                 .filter(u -> u.getFullName().equals(username))
                 .findFirst()
-                .map(Client::getSubscribers) //todo probleme ici
+                .map(Client::getSubscribers)
                 .orElseThrow(() -> new UserReaderException("User not found: " + username));
     }
 }

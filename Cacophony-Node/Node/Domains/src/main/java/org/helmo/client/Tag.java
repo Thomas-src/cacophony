@@ -1,28 +1,26 @@
 package org.helmo.client;
 
-import org.helmo.ISubscriber;
+import org.helmo.subscriber.IUserSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tag implements ISubscriber {
+public class Tag {
 
     private final String name;
-    private final List<ISubscriber> subscribers = new ArrayList<>();
+    private final List<IUserSubscriber> subscribers = new ArrayList<>();
 
-    public Tag(String name, List<ISubscriber> subscribers) {
+    public Tag(String name, List<IUserSubscriber> subscribers) {
         this.name = name;
         if(subscribers != null){
             this.subscribers.addAll(subscribers);
         }
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getFullName() {
         return name;
     }

@@ -13,6 +13,7 @@ import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.server.ActiveSession;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -26,17 +27,17 @@ public class OnboardingHandler implements CommandHandler{
 
     /**
      * Permet l'inscription ou non d'un nouvel utilisateur. Prend en paramètre la demande d'inscription, compare ce potentiel nouvel utilisateur avec ceux déjà enregistré, l'inscrit si c'est possbile
-     * @param message
+     * @param args
      * @return le message "OK" si l'inscription peut se faire, "ERR" sinon
      * @throws OnboardingException
      */
     @Override
-    public String handle(String message, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, ClientSession session) throws HandlerException {
         LOGGER.info("New Onboarding request received");
         if(session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
-        Client client = Client.newClientFromOnboarding(message);
+        Client client = Client.newClientFromOnboarding(args);
 
         try {
             for (Client user : userRepository.getUsers()) {

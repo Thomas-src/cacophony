@@ -24,12 +24,11 @@ public class AuthentificateHandler implements  CommandHandler{
     }
 
     @Override
-    public String handle(String message, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, ClientSession session) throws HandlerException {
         if(session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
-
-        String username = message.split(" ")[1].trim();
+        String username = args.getFirst();
         Client user = null;
 
         try {

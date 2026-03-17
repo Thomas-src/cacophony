@@ -10,8 +10,7 @@ import java.util.Objects;
 
 public class ActiveSession {
     private static final Logger LOGGER = LogManager.getLogger();
-
-    private static final Map<String, WestThread> sessions = new ConcurrentHashMap<String, WestThread>();
+    private static final Map<String, WestThread> sessions = new ConcurrentHashMap<>();
 
     public static void add(String fullName, WestThread wt) {
         Objects.requireNonNull(wt, "WestThread is null");
@@ -27,7 +26,6 @@ public class ActiveSession {
     }
 
     public static void send(String fullName, String message) {
-        LOGGER.info(sessions.keySet().toString());
         LOGGER.info("Tentative d'envoie de message au client {}, message : {}", fullName, message);
         if (fullName != null && !fullName.isBlank()) {
             if(!sessions.containsKey(fullName)) {

@@ -13,6 +13,7 @@ import org.helmo.server.ActiveSession;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public class ResponseChallengeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -22,11 +23,11 @@ public class ResponseChallengeHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(String message, ClientSession session) {
+    public String handle(List<String> args, ClientSession session) {
         if(session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
-        String clientResponse = message.split(" ")[1];
+        String clientResponse = args.getFirst();
         String challenge = session.getRandomString();
 
         Client client = session.getClient();

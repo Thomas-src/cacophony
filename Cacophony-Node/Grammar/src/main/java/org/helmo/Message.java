@@ -14,26 +14,25 @@ public class Message {
 
     // user = "USER" sp user newline
     // Note : le deuxième 'user' fait référence à la constante USER (5 à 20 digit_letter)
-    public static final String CMD_USER = "USER" + SP + USER;
+    public static final String CMD_USER = "USER" + SP + "("+USER+")";
 
     // challenge = "CHALLENGE" sp counter sp random_string newline
     public static final String CMD_CHALLENGE = "CHALLENGE" + SP + COUNTER + SP + RANDOM_STRING;
 
     // response = "RESPONSE" sp sha3_hexstring newline
-    public static final String CMD_RESPONSE = "RESPONSE" + SP + SHA3_HEXSTRING;
+    public static final String CMD_RESPONSE = "RESPONSE" + SP +"(" +SHA3_HEXSTRING+")";
 
     // onboarding = "ONBOARDING" sp user sp salt_length sp bcrypt newline
-    public static final String CMD_ONBOARDING = "ONBOARDING" + SP + USER + SP + SALT_LENGTH + SP + BCRYPT;
+    public static final String CMD_ONBOARDING = "ONBOARDING" + SP + "(" + USER+ ")" + SP + "("+ SALT_LENGTH +")" + SP + "(" + BCRYPT+ ")";
 
     // subscribe = "SUBSCRIBE" sp (user_at_domain / tag_at_domain) newline
     // Utilisation d'un groupe non capturant (?: ... | ... ) pour le OU logique
-    public static final String CMD_SUBSCRIBE = "SUBSCRIBE" + SP + "(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
+    public static final String CMD_SUBSCRIBE = "SUBSCRIBE" + SP + "(:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
 
     // send = "SEND" sp message newline
-    public static final String CMD_SEND = "SEND" + SP + MESSAGE;
-
+    public static final String CMD_SEND = "SEND" + SP + "(" + MESSAGE + ")";
     // msg = "MSG" sp (user_at_domain / tag_at_domain) sp message newline
-    public static final String CMD_MSG = "MSG" + SP + "(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + MESSAGE;
+    public static final String CMD_MSG = "MSG" + SP + "(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+MESSAGE+")";
 
     // ok = "OK" [sp message] newline
     // Utilisation de (?: ... )? pour rendre le bloc [sp message] optionnel
