@@ -1,6 +1,7 @@
 package org.helmo.client;
 
 import org.helmo.server.ActiveSession;
+import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
 
 public class ClientSession {
@@ -68,4 +69,9 @@ public class ClientSession {
     public String getDomain() {
         return domain;
     }
+
+    public TaskThread getTaskThread() {
+        return this.thread.getTaskThread();
+    }
 }
+

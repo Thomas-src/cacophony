@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
+import org.helmo.Task;
 import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
@@ -22,13 +23,15 @@ public class WestThread extends Thread {
     private final Socket socket;
     private final CommandMenu menu;
     private final Config config;
+    private final TaskThread taskThread;
 
     private PrintWriter toClient;
 
-    public WestThread(Socket socket, CommandMenu menu, Config config) {
+    public WestThread(Socket socket, CommandMenu menu, Config config, TaskThread taskThread) {
         this.socket = socket;
         this.menu = menu;
         this.config = config;
+        this.taskThread = taskThread;
         setName("WestThread");
     }
 
@@ -47,10 +50,8 @@ public class WestThread extends Thread {
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
-                String response = menu.execute(line, session);
 
-                LOGGER.info("MESSAGE OUT {} => {}", socket.getInetAddress(), response);
-                toClient.println(response);
+                taskThread.addTask(new Task(session, line, this));
             }
         } catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
@@ -74,6 +75,10 @@ public class WestThread extends Thread {
         if (toClient != null && !socket.isClosed()) {
             toClient.println(message);
         }
+    }
+
+    public TaskThread getTaskThread() {
+        return taskThread;
     }
 
 }
