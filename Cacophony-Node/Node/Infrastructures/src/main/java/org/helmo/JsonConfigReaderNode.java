@@ -17,10 +17,28 @@ import java.nio.file.Paths;
 
 
 public class JsonConfigReaderNode implements IConfigReaderRepository {
-    private static final String FILE_NAME = System.getProperty("config.file", "../Node/config-node.json");
     private static final Gson gson = new Gson();
-    private static final Path configPath = Paths.get(FILE_NAME);
+    private static final Path configPath = findConfigFile();
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static Path findConfigFile() {
+        String fileName = "config-node.json";
+
+        // Case 1: Running from 'Node' subdirectory (e.g., Gradle's 'run' task)
+        Path pathFromNodeDir = Paths.get(fileName);
+        if (Files.exists(pathFromNodeDir)) {
+            return pathFromNodeDir;
+        }
+
+        // Case 2: Running from project root (e.g., IDE)
+        Path pathFromRoot = Paths.get("Node", fileName);
+        if (Files.exists(pathFromRoot)) {
+            return pathFromRoot;
+        }
+
+        // Fallback to original path as a last resort
+        return Paths.get("../Node/config-node.json");
+    }
 
     @Override
     public Config getConfig() throws ConfigReaderException {
@@ -34,7 +52,7 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
 
             return JsonConfigMapper.ConfigfromDto(dto);
         }  catch (IOException ex) {
-            LOGGER.error("Impossible de charger la configuration", ex);
+            LOGGER.error("Impossible de charger la configuration. Tried path: " + configPath.toAbsolutePath(), ex);
             throw new ConfigReaderException("Impossible de charger la configuration");
         }
     }
