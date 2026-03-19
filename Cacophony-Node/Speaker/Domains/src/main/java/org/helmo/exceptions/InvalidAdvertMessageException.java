@@ -1,0 +1,14 @@
+package org.helmo.exceptions;
+
+/**
+ * Exception levée lorsqu'un message publicitaire est invalide.
+ */
+public class InvalidAdvertMessageException extends RuntimeException {
+    public InvalidAdvertMessageException(String message) {
+        super(message);
+    }
+
+    public InvalidAdvertMessageException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

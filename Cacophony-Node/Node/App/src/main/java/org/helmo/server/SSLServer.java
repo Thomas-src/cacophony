@@ -23,7 +23,7 @@ public class SSLServer extends AbstractServer {
     public ServerSocket createServerSocket(int port) throws ServerException {
         try {
             KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(new FileInputStream("Node/star.swilabus.xyz.p12"), "labo2026".toCharArray());
+            ks.load(new FileInputStream("star.swilabus.xyz.p12"), "labo2026".toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ks, "labo2026".toCharArray());
             SSLContext sc = SSLContext.getInstance("TLSv1.3");

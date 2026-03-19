@@ -1,16 +1,15 @@
 rootProject.name = "Cacophony-Node"
-include("Speaker")
-include("Node")
+
 include("Grammar")
+
+include("Node")
 include("Node:App")
-include("Node:Infrastructures")
 include("Node:Domains")
+include("Node:Infrastructures")
+
 include("Speaker")
 include("Speaker:App")
 include("Speaker:Domains")
-include("Speaker:Domains:Infrastructures")
 include("Speaker:Views")
 include("Speaker:Infrastructures")
 
-
-include("Grammar")
