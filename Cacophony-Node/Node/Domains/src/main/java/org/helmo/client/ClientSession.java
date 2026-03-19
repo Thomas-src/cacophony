@@ -1,6 +1,7 @@
 package org.helmo.client;
 
 import org.helmo.server.ActiveSession;
+import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
 
 public class ClientSession {
@@ -16,16 +17,15 @@ public class ClientSession {
     public void setClient(Client client) {
         this.client = client;
     }
-    public void setWestThread(WestThread thread) {
-        this.thread = thread;
-    }
 
     public Client getClient() {
         return client;
     }
 
-    public ClientSession(String randomString) {
+    public ClientSession(String randomString, WestThread thread, String domain ) {
         this.randomString = randomString;
+        this.thread = thread;
+        this.domain = domain;
     }
 
     public String getRandomString() {
@@ -69,4 +69,9 @@ public class ClientSession {
     public String getDomain() {
         return domain;
     }
+
+    public TaskThread getTaskThread() {
+        return this.thread.getTaskThread();
+    }
 }
+

@@ -3,6 +3,7 @@ package org.helmo.server;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.handler.CommandMenu;
+import org.helmo.server.threads.TaskThread;
 
 import javax.net.ssl.*;
 import java.io.FileInputStream;
@@ -14,8 +15,8 @@ import java.security.KeyStore;
  */
 public class SSLServer extends AbstractServer {
 
-    public SSLServer(CommandMenu menu, Config config) {
-        super(menu, config);
+    public SSLServer(CommandMenu menu, Config config, TaskThread taskThread) {
+        super(menu, config,  taskThread);
     }
 
     @Override

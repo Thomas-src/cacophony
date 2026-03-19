@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.handler.CommandMenu;
+import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
 
 import java.io.*;
@@ -16,13 +17,15 @@ public abstract class AbstractServer implements IServer {
 
     private final Config config;
     private final CommandMenu menu;
+    private final TaskThread taskThread;
     private boolean stop = false;
     private boolean isStarted = false;
     private ServerSocket  listener;
 
-    public AbstractServer(CommandMenu menu, Config config) {
+    public AbstractServer(CommandMenu menu, Config config,  TaskThread taskThread) {
         this.menu = menu;
         this.config = config;
+        this.taskThread = taskThread;
     }
 
 
@@ -38,7 +41,7 @@ public abstract class AbstractServer implements IServer {
             while (!stop) {
                 Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-                WestThread thread = new WestThread(client, menu, config);
+                WestThread thread = new WestThread(client, menu, config, taskThread);
                 thread.start();
             }
 

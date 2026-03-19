@@ -4,13 +4,14 @@ package org.helmo.server;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.handler.CommandMenu;
+import org.helmo.server.threads.TaskThread;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
 public class Server extends AbstractServer {
-    public Server(CommandMenu menu, Config config) {
-        super(menu, config);
+    public Server(CommandMenu menu, Config config, TaskThread taskThread) {
+        super(menu, config,  taskThread);
     }
 
     @Override

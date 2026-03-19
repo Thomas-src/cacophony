@@ -1,28 +1,25 @@
-package org.helmo.client;
+package org.helmo.tag;
 
 import org.helmo.subscriber.IUserSubscriber;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Tag {
+public class InternalTag implements ITag {
 
-    private final String name;
+    private final String fullName;
     private final List<IUserSubscriber> subscribers = new ArrayList<>();
 
-    public Tag(String name, List<IUserSubscriber> subscribers) {
-        this.name = name;
+    public InternalTag(String fullName, List<IUserSubscriber> subscribers) {
+        this.fullName = fullName;
         if(subscribers != null){
             this.subscribers.addAll(subscribers);
         }
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public String getFullName() {
-        return name;
+        return fullName;
     }
 
     public List<IUserSubscriber> getSubscribers() {
