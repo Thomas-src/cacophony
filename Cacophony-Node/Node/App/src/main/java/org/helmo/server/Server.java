@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 public class Server extends AbstractServer {
-    public Server(CommandMenu menu, Config config, TaskThread taskThread) {
-        super(menu, config,  taskThread);
+    public Server(Config config, TaskThread taskThread) {
+        super( config,  taskThread);
     }
 
     @Override

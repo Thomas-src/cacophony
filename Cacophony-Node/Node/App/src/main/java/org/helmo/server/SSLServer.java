@@ -18,8 +18,8 @@ import java.security.KeyStore;
  */
 public class SSLServer extends AbstractServer {
 
-    public SSLServer(CommandMenu menu, Config config, TaskThread taskThread) {
-        super(menu, config,  taskThread);
+    public SSLServer(Config config, TaskThread taskThread) {
+        super(config,  taskThread);
     }
 
     private static String findKeyStoreFile() {

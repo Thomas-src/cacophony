@@ -16,14 +16,13 @@ public abstract class AbstractServer implements IServer {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Config config;
-    private final CommandMenu menu;
     private final TaskThread taskThread;
     private boolean stop = false;
     private boolean isStarted = false;
     private ServerSocket  listener;
 
-    public AbstractServer(CommandMenu menu, Config config,  TaskThread taskThread) {
-        this.menu = menu;
+    public AbstractServer(Config config,  TaskThread taskThread) {
+
         this.config = config;
         this.taskThread = taskThread;
     }
@@ -41,7 +40,7 @@ public abstract class AbstractServer implements IServer {
             while (!stop) {
                 Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-                WestThread thread = new WestThread(client, menu, config, taskThread);
+                WestThread thread = new WestThread(client, config, taskThread);
                 thread.start();
             }
 

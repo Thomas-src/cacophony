@@ -42,7 +42,7 @@ public class Program {
                 TaskThread taskthread = new TaskThread(menu);
                 taskthread.start();
                 // Création du serveur + démarrage
-                IServer server = ServerFactory.createServer(menu, configReader, taskthread);
+                IServer server = ServerFactory.createServer(configReader, taskthread);
                 server.run();
             } catch (ConfigReaderException | ServerException e) {
                 LOGGER.error("Le serveur n'a pas pu démarrer",e);
