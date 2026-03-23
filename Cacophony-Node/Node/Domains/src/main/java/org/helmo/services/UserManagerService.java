@@ -24,5 +24,14 @@ public class UserManagerService {
                 .map(Client::getSubscribers)
                 .orElse(null);
     }
+    public Client findUser(String username) throws UserReaderException {
+        List<Client> users = getUsers();
+        for (Client user : users) {
+            if (user.getFullName().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
 }
 

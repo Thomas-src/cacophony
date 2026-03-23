@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="Cacophony-Node.main" target="21" />
+      <module name="Cacophony-Node.Node.Views" target="21" />
+      <module name="Cacophony-Node.Node.Views.main" target="21" />
+      <module name="Cacophony-Node.Node.Views.test" target="21" />
+      <module name="Cacophony-Node.Speaker.Domains.Infrastructures" target="21" />
+      <module name="Cacophony-Node.Speaker.Domains.Infrastructures.main" target="21" />
+      <module name="Cacophony-Node.Speaker.Domains.Infrastructures.test" target="21" />
+      <module name="Cacophony-Node.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

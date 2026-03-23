@@ -10,6 +10,7 @@ import org.helmo.task.TypeTask;
 import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
+import org.helmo.task.Task;
 
 import java.io.*;
 import java.net.Socket;
@@ -17,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.regex.Matcher;
 
-import static org.helmo.Message.*;
 
 /*
 Echange avec clients
@@ -26,15 +26,13 @@ public class WestThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Socket socket;
-    private final CommandMenu menu;
     private final Config config;
     private final TaskThread taskThread;
 
     private PrintWriter toClient;
 
-    public WestThread(Socket socket, CommandMenu menu, Config config, TaskThread taskThread) {
+    public WestThread(Socket socket, Config config, TaskThread taskThread) {
         this.socket = socket;
-        this.menu = menu;
         this.config = config;
         this.taskThread = taskThread;
         setName("WestThread");
@@ -49,17 +47,14 @@ public class WestThread extends Thread {
             LOGGER.info("Client connecté : {}", socket.getInetAddress().getHostAddress());
 
             String randomChallenge = RandomService.generateRandomString(22);
-            toClient.println(MessageBuilder.buildWelcome(config.getCurrentDomain(), randomChallenge));
+            toClient.println(MessageBuilder.buildWelcome(config.currentDomain(), randomChallenge));
 
-            ClientSession session = new ClientSession(randomChallenge, this, config.getCurrentDomain());
+            ClientSession session = new ClientSession(randomChallenge, this, config.currentDomain());
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
 
-
-
-                Task task = createTask(line, session);
-                taskThread.addTask(task);
+                taskThread.addTask(createTask(line, session));
             }
         } catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
@@ -108,8 +103,12 @@ public class WestThread extends Thread {
         }
     }
 
-    public TaskThread getTaskThread() {
-        return taskThread;
+    public void stopThread() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            LOGGER.error("Erreur fermeture socket", e);
+        }
     }
 
 }
