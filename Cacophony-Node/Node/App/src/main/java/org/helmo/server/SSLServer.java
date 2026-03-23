@@ -8,6 +8,9 @@ import org.helmo.server.threads.TaskThread;
 import javax.net.ssl.*;
 import java.io.FileInputStream;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.KeyStore;
 
 /**
@@ -19,11 +22,31 @@ public class SSLServer extends AbstractServer {
         super(menu, config,  taskThread);
     }
 
+    private static String findKeyStoreFile() {
+        String fileName = "star.swilabus.xyz.p12";
+
+        // Case 1: Running from 'Node' subdirectory (e.g., Gradle's 'run' task)
+        Path pathFromNodeDir = Paths.get("..", fileName);
+        if (Files.exists(pathFromNodeDir)) {
+            return pathFromNodeDir.toString();
+        }
+
+        // Case 2: Running from project root (e.g., IDE)
+        Path pathFromRoot = Paths.get(fileName);
+        if (Files.exists(pathFromRoot)) {
+            return pathFromRoot.toString();
+        }
+
+        // Fallback to original path as a last resort
+        return "../star.swilabus.xyz.p12";
+    }
+
     @Override
     public ServerSocket createServerSocket(int port) throws ServerException {
         try {
+            String keyStorePath = findKeyStoreFile();
             KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(new FileInputStream("../star.swilabus.xyz.p12"), "labo2026".toCharArray());
+            ks.load(new FileInputStream(keyStorePath), "labo2026".toCharArray());
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
             kmf.init(ks, "labo2026".toCharArray());
             SSLContext sc = SSLContext.getInstance("TLSv1.3");
