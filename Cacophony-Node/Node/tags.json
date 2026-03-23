@@ -1,12 +1,25 @@
 {
-  "tags" :
-  [
+  "tags": [
     {
       "tag": "#monTag1",
       "subscribers": [
-        "thomas@node1.swilabus.xyz",
+        "louis@node1.swilabus.xyz",
         "rootroot@node1.swilabus.xyz",
-        "lswinnen@node2.swilabus.xyz"
+        "tomsy@node1.swilabus.xyz"
+      ]
+    },
+    {
+      "tag": "#voiture",
+      "subscribers": [
+        "TiboRR@node1.swilabus.xyz",
+        "rootroot@node1.swilabus.xyz"
+      ]
+    },
+    {
+      "tag": "#maison",
+      "subscribers": [
+        "TiboRR@node1.swilabus.xyz",
+        "rootroot@node1.swilabus.xyz"
       ]
     }
   ]

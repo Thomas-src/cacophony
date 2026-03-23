@@ -1,6 +1,8 @@
 package org.helmo.services;
 
 import org.helmo.Exception.TagReaderException;
+import org.helmo.Exception.TagSaveException;
+import org.helmo.client.Client;
 import org.helmo.tag.InternalTag;
 import org.helmo.repository.ITagRepository;
 import org.helmo.subscriber.IUserSubscriber;
@@ -22,5 +24,13 @@ public class TagManagerService {
                 .findFirst()
                 .map(InternalTag::getSubscribers)
                 .orElse(null);
+    }
+
+    public void createTag(Client client, String tag) throws TagSaveException {
+        tagRepository.createTag(client, tag);
+    }
+
+    public void addUserToTag(Client client, String tag) throws TagSaveException {
+        tagRepository.addUserToTag(client, tag);
     }
 }

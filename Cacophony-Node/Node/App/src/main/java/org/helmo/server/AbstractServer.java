@@ -41,7 +41,7 @@ public abstract class AbstractServer implements IServer {
             while (!stop) {
                 Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-                WestThread thread = new WestThread(client, config, taskThread);
+                WestThread thread = new WestThread(client, new CommandMenu(), config, taskThread);
                 thread.start();
                 this.westThreads.add(thread);
             }

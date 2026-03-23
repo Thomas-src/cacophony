@@ -172,6 +172,74 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    @Override
+    public void addTagFor(Client client, String tag) throws UserSaveException {
+        synchronized (USERS_FILE_LOCK) {
+            try {
+                ensureStorage();
+
+                List<UserDto> existingUserDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
+                    if (existingDto == null || existingDto.users() == null) {
+                        existingUserDtos = new ArrayList<>();
+                    } else {
+                        existingUserDtos = new ArrayList<>(existingDto.users());
+                    }
+                }
+
+                boolean found = false;
+
+                // 2. Trouver le bon utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+
+                    if (user.login().equals(client.getName())) {
+
+                        List<String> tags = user.userTags() != null
+                                ? new ArrayList<>(user.userTags())
+                                : new ArrayList<>();
+
+                        // 3. Ajouter le tag s'il n'existe pas déjà
+                        if (!tags.contains(tag)) {
+                            tags.add(tag);
+                        }
+
+                        // 4. Recréer le UserDto (record immuable)
+                        UserDto updatedUser = new UserDto(
+                                user.login(),
+                                user.bcryptHash(),
+                                user.bcryptRound(),
+                                user.bcryptSalt(),
+                                user.subscribers(),
+                                tags
+                        );
+
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour ajout tag : {}", client.getName());
+                    return;
+                }
+
+                // 5. Réécrire le fichier
+                UsersDto updatedDto = new UsersDto(existingUserDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de l'ajout d'un tag", ex);
+                throw new UserSaveException("Erreur lors de l'ajout d'un tag");
+            }
+        }
+    }
+
     private void ensureStorage() throws IOException {
         if (Files.notExists(configPath)) {
             Path parent = configPath.getParent();
