@@ -73,8 +73,13 @@ public class SubscribeHandler implements CommandHandler {
             throw new HandlerException("Impossible de lire les tags");
         }
 
+        String tagName = target.split("@")[0];
+
         for (InternalTag tag : tags) {
-            if (tag.getFullName().equals(target.split("@")[0])) { // Si le tag existe deja
+            LOGGER.info("Comparing {} with {}", tag.getFullName(), tagName);
+            if (tag.getTagName().equals(tagName)) {
+                // Si le tag existe deja
+                LOGGER.info(tag.getFullName() + " existe déjà");
                 // Ajouter le tags pour le client dans la session
                 try {
                     tagManagerService.addUserToTag(session.getClient(), target.split("@")[0]);

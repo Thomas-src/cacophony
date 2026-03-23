@@ -17,8 +17,7 @@
       "bcryptHash": "Ug0vkBLUjrAdPDEGUJzHK/Uoy3OvQ.W",
       "bcryptRound": 14,
       "bcryptSalt": "5u4pcJaHAh3kpiIA8tvo4O",
-      "subscribers": [
-      ],
+      "subscribers": [],
       "userTags": []
     },
     {
@@ -42,7 +41,20 @@
         "thomas@node1.swilabus.xyz"
       ],
       "userTags": [
-        "#monTag1@node1.swilabus.xyz"
+        "#monTag1@node1.swilabus.xyz",
+        "#voiture@node1.swilabus.xyz",
+        "#maison@node1.swilabus.xyz"
+      ]
+    },
+    {
+      "login": "TiboRR",
+      "bcryptHash": "zfJ.tS69BnbTVuhafcXuID5rl/zNrnm",
+      "bcryptRound": 14,
+      "bcryptSalt": "NugT6ky9OSqlzKx6QR4nY.",
+      "subscribers": [],
+      "userTags": [
+        "#voiture@node1.swilabus.xyz",
+        "#maison@node1.swilabus.xyz"
       ]
     }
   ]
