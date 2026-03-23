@@ -9,7 +9,6 @@ public class ClientSession {
     private final String randomString;
     private Client client;
     private WestThread thread;
-    private String bcryptHash;
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
     private String domain;
@@ -30,10 +29,6 @@ public class ClientSession {
 
     public String getRandomString() {
         return randomString;
-    }
-
-    public void setBcryptHash(String bcryptHash) {
-        this.bcryptHash = bcryptHash;
     }
 
     public String getUsername() {

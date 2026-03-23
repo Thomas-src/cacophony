@@ -53,7 +53,7 @@ public class WestThread extends Thread {
                 /*
                 Ajouter id, type, Sender, receiver, Détails
                  */
-                taskThread.addTask(new Task("1234", SEND_MESSAGE , session, "", line));
+                taskThread.addTask(new Task("1234", SEND_MESSAGE, session, null, line));
             }
         } catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
