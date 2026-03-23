@@ -18,7 +18,6 @@ import java.util.List;
 public class ResponseChallengeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-
     public ResponseChallengeHandler() {
     }
 
@@ -27,13 +26,12 @@ public class ResponseChallengeHandler implements CommandHandler {
         if(session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
+        LOGGER.info("Response");
         String clientResponse = args.getFirst();
         String challenge = session.getRandomString();
 
-        Client client = session.getClient();
-
-        if (client.verifyChallengeResponse(clientResponse, challenge)) {
-            session.authenticate();
+        if (session.verifyChallenge(clientResponse, challenge)) {
+            session.setAuthenticate();
             LOGGER.info("Authentication successful for {}", session.getUsername());
             return MessageBuilder.buildOk();
         }

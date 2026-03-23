@@ -9,7 +9,6 @@ public class ClientSession {
     private final String randomString;
     private Client client;
     private WestThread thread;
-    private String bcryptHash;
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
     private String domain;
@@ -32,15 +31,11 @@ public class ClientSession {
         return randomString;
     }
 
-    public void setBcryptHash(String bcryptHash) {
-        this.bcryptHash = bcryptHash;
-    }
-
     public String getUsername() {
         return client.getName();
     }
 
-    public void authenticate() {
+    public void setAuthenticate() {
         ActiveSession.add(getUserFullName(), thread);
         authenticated = true;
     }
@@ -62,16 +57,15 @@ public class ClientSession {
         ActiveSession.remove(client.getName());
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
     public String getDomain() {
         return domain;
     }
 
-    public TaskThread getTaskThread() {
-        return this.thread.getTaskThread();
+    public void send(String message) {
+        this.thread.send(message);
+    }
+    public boolean verifyChallenge(String clientResponse, String challengeResponse) {
+        return client.verifyChallengeResponse(clientResponse, challengeResponse);
     }
 }
 

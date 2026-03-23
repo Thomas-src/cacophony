@@ -11,15 +11,9 @@ import java.util.List;
 
 
 public class LeaveHandler implements CommandHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public String handle(List<String> args, ClientSession session) {
-        // Le CommandMenu garantit que ce handler n'est appelé que pour la commande LEAVE.
-        // 1. On met le flag à true pour signaler la fermeture prochaine.
         session.closeSession();
-        // 2. On prépare un message de confirmation pour le client.
-        LOGGER.info("Client leaving");
-        return MessageBuilder.buildOk();
 
+        return MessageBuilder.buildOk();
     }
 }

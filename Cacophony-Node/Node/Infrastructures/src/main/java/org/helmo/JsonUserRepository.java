@@ -49,7 +49,7 @@ public class JsonUserRepository implements IUserRepository {
                     if (dto == null) {
                         return List.of();
                     }
-                    return JsonUserMapper.mapUsers(dto, config.getCurrentDomain());
+                    return JsonUserMapper.mapUsers(dto, config.currentDomain());
                 }
             } catch (IOException ex) {
                 LOGGER.error("Impossible de charger le fichier users", ex);

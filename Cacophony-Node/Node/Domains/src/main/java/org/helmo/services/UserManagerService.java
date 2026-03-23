@@ -1,5 +1,7 @@
 package org.helmo.services;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
@@ -9,6 +11,8 @@ import org.helmo.subscriber.IUserSubscriber;
 import java.util.List;
 
 public class UserManagerService {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private final IUserRepository userRepository;
     public UserManagerService(IUserRepository userRepository) {
         this.userRepository = userRepository;

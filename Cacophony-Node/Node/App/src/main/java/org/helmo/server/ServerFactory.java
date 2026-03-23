@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ConfigReaderException;
 import org.helmo.Exception.ServerException;
-import org.helmo.handler.CommandMenu;
 import org.helmo.repository.IConfigReaderRepository;
 import org.helmo.server.threads.TaskThread;
 
@@ -16,7 +15,7 @@ public class ServerFactory {
     public static IServer createServer(IConfigReaderRepository configReader, TaskThread taskThread) throws ServerException {
         try {
             Config config = configReader.getConfig();
-            if (config.isTls()) {
+            if (config.tls()) {
                 return new SSLServer(config, taskThread);
             } else {
                 return new Server(config, taskThread);
