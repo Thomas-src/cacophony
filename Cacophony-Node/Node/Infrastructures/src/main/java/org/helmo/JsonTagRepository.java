@@ -58,7 +58,7 @@ public class JsonTagRepository implements ITagRepository {
 
                     List<Client> clients = userService.getUsers();
                     Map<String, Client> userMap = clients.stream().collect(Collectors.toMap(Client::getName, u -> u));
-                    return JsonTagMapper.mapTags(dto, userMap, config.getCurrentDomain());
+                    return JsonTagMapper.mapTags(dto, userMap, config.currentDomain());
                 }
             } catch (IOException ex) {
                 LOGGER.error("Impossible de charger le fichier tag", ex);

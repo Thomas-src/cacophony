@@ -40,7 +40,7 @@ public class ClientSession {
         return client.getName();
     }
 
-    public void authenticate() {
+    public void setAuthenticate() {
         ActiveSession.add(getUserFullName(), thread);
         authenticated = true;
     }
@@ -68,6 +68,9 @@ public class ClientSession {
 
     public void send(String message) {
         this.thread.send(message);
+    }
+    public boolean verifyChallenge(String clientResponse, String challengeResponse) {
+        return client.verifyChallengeResponse(clientResponse, challengeResponse);
     }
 }
 

@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
-import org.helmo.client.ClientSession;
 import org.helmo.task.Task;
 
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ public class CommandMenu {
             Pattern pattern = entry.getKey();
             CommandHandler handler = entry.getValue();
             var matcher = pattern.matcher(task.message());
+
             // Extraitre les arguments
             if (matcher.matches()) {
                 List<String> args = new ArrayList<>();
@@ -39,5 +39,4 @@ public class CommandMenu {
         LOGGER.warn("Command {} not found", task.message());
         return MessageBuilder.buildError();
     }
-
 }

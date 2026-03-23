@@ -20,24 +20,6 @@ public class Client  {
     private List<ITag> internalTags = new ArrayList<>();
     private String fullName;
 
-    public Client() {
-    }
-
-    public static Client newClientFromOnboarding(List<String> args) {
-        Client actual = new Client();
-        actual.name = args.getFirst();
-        actual.subscribers = new ArrayList<>(); // Un utilisateur qui vient de créer son compte n'est abonné a rien
-
-        int rotation = Integer.parseInt(args.get(2).split("\\$")[2]);
-        var saltLength = Integer.parseInt(args.get(1));
-        var salt = args.get(2).split("\\$")[3].substring(0, saltLength);
-        var hashpassword =args.get(2).split("\\$")[3].substring(saltLength);
-
-        actual.hashPassword = new HashPassword(hashpassword, rotation, salt);
-
-        return actual;
-    }
-
     /**
      * Constructeur de l'objet User.
      *
@@ -59,7 +41,7 @@ public class Client  {
 
     public String getName() {
         return name.split("@")[0];
-    }
+    } // todo supprimer le split
 
     public String getFullName() {
         return fullName;
@@ -78,7 +60,7 @@ public class Client  {
      * @return vrai si la réponse du client est correcte, faux sinon.
      */
     public boolean verifyChallengeResponse(String clientResponse, String challenge) {
-        return getHashPassword().checkChallenge(clientResponse, challenge);
+        return hashPassword.checkChallenge(clientResponse, challenge);
     }
 
     public void subscribe(IUserSubscriber subscriber) {

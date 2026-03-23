@@ -43,9 +43,9 @@ public class WestThread extends Thread {
             LOGGER.info("Client connecté : {}", socket.getInetAddress().getHostAddress());
 
             String randomChallenge = RandomService.generateRandomString(22);
-            toClient.println(MessageBuilder.buildWelcome(config.getCurrentDomain(), randomChallenge));
+            toClient.println(MessageBuilder.buildWelcome(config.currentDomain(), randomChallenge));
 
-            ClientSession session = new ClientSession(randomChallenge, this, config.getCurrentDomain());
+            ClientSession session = new ClientSession(randomChallenge, this, config.currentDomain());
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);

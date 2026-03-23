@@ -10,15 +10,15 @@ import java.net.ServerSocket;
 
 public class Server extends AbstractServer {
     public Server(Config config, TaskThread taskThread) {
-        super( config,  taskThread);
+        super(config, taskThread);
     }
 
     @Override
-    public ServerSocket createServerSocket(int port)  throws ServerException {
-       try {
-           return new ServerSocket(port);
-       } catch (IOException e) {
-           throw new ServerException(e.toString());
-       }
+    public ServerSocket createServerSocket(int port) throws ServerException {
+        try {
+            return new ServerSocket(port);
+        } catch (IOException e) {
+            throw new ServerException(e.toString());
+        }
     }
 }
