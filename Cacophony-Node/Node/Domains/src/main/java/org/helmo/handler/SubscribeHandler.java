@@ -79,11 +79,11 @@ public class SubscribeHandler implements CommandHandler {
             LOGGER.info("Comparing {} with {}", tag.getFullName(), tagName);
             if (tag.getTagName().equals(tagName)) {
                 // Si le tag existe deja
-                LOGGER.info(tag.getFullName() + " existe déjà");
                 // Ajouter le tags pour le client dans la session
                 try {
                     tagManagerService.addUserToTag(session.getClient(), target.split("@")[0]);
                     userManagerService.addTagFor(session.getClient(), target);
+                    LOGGER.info(session.getUsername() + " s'est abonné à : " + target);
                 } catch (UserSaveException | TagSaveException e) {
                     throw new HandlerException("Impossible d'ajouter le tags :'" + target + "'  pour l'utilisateur : " + session.getUsername());
                 }
@@ -96,6 +96,7 @@ public class SubscribeHandler implements CommandHandler {
         try {
             tagManagerService.createTag(session.getClient(), Arrays.stream(target.split("@")).toList().getFirst());
             userManagerService.addTagFor(session.getClient(), target);
+            LOGGER.info(session.getUsername() + " a créé le tag : " + target);
         } catch (TagSaveException | UserSaveException e) {
             throw new HandlerException("Impossible de creer le tag :" + target);
         }
