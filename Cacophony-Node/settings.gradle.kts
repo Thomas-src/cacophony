@@ -12,4 +12,3 @@ include("Speaker:App")
 include("Speaker:Domains")
 include("Speaker:Views")
 include("Speaker:Infrastructures")
-

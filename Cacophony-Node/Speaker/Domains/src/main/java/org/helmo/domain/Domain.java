@@ -7,10 +7,14 @@ public class Domain {
     private final String name;
     private final byte[] aesKey;
     private boolean active;
+    private final String nodeAddress;
+    private final byte[] publicKey;
 
-    public Domain(String name, byte[] aesKey) {
+    public Domain(String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
         this.name = name;
         this.aesKey = aesKey;
+        this.nodeAddress = nodeAddress;
+        this.publicKey = publicKey;
         this.active = true; // Par défaut, un domaine est actif
     }
 
@@ -28,5 +32,13 @@ public class Domain {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getNodeAddress() {
+        return nodeAddress;
+    }
+
+    public byte[] getPublicKey() {
+        return publicKey;
     }
 }

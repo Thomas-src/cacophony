@@ -1,23 +1,21 @@
 package org.helmo;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.helmo.exceptions.ConfigurationLoadException;
-import org.helmo.exceptions.InvalidAdvertMessageException;
 import org.helmo.exceptions.NetworkConnectionException;
+import org.helmo.network.SpeakerMulticastListener;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import org.helmo.network.SpeakerMulticastListener;
 
 /**
  * Point d'entrée principal de l'application Speaker.
  * À compléter : initialisation, chargement config, démarrage listeners, gestion du cycle de vie.
  */
 public class SpeakerApplication {
-    public static void main(String[] args) {
-
+     public static void main(String[] args) {
         try {
             // Charger la configuration
             SpeakerAppConfig config = loadConfiguration();
@@ -39,17 +37,23 @@ public class SpeakerApplication {
             consoleView.log("Application started.");
 
             // Démarrer le listener UDP multicast
-            SpeakerMulticastListener multicastListener = new SpeakerMulticastListener((advert, sourceIp) -> {
-                if (advert == null) {
-                    throw new InvalidAdvertMessageException("The received advert message is invalid.");
+            SpeakerMulticastListener multicastListener = new SpeakerMulticastListener(
+                config.getMulticastAddress(),
+                config.getMulticastPort(),
+                config.getNetworkInterface(),
+                (advert, sourceIp) -> {
+                    if (advert == null) {
+                        consoleView.log("Received null advert from " + sourceIp);
+                        return;
+                    }
+                    consoleView.log("Advert received from " + sourceIp + ": " + advert);
                 }
-                System.out.println("Advert received from " + sourceIp + ": " + advert);
-            });
+            );
 
             Thread listenerThread = new Thread(() -> {
                 try {
                     multicastListener.startListening();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     throw new NetworkConnectionException("Error while starting the multicast listener.", e);
                 }
             });
@@ -73,11 +77,27 @@ public class SpeakerApplication {
 
     private static SpeakerAppConfig loadConfiguration() {
         try {
-            String jsonContent = new String(Files.readAllBytes(Paths.get("config-speaker.json")));
+            // Construire les chemins possibles pour le fichier de configuration
+            String basePath = System.getProperty("user.dir");
+            String configPath = Paths.get(basePath, "Speaker", "config-speaker.json").toString();
+            String alternativeConfigPath = Paths.get(basePath, "config-speaker.json").toString();
+
+            // Vérifier si le fichier existe dans l'un des chemins
+            String finalConfigPath;
+            if (Files.exists(Paths.get(configPath))) {
+                finalConfigPath = configPath;
+            } else if (Files.exists(Paths.get(alternativeConfigPath))) {
+                finalConfigPath = alternativeConfigPath;
+            } else {
+                throw new ConfigurationLoadException("Configuration file not found in expected locations.");
+            }
+
+            // Lire le contenu du fichier JSON
+            String jsonContent = new String(Files.readAllBytes(Paths.get(finalConfigPath)));
             Gson gson = new Gson();
             return gson.fromJson(jsonContent, SpeakerAppConfig.class);
         } catch (IOException e) {
-            throw new ConfigurationLoadException("Error while loading the configuration: config-speaker.json", e);
+            throw new ConfigurationLoadException("Error while loading the configuration: Speaker/config-speaker.json", e);
         } catch (JsonSyntaxException e) {
             throw new ConfigurationLoadException("The configuration file contains invalid JSON syntax.", e);
         }

@@ -1,5 +1,6 @@
 package org.helmo.security;
 
+import org.helmo.domain.CryptoProvider;
 import org.helmo.exceptions.DecryptionException;
 import org.helmo.exceptions.EncryptionException;
 

@@ -1,8 +1,13 @@
 package org.helmo;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+import org.helmo.domain.CryptoProvider;
 import org.helmo.domain.Domain;
 import org.helmo.domain.MessageRouter;
+import org.helmo.dto.DecryptedMessageDto;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,9 +17,12 @@ import java.util.Optional;
  */
 public class SpeakerDomainService implements MessageRouter {
     private final Map<String, Domain> domains;
+    private final CryptoProvider cryptoService;
+    private static final Gson gson = new Gson();
 
-    public SpeakerDomainService(Map<String, Domain> domains) {
+    public SpeakerDomainService(Map<String, Domain> domains, CryptoProvider cryptoService) {
         this.domains = domains;
+        this.cryptoService = cryptoService;
     }
 
     /**
@@ -29,11 +37,11 @@ public class SpeakerDomainService implements MessageRouter {
      */
     @Override
     public void routePostMessage(String fromDomainName, String toDomainName, byte[] encryptedMessage) {
-        // TODO: 1. Récupérer les objets Domain pour 'fromDomain' et 'toDomain' via la Map 'domains'
+        //1. Récupérer les objets Domain pour 'fromDomain' et 'toDomain' via la Map 'domains'
         Domain fromDomain = getDomain(fromDomainName).orElseThrow(() -> new IllegalArgumentException("Le domaine source n'existe pas: " + fromDomainName));
         Domain toDomain = getDomain(toDomainName).orElseThrow(() -> new IllegalArgumentException("Le domaine destinataire n'existe pas: " + toDomainName));
 
-        // TODO: 2. Valider l'existence et l'état des domaines (ex: sont-ils actifs ?)
+        // 2. Valider l'existence et l'état des domaines (ex: sont-ils actifs ?)
         if (!fromDomain.isActive()) {
             throw new IllegalStateException("Le domaine source n'est pas actif: " + fromDomainName);
         }
@@ -41,23 +49,56 @@ public class SpeakerDomainService implements MessageRouter {
             throw new IllegalStateException("Le domaine destinataire n'est pas actif: " + toDomainName);
         }
 
-        // TODO: 3. Déchiffrer 'encryptedMessage' en utilisant la clé publique/privée du domaine source
-        // TODO: 4. Valider le contenu du message déchiffré (format, intégrité)
-        // TODO: 5. Transformer ou logger le message si nécessaire pour le routage
-        // TODO: 6. Chiffrer le message avec la clé publique du domaine destinataire
-        // TODO: 7. Identifier l'adresse du Node destinataire
-        // TODO: 8. Envoyer le message via le client réseau approprié
+        // 3. Déchiffrer 'encryptedMessage' en utilisant la clé AES du domaine source
+        byte[] decryptedMessage = cryptoService.decrypt(encryptedMessage, fromDomain.getAesKey());
+
+
+        // 4. Valider le contenu du message déchiffré (format, intégrité)
+        validateMessageContent(decryptedMessage);
+
+        // 5. Transformer ou logger le message si nécessaire pour le routage
+        String transformedMessage = "[Transformed] " + new String(decryptedMessage, StandardCharsets.UTF_8);
+
+        // 6. Ch// 6. Chiffrer le message avec la clé AES du domaine destinataire (chiffrement symétrique efficace)
+        byte[] encryptedTransformedMessage = cryptoService.encrypt(
+                transformedMessage.getBytes(StandardCharsets.UTF_8),
+                toDomain.getAesKey()
+        );
+
+        // 7. Identifier l'adresse du Node destinataire
+        String destinationAddress = toDomain.getNodeAddress();
+
+        // 8. Envoyer le message via le client réseau approprié
+        sendMessage(destinationAddress, encryptedTransformedMessage);
+    }
+
+    private void sendMessage(String destinationAddress, byte[] encryptedTransformedMessage) {
+        System.out.println("Envoi du message à l'adresse : " + destinationAddress);
+        System.out.println("Message chiffré : [REDACTED] (" + encryptedTransformedMessage.length + " bytes)");
+    }
+
+    @Override
+    public void validateDecryptedMessage(byte[] decryptedMessage) {
+        validateMessageContent(decryptedMessage);
     }
 
     /**
-     * Routes a message to the appropriate domain.
-     * Placeholder implementation for now.
+     * Valide le contenu d'un message déchiffré.
+     * Vérifie que le message est un JSON valide et contient les champs requis.
+     *
+     * @param decryptedMessage Le message déchiffré en bytes.
+     * @throws IllegalArgumentException si le message est invalide.
      */
-    public void routeMessage(String message) {
-        System.out.println("Routing message: " + message);
+    private void validateMessageContent(byte[] decryptedMessage) {
+        try {
+            String messageContent = new String(decryptedMessage, StandardCharsets.UTF_8);
+            DecryptedMessageDto messageDto = gson.fromJson(messageContent, DecryptedMessageDto.class);
+
+            if (messageDto == null || messageDto.getType() == null || messageDto.getPayload() == null) {
+                throw new IllegalArgumentException("Le message déchiffré est invalide : champs requis manquants ou format JSON incorrect.");
+            }
+        } catch (JsonParseException e) {
+            throw new IllegalArgumentException("Le message déchiffré n'est pas un JSON valide.", e);
+        }
     }
-
-    // Autres méthodes métier à ajouter ici
-
-    
 }

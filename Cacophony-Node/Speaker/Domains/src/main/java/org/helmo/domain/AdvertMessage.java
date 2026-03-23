@@ -10,8 +10,8 @@ public class AdvertMessage {
     private final int port;
 
     /**
-     *
-     * @param rawMessage
+     * Construit un AdvertMessage à partir d'une chaîne brute.
+     * Le format attendu est "domain:port".
      */
     public AdvertMessage(String rawMessage) {
         if (rawMessage == null || !rawMessage.contains(":")) {
