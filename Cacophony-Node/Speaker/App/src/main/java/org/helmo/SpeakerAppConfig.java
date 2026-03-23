@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class SpeakerAppConfig {
 
-    private static final String CONFIG_FILE = "./Speaker/config-speaker.json";
+    private static final String CONFIG_FILE = "Speaker/config-speaker.json";
     private static final String DEFAULT_NODE_ADDRESS = "";
     private static final byte[] DEFAULT_BYTE_ARRAY = new byte[0];
 
