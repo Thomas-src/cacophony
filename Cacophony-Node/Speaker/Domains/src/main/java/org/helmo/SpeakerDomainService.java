@@ -29,10 +29,14 @@ public class SpeakerDomainService implements MessageRouter {
      */
     @Override
     public void routePostMessage(String fromDomain, String toDomain, byte[] encryptedMessage) {
-        // TODO: Déchiffrer avec la clé du domaine source
-        // TODO: Vérifier le domaine de destination
-        // TODO: Chiffrer avec la clé du domaine destinataire
-        // TODO: Transmettre au Node destinataire
+        // TODO: 1. Récupérer les objets Domain pour 'fromDomain' et 'toDomain' via la Map
+        // TODO: 2. Valider l'existence et l'état des domaines (ex: sont-ils actifs ?)
+        // TODO: 3. Déchiffrer 'encryptedMessage' en utilisant la clé publique/privée du domaine source
+        // TODO: 4. Valider le contenu du message déchiffré (format, intégrité)
+        // TODO: 5. Transformer ou logger le message si nécessaire pour le routage
+        // TODO: 6. Chiffrer le message avec la clé publique du domaine destinataire
+        // TODO: 7. Identifier l'adresse du Node destinataire
+        // TODO: 8. Envoyer le message via le client réseau approprié
     }
 
     /**
