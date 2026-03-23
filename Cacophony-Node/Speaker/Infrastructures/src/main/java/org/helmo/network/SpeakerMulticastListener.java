@@ -12,6 +12,8 @@ import org.helmo.domain.AdvertMessage;
  * À implémenter : réception, parsing, notification de nouveaux Nodes.
  */
 public class SpeakerMulticastListener {
+    private static final String MULTICAST_ADDRESS = "224.224.200.200";
+
     public void startListening() {
     }
 
@@ -30,7 +32,7 @@ public class SpeakerMulticastListener {
     public void start() {
         try {
             socket = new MulticastSocket(4446); // Port par défaut pour ADVERT
-            InetAddress group = InetAddress.getByName("230.0.0.1"); // Adresse multicast
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS); // Adresse multicast
             socket.joinGroup(group);
             running = true;
 
@@ -47,7 +49,7 @@ public class SpeakerMulticastListener {
                                 String sourceIp = packet.getAddress().getHostAddress();
 
                                 // Parsing du message ADVERT (simplifié ici)
-                                AdvertMessage advert = new AdvertMessage(message, 5002);
+                                AdvertMessage advert = new AdvertMessage(message);
                                 listener.onAdvertReceived(advert, sourceIp);
                             } catch (IOException e) {
                                 if (running) {
@@ -66,7 +68,7 @@ public class SpeakerMulticastListener {
         running = false;
         if (socket != null) {
             try {
-                socket.leaveGroup(InetAddress.getByName("224.224.200.200"));
+                socket.leaveGroup(InetAddress.getByName(MULTICAST_ADDRESS));
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();

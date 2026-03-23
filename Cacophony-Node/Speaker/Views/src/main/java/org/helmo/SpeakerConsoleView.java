@@ -17,13 +17,13 @@ public class SpeakerConsoleView {
 
     private void configureLogger() {
         try {
-            // Ensure the logs directory exists
+            // Créer le répertoire "logs" s'il n'existe pas pour éviter les problèmes de fichier verrouillé
             java.nio.file.Path logsDir = java.nio.file.Paths.get("logs");
             if (!java.nio.file.Files.exists(logsDir)) {
                 java.nio.file.Files.createDirectories(logsDir);
             }
 
-            // Generate a unique log file name with timestamp to avoid file lock issues
+            // Utiliser un nom de fichier unique pour éviter les conflits de verrouillage
             String logFileName = "logs/speaker-" + System.currentTimeMillis() + ".log";
             System.out.println("Logger will write to: " + logFileName); // Debug message
             FileHandler fileHandler = new FileHandler(logFileName, true);
@@ -55,6 +55,13 @@ public class SpeakerConsoleView {
         LOGGER.info(logMessage);
     }
 
+    /**
+     *
+     * @param multicastAddr
+     * @param multicastPort
+     * @param networkInterface
+     * @param domainsConfigured
+     */
     public void displayConfiguration(String multicastAddr, int multicastPort, String networkInterface, int domainsConfigured) {
         String configMessage = "===== CONFIGURATION =====\n" +
                 "Multicast address   : " + multicastAddr + "\n" +

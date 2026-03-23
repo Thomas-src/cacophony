@@ -13,13 +13,13 @@ import org.helmo.server.threads.TaskThread;
 public class ServerFactory {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static IServer createServer(CommandMenu menu, IConfigReaderRepository configReader, TaskThread taskThread) throws ServerException {
+    public static IServer createServer(IConfigReaderRepository configReader, TaskThread taskThread) throws ServerException {
         try {
             Config config = configReader.getConfig();
             if (config.isTls()) {
-                return new SSLServer(menu, config, taskThread);
+                return new SSLServer(config, taskThread);
             } else {
-                return new Server(menu, config, taskThread);
+                return new Server(config, taskThread);
             }
         } catch (ConfigReaderException e) {
             LOGGER.error(e.getMessage());

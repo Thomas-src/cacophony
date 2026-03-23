@@ -22,7 +22,9 @@ public class JsonConfigMapper {
                 dto.relayPort(),
                 dto.networkInterface(),
                 dto.base64AES(),
-                dto.tls()
+                dto.tls(),
+                dto.certificateName(),
+                dto.certificatePassword()
         );
     }
 }
