@@ -1,7 +1,7 @@
 package org.helmo;
 
 public class Config {
-
+// todo transformer en record
     private final String currentDomain;
     private final int saltSizeInBytes;
     private final String multicastAddress;
@@ -11,7 +11,8 @@ public class Config {
     private final String networkInterface;
     private final String base64AES;
     private final boolean tls;
-
+    private final String certificateName;
+    private final String certificatePassword;
 
     public Config(String currentDomain,
                   int saltSizeInBytes,
@@ -21,7 +22,9 @@ public class Config {
                   int relayPort,
                   String networkInterface,
                   String base64AES,
-                  boolean tls) {
+                  boolean tls,
+                  String certificateName,
+                  String certificatePassword) {
 
         this.currentDomain = currentDomain;
         this.saltSizeInBytes = saltSizeInBytes;
@@ -32,9 +35,17 @@ public class Config {
         this.networkInterface = networkInterface;
         this.base64AES = base64AES;
         this.tls = tls;
+        this.certificateName = certificateName;
+        this.certificatePassword = certificatePassword;
 
     }
 
+    public String getCertificateName() {
+        return certificateName;
+    }
+    public String getCertificatePassword() {
+        return certificatePassword;
+    }
     public String getCurrentDomain() {
         return currentDomain;
     }

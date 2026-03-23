@@ -9,6 +9,8 @@ public record ConfigDto(String currentDomain,
                         int relayPort,
                         String networkInterface,
                         String base64AES,
-                        boolean tls
+                        boolean tls,
+                        String certificateName,
+                        String certificatePassword
                         ) {
 };
