@@ -7,6 +7,7 @@ public class AdvertMessage {
     private final String domain;
     private final int port;
 
+
     public AdvertMessage(String domain, int port) {
         this.domain = domain;
         this.port = port;

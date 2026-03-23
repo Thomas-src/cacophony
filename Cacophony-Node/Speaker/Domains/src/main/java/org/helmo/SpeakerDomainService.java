@@ -44,4 +44,6 @@ public class SpeakerDomainService implements MessageRouter {
     }
 
     // Autres méthodes métier à ajouter ici
+
+    
 }
