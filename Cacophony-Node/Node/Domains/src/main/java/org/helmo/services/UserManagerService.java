@@ -37,5 +37,19 @@ public class UserManagerService {
     public void addTagFor(Client client, String tag) throws UserSaveException {
         userRepository.addTagFor(client, tag);
     }
+
+    public Client findUser(String username) throws UserReaderException {
+        List<Client> users = getUsers();
+        for (Client user : users) {
+            if (user.getName().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void saveUser(Client user) throws UserSaveException {
+        userRepository.saveUsers(user);
+    }
 }
 
