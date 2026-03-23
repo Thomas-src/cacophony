@@ -28,9 +28,19 @@ public class SpeakerDomainService implements MessageRouter {
      * Exemple de squelette pour router un message POST.
      */
     @Override
-    public void routePostMessage(String fromDomain, String toDomain, byte[] encryptedMessage) {
-        // TODO: 1. Récupérer les objets Domain pour 'fromDomain' et 'toDomain' via la Map
+    public void routePostMessage(String fromDomainName, String toDomainName, byte[] encryptedMessage) {
+        // TODO: 1. Récupérer les objets Domain pour 'fromDomain' et 'toDomain' via la Map 'domains'
+        Domain fromDomain = getDomain(fromDomainName).orElseThrow(() -> new IllegalArgumentException("Le domaine source n'existe pas: " + fromDomainName));
+        Domain toDomain = getDomain(toDomainName).orElseThrow(() -> new IllegalArgumentException("Le domaine destinataire n'existe pas: " + toDomainName));
+
         // TODO: 2. Valider l'existence et l'état des domaines (ex: sont-ils actifs ?)
+        if (!fromDomain.isActive()) {
+            throw new IllegalStateException("Le domaine source n'est pas actif: " + fromDomainName);
+        }
+        if (!toDomain.isActive()) {
+            throw new IllegalStateException("Le domaine destinataire n'est pas actif: " + toDomainName);
+        }
+
         // TODO: 3. Déchiffrer 'encryptedMessage' en utilisant la clé publique/privée du domaine source
         // TODO: 4. Valider le contenu du message déchiffré (format, intégrité)
         // TODO: 5. Transformer ou logger le message si nécessaire pour le routage
