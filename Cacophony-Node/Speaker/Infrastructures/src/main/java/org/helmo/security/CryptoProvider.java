@@ -6,5 +6,7 @@ package org.helmo.security;
 public interface CryptoProvider {
     byte[] encrypt(byte[] plaintext, byte[] key);
     byte[] decrypt(byte[] ciphertext, byte[] key);
+
+    byte[] generateRandomKey();
 }
 

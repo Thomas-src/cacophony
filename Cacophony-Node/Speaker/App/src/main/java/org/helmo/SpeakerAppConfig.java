@@ -31,7 +31,6 @@ public class SpeakerAppConfig {
         return networkInterface;
     }
 
-    @SuppressWarnings("unused")
     public static class ConfiguredDomain {
         private String domain;
         private String base64AES;
