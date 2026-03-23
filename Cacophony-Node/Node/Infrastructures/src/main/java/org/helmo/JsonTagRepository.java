@@ -111,6 +111,120 @@ public class JsonTagRepository implements ITagRepository {
         }
     }
 
+    @Override
+    public void createTag(Client client, String tag) throws TagSaveException {
+        synchronized (TAGS_FILE_LOCK) {
+            try {
+                ensureStorage();
+
+                List<TagDto> existingTagDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    TagsDto existingDto = gson.fromJson(reader, TagsDto.class);
+                    if (existingDto == null || existingDto.tags() == null) {
+                        existingTagDtos = new ArrayList<>();
+                    } else {
+                        existingTagDtos = new ArrayList<>(existingDto.tags());
+                    }
+                }
+
+                // 2. Vérifier si le tag existe déjà
+                for (TagDto tagDto : existingTagDtos) {
+                    if (tagDto.tag().equals(tag)) {
+                        LOGGER.error("Le tag existe déjà : {}", tag);
+                        return;
+                    }
+                }
+
+                // 3. Créer la liste de subscribers (le créateur est auto-abonné)
+                List<String> subscribers = new ArrayList<>();
+                subscribers.add(client.getFullName());
+
+                // 4. Créer le TagDto (record immuable)
+                TagDto newTag = new TagDto(tag, subscribers);
+
+                // 5. Ajouter à la liste
+                existingTagDtos.add(newTag);
+
+                // 6. Réécrire le fichier
+                TagsDto updatedDto = new TagsDto(existingTagDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de la création du tag", ex);
+                throw new TagSaveException("Erreur lors de la création du tag");
+            }
+        }
+    }
+
+    @Override
+    public void addUserToTag(Client client, String tag) throws TagSaveException {
+        synchronized (TAGS_FILE_LOCK) {
+            try {
+                ensureStorage();
+
+                List<TagDto> existingTagDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    TagsDto existingDto = gson.fromJson(reader, TagsDto.class);
+                    if (existingDto == null || existingDto.tags() == null) {
+                        existingTagDtos = new ArrayList<>();
+                    } else {
+                        existingTagDtos = new ArrayList<>(existingDto.tags());
+                    }
+                }
+
+                boolean found = false;
+
+                // 2. Trouver le bon tag
+                for (int i = 0; i < existingTagDtos.size(); i++) {
+                    TagDto tagDto = existingTagDtos.get(i);
+
+                    if (tagDto.tag().equals(tag)) {
+
+                        List<String> subscribers = tagDto.subscribers() != null
+                                ? new ArrayList<>(tagDto.subscribers())
+                                : new ArrayList<>();
+
+                        String userFullName = client.getFullName();
+
+                        // 3. Ajouter l'utilisateur s'il n'est pas déjà abonné
+                        if (!subscribers.contains(userFullName)) {
+                            subscribers.add(userFullName);
+                        }
+
+                        // 4. Recréer le TagDto (record immuable)
+                        TagDto updatedTag = new TagDto(
+                                tagDto.tag(),
+                                subscribers
+                        );
+
+                        existingTagDtos.set(i, updatedTag);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    LOGGER.error("Tag non trouvé : {}", tag);
+                    return;
+                }
+
+                // 5. Réécrire le fichier
+                TagsDto updatedDto = new TagsDto(existingTagDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de l'ajout d'un utilisateur au tag", ex);
+                throw new TagSaveException("Erreur lors de l'ajout d'un utilisateur au tag");
+            }
+        }
+    }
+
     private void ensureStorage() throws IOException {
         if (Files.notExists(configPath)) {
             Path parent = configPath.getParent();

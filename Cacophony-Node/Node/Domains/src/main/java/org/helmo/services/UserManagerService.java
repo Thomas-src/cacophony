@@ -1,5 +1,6 @@
 package org.helmo.services;
 
+import org.helmo.Exception.UserSaveException;
 import org.helmo.client.Client;
 import org.helmo.repository.IUserRepository;
 import org.helmo.Exception.UserReaderException;
@@ -23,6 +24,14 @@ public class UserManagerService {
                 .findFirst()
                 .map(Client::getSubscribers)
                 .orElse(null);
+    }
+
+    public void addSubscribersFor(Client client, String username) throws UserSaveException {
+        userRepository.addSubscribersFor(client, username);
+    }
+
+    public void addTagFor(Client client, String tag) throws UserSaveException {
+        userRepository.addTagFor(client, tag);
     }
 }
 

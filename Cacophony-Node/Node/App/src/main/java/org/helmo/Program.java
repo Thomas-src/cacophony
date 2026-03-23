@@ -35,7 +35,7 @@ public class Program {
                 menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userRepository));
                 menu.add(Message.P_CMD_USER, new AuthentificateHandler(userRepository));
                 menu.add(Message.P_CMD_SEND, new SendHandler(userManagerService, tagManagerService));
-                menu.add(Message.P_CMD_SUBSCRIBE, new SubscribeHandler(userRepository));
+                menu.add(Message.P_CMD_SUBSCRIBE, new SubscribeHandler(userManagerService, tagManagerService));
                 menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
                 menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
 

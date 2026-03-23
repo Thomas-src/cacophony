@@ -9,4 +9,6 @@ public interface IUserRepository {
     void saveUsers(Client client) throws UserSaveException;
 
     void addSubscribersFor(Client name, String sub) throws UserSaveException;
+
+    void addTagFor(Client client, String tag)throws UserSaveException;
 }
