@@ -2,7 +2,6 @@ package org.helmo.client;
 
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
-import org.helmo.tag.InternalTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +12,7 @@ import java.util.Objects;
  * La classe User représente un utilisateur du système. Chaque User a un nom, un HashPassword qui contient le mot de passe hashé et les méthodes pour vérifier les challenges, et une liste de Subscribers qui sont abonnés à ce User.
  * Un User peut être abonné à d'autres Users, et d'autres Users ou Tags peuvent être abonnés à lui. La classe fournit des méthodes pour vérifier les réponses aux challenges, gérer les abonnements, et vérifier si un Subscriber est déjà abonné.
  */
-public class Client  {
+public class Client {
     private String name;
     private HashPassword hashPassword;
     private List<IUserSubscriber> subscribers = new ArrayList<>();
@@ -27,10 +26,10 @@ public class Client  {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain,  List<ITag> internalTags) {
+    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags) {
         this.name = name;
         this.hashPassword = hashPassword;
-        this.fullName = name+'@'+domain;
+        this.fullName = name + '@' + domain;
         if (subscribers != null) {
             this.subscribers.addAll(subscribers);
         }

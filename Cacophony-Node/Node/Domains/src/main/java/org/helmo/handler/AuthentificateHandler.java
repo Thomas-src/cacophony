@@ -4,58 +4,41 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.UserReaderException;
-import org.helmo.Grammar;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.client.ClientSession;
-import org.helmo.repository.IUserRepository;
-
+import org.helmo.services.UserManagerService;
 import java.util.List;
-import java.util.regex.Pattern;
 
-public class AuthentificateHandler implements  CommandHandler{
+public class AuthentificateHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private final UserManagerService userManagerService;
 
-    private final IUserRepository userRepository;
-
-    public AuthentificateHandler(IUserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuthentificateHandler(UserManagerService userManagerService) {
+        this.userManagerService = userManagerService;
     }
 
     @Override
     public String handle(List<String> args, ClientSession session) throws HandlerException {
-        if(session.isAuthenticated()) {
+
+        if (session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }
-        String username = args.getFirst();
-        Client user = null;
+        String username = args.getFirst().trim();
 
         try {
-            List<Client> clients = userRepository.getUsers();
-            for (Client client : clients) {
-                if (client.getName().equals(username)) {
-                    user = client;
-                    break;
-                }
+            Client user = userManagerService.findUser(username);
+            if(user == null) {
+                return MessageBuilder.buildError();
             }
 
+            session.setClient(user);
+            return MessageBuilder.buildChallenge(String.valueOf(user.getHashPassword().bcryptRound()), user.getHashPassword().bcryptSalt());
         } catch (UserReaderException e) {
+            LOGGER.info("err");
             throw new HandlerException(e.getMessage());
         }
 
-        if(user == null){
-            return MessageBuilder.buildError();
-        }
-
-        session.setClient(user);
-
-        String fullhash = user.getHashPassword().toString();
-
-        session.setBcryptHash(fullhash);
-
-        return MessageBuilder.buildChallenge(String.valueOf(user.getHashPassword().bcryptRound()), user.getHashPassword().bcryptSalt());
     }
-
-
 }
