@@ -9,13 +9,17 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
 /**
- * Service de chiffrement/déchiffrement AES-256 GCM pour les communications Speaker <-> Node.
- * À implémenter : méthodes pour chiffrer/déchiffrer, gestion des clés, etc.
+ * Service qui implémente l'interface CryptoProvider pour fournir des fonctionnalités
+ * de chiffrement et déchiffrement utilisant AES-256 GCM (Galois/Counter Mode).
+ * Cette classe permet également de générer des clés aléatoires adaptées à l'algorithme utilisé.
+ * Le chiffrement inclut un vecteur d'initialisation (IV) aléatoire pour garantir l'unicité
+ * des sorties même avec des données en entrée identiques.
  */
 public class CryptoService implements CryptoProvider {
     private static final String ALGORITHM = "AES/GCM/NoPadding";
     private static final int IV_LENGTH_BYTES = 12; // 96 bits, recommandé pour GCM
     private static final int TAG_LENGTH_BITS = 128;
+
 
     @Override
     public byte[] encrypt(byte[] plaintext, byte[] key) {
