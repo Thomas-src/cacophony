@@ -5,7 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
-import org.helmo.Task;
+import org.helmo.task.Task;
+import org.helmo.task.TypeTask;
 import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
@@ -13,6 +14,10 @@ import org.helmo.services.RandomService;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
+import java.util.regex.Matcher;
+
+import static org.helmo.Message.*;
 
 /*
 Echange avec clients
@@ -51,7 +56,10 @@ public class WestThread extends Thread {
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
 
-                taskThread.addTask(new Task(session, line, this));
+
+
+                Task task = createTask(line, session);
+                taskThread.addTask(task);
             }
         } catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
@@ -71,6 +79,29 @@ public class WestThread extends Thread {
             LOGGER.info("Fin de session pour {}", socket.getInetAddress());
         }
     }
+
+    private String creatId(){
+
+            return UUID.randomUUID().toString();
+
+    }
+
+
+    private Task createTask(String line, ClientSession session) {
+        String input = line.trim();
+
+        for (TypeTask type : TypeTask.values()) {
+            Matcher matcher = type.getPattern().matcher(input);
+
+            if (matcher.matches()) {
+
+                return new Task(creatId(), type, session, line);
+            }
+        }
+        throw new IllegalArgumentException("Commande inconnue : " + input);
+    }
+
+
     public synchronized void send(String message) {
         if (toClient != null && !socket.isClosed()) {
             toClient.println(message);

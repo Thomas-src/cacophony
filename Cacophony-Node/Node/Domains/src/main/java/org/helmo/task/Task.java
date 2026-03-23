@@ -1,8 +1,9 @@
 package org.helmo.task;
 
-import org.helmo.server.threads.WestThread;
+import org.helmo.client.ClientSession;
 
-public record Task(String id, TypeTask type, WestThread sender, String receiver, String message) {
+public record Task(String id, TypeTask type, ClientSession sender, String message) {
+
 public void send(String message) {
     sender.send(message);
 }
