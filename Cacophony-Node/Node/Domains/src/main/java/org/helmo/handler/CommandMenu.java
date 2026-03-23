@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.ClientSession;
+import org.helmo.task.Task;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -19,12 +20,11 @@ public class CommandMenu {
         handlers.put(command, handler);
     }
 
-    public String execute(String command, ClientSession session) throws HandlerException {
+    public String execute(Task task) throws HandlerException {
         for (var entry : handlers.entrySet()) {
             Pattern pattern = entry.getKey();
             CommandHandler handler = entry.getValue();
-
-            var matcher = pattern.matcher(command);
+            var matcher = pattern.matcher(task.message());
             // Extraitre les arguments
             if (matcher.matches()) {
                 List<String> args = new ArrayList<>();
@@ -32,11 +32,11 @@ public class CommandMenu {
                     args.add(matcher.group(i));
                 }
 
-                return handler.handle(args, session);
+                return handler.handle(args, task.sender());
             }
         }
 
-        LOGGER.warn("Command {} not found", command);
+        LOGGER.warn("Command {} not found", task.message());
         return MessageBuilder.buildError();
     }
 

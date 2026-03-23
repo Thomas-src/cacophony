@@ -41,11 +41,11 @@ public class AuthentificateHandler implements  CommandHandler{
             }
 
         } catch (UserReaderException e) {
-            user = null;
+            throw new HandlerException(e.getMessage());
         }
 
         if(user == null){
-            return "ERR";
+            return MessageBuilder.buildError();
         }
 
         session.setClient(user);
@@ -54,9 +54,7 @@ public class AuthentificateHandler implements  CommandHandler{
 
         session.setBcryptHash(fullhash);
 
-        String response = "CHALLENGE " + user.getHashPassword().bcryptRound() + " " + user.getHashPassword().bcryptSalt();
-        LOGGER.info(response);
-        return response;
+        return MessageBuilder.buildChallenge(String.valueOf(user.getHashPassword().bcryptRound()), user.getHashPassword().bcryptSalt());
     }
 
 

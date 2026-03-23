@@ -62,16 +62,12 @@ public class ClientSession {
         ActiveSession.remove(client.getName());
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
-
     public String getDomain() {
         return domain;
     }
 
-    public TaskThread getTaskThread() {
-        return this.thread.getTaskThread();
+    public void send(String message) {
+        this.thread.send(message);
     }
 }
 

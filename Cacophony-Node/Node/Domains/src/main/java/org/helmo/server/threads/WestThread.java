@@ -5,14 +5,15 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
-import org.helmo.Task;
 import org.helmo.client.ClientSession;
-import org.helmo.handler.CommandMenu;
 import org.helmo.services.RandomService;
+import org.helmo.task.Task;
 
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+
+import static org.helmo.task.TypeTask.SEND_MESSAGE;
 
 /*
 Echange avec clients
@@ -21,15 +22,13 @@ public class WestThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Socket socket;
-    private final CommandMenu menu;
     private final Config config;
     private final TaskThread taskThread;
 
     private PrintWriter toClient;
 
-    public WestThread(Socket socket, CommandMenu menu, Config config, TaskThread taskThread) {
+    public WestThread(Socket socket, Config config, TaskThread taskThread) {
         this.socket = socket;
-        this.menu = menu;
         this.config = config;
         this.taskThread = taskThread;
         setName("WestThread");
@@ -51,7 +50,10 @@ public class WestThread extends Thread {
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
 
-                taskThread.addTask(new Task(session, line, this));
+                /*
+                Ajouter id, type, Sender, receiver, Détails
+                 */
+                taskThread.addTask(new Task("1234", SEND_MESSAGE , session, "", line));
             }
         } catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
@@ -77,8 +79,11 @@ public class WestThread extends Thread {
         }
     }
 
-    public TaskThread getTaskThread() {
-        return taskThread;
+    public void stopThread() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            LOGGER.error("Erreur fermeture socket", e);
+        }
     }
-
 }

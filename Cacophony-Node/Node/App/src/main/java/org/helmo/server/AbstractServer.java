@@ -4,13 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
-import org.helmo.handler.CommandMenu;
 import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractServer implements IServer {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -20,6 +21,7 @@ public abstract class AbstractServer implements IServer {
     private boolean stop = false;
     private boolean isStarted = false;
     private ServerSocket  listener;
+    private final List<WestThread> westThreads = new ArrayList<WestThread>();
 
     public AbstractServer(Config config,  TaskThread taskThread) {
 
@@ -42,6 +44,7 @@ public abstract class AbstractServer implements IServer {
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
                 WestThread thread = new WestThread(client, config, taskThread);
                 thread.start();
+                this.westThreads.add(thread);
             }
 
         }catch (IOException e) {
@@ -54,6 +57,7 @@ public abstract class AbstractServer implements IServer {
     public void stopServer() {
         if(isStarted) {
             stop = true;
+            this.westThreads.forEach(WestThread::stopThread);
             LOGGER.info("Serveur fermé");
             try {
                 if (listener != null) {

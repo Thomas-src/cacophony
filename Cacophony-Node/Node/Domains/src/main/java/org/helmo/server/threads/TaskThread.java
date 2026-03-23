@@ -1,15 +1,16 @@
 package org.helmo.server.threads;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
-import org.helmo.Task;
-import org.helmo.client.ClientSession;
 import org.helmo.handler.CommandMenu;
+import org.helmo.task.Task;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class TaskThread extends Thread {
-
     private final BlockingQueue<Task> queue = new LinkedBlockingQueue<>();
     private final CommandMenu menu;
 
@@ -22,14 +23,14 @@ public class TaskThread extends Thread {
         while (!Thread.currentThread().isInterrupted()) {
             try{
                 Task task = queue.take();
-                String response = menu.execute(task.getRawLine(), task.getSession());
-                if (response != null && task.getWestThread() != null) {
-                    task.getWestThread().send(response);
+                String response = menu.execute(task);
+                if (response != null) {
+                    task.send(response);
                 }
             } catch (InterruptedException e){
                 Thread.currentThread().interrupt();
             } catch (HandlerException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException(e); // todo à modifier
             }
 
         }
@@ -37,6 +38,7 @@ public class TaskThread extends Thread {
 
 
     public void addTask(Task task) {
+        // queue.size() '4 chiffres +1' % 9999
         queue.add(task);
     }
 
