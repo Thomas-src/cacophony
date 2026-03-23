@@ -6,6 +6,7 @@ import org.helmo.exceptions.EncryptionException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 
 /**
@@ -44,10 +45,9 @@ public class CryptoService implements CryptoProvider {
             System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
 
             return encryptedData;
-        } catch (Exception e) {
-            throw new EncryptionException("Erreur lors du chiffrement des données", e);
+        } catch (GeneralSecurityException e) {
+            throw new EncryptionException("Erreur de sécurité lors du chiffrement des données", e);
         }
-        // TODO exeptiion trop large
     }
 
     @Override
@@ -72,10 +72,9 @@ public class CryptoService implements CryptoProvider {
 
             // 3. Effectuer le déchiffrement
             return cipher.doFinal(cipherText);
-        } catch (Exception e) {
-            throw new DecryptionException("Erreur lors du déchiffrement des données. La clé est peut-être incorrecte ou les données ont été altérées.", e);
+        } catch (GeneralSecurityException e) {
+            throw new DecryptionException("Erreur de sécurité lors du déchiffrement. La clé est peut-être incorrecte ou les données sont corrompues.", e);
         }
-        // TODO exeptiion trop large
     }
 
     @Override
