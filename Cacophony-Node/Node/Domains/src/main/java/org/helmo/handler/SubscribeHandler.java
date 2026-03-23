@@ -55,7 +55,7 @@ public class SubscribeHandler implements CommandHandler {
             for (Client client : clients) {
                 if (targetName.equals(client.getName())) {
                     LOGGER.info("\n========" + session.getUsername() + "========\n");
-                    String sub = session.getUsername() + "@node1.swilabus.xyz"; // todo changer en domaine du node
+                    String sub = session.getUserFullName();
                     userManagerService.addSubscribersFor(client, sub);
                 }
             }
