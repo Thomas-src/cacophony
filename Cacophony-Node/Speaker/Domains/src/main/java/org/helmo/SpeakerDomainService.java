@@ -67,7 +67,7 @@ public class SpeakerDomainService implements MessageRouter {
         );
 
         // 7. Identifier l'adresse du Node destinataire
-        String destinationAddress = toDomain.getNodeAddress();
+        String destinationAddress = toDomain.getName();
         // TODO: Gérer le cas où l'adresse du nœud n'est pas encore connue (DEFAULT_NODE_ADDRESS).
         // Le message pourrait être mis en file d'attente jusqu'à ce que l'adresse soit découverte via un message ADVERT.
 

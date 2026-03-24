@@ -1,13 +1,19 @@
 package org.helmo.network.impl;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.network.NodeConnection;
 
 /**
  * Implémentation de l'interface NodeConnection pour gérer une connexion TCP avec un Node.
  */
 public class NodeConnectionImpl implements NodeConnection {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private final String domain;
     private final Socket socket;
 
@@ -17,12 +23,18 @@ public class NodeConnectionImpl implements NodeConnection {
     }
 
     @Override
-    public void sendMessage(byte[] message) {
+    public void sendMessage(String line) {
         try {
-            socket.getOutputStream().write(message);
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            writer.print(line );
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Erreur envoi vers {}", domain, e);
         }
+    }
+
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(
+                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
     }
 
     @Override
@@ -30,7 +42,7 @@ public class NodeConnectionImpl implements NodeConnection {
         try {
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Erreur envoi vers {}", domain, e);
         }
     }
 

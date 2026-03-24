@@ -1,0 +1,12 @@
+{
+  "domains": [
+    {
+      "domain": "node1.swilabus.xyz",
+      "base64AES": "8N+2qBU5K0IJ/65xOldmicvA99zZwQdEk4kr0ifvZVk="
+    },
+    {
+      "domain": "node2.swilabus.xyz",
+      "base64AES": "EF93si4sDqaklpY8lcRSj1GeTL+BqUhM8I/qesnhWR0="
+    }
+  ]
+}

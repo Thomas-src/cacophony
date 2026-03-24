@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
 import org.helmo.dto.DomainDto;
+import org.helmo.dto.DomainsDto;
 import org.helmo.exceptions.DomainReaderException;
 import org.helmo.mapper.JsonDomainMapper;
 import org.helmo.repository.IDomainRepository;
@@ -25,10 +26,28 @@ import java.util.List;
  * </p>
  */
 public class JsonDomainRepository implements IDomainRepository {
-    private static final String FILE_NAME = "Speaker/domains.json";
     private static final Gson gson = new Gson();
-    private static final Path configPath = Paths.get(FILE_NAME);
+    private static final Path configPath = findDomainFile();
     private static final Logger LOGGER = LogManager.getLogger();
+
+    private static Path findDomainFile() {
+        String fileName = "domains.json";
+
+        // Case 1: Running from 'Node' subdirectory (e.g., Gradle's 'run' task)
+        Path pathFromNodeDir = Paths.get(fileName);
+        if (Files.exists(pathFromNodeDir)) {
+            return pathFromNodeDir;
+        }
+
+        // Case 2: Running from project root (e.g., IDE)
+        Path pathFromRoot = Paths.get("Speaker", fileName);
+        if (Files.exists(pathFromRoot)) {
+            return pathFromRoot;
+        }
+
+        // Fallback to original path as a last resort
+        return Paths.get("../Speaker/domains.json");
+    }
 
     /**
      * Récupère la liste de tous les domaines configurés depuis le fichier JSON.
@@ -47,8 +66,8 @@ public class JsonDomainRepository implements IDomainRepository {
         try {
             ensureStorage();
             try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-                DomainDto dto = gson.fromJson(reader, DomainDto.class);
-                if (dto == null || dto.domain() == null) {
+                DomainsDto dto = gson.fromJson(reader, DomainsDto.class);
+                if (dto == null || dto.domains() == null || dto.domains().isEmpty()) {
                     throw new DomainReaderException("Invalid or empty domains configuration");
                 }
                
@@ -59,7 +78,8 @@ public class JsonDomainRepository implements IDomainRepository {
                 throw new DomainReaderException("Invalid JSON format in domains file");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Failed to read domains file: {}", configPath, e);
+            throw new DomainReaderException("Failed to initialize domains storage");
         }
     }
 
@@ -78,7 +98,7 @@ public class JsonDomainRepository implements IDomainRepository {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(configPath, gson.toJson(new DomainDto("", "")));
+            Files.writeString(configPath, gson.toJson(List.of()));
             
         }
     }

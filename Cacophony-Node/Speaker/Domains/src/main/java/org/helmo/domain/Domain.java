@@ -1,5 +1,7 @@
 package org.helmo.domain;
 
+import java.util.Base64;
+
 /**
  * Représente un domaine connu du Speaker (nom, clé AES, etc.).
  */
@@ -8,24 +10,9 @@ public class Domain {
     private final byte[] aesKey;
     private boolean active;
 
-    private final String nodeAddress;
-
-    private final byte[] publicKey;
-
-    public Domain(String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
-        // TODO: Valider les paramètres du constructeur (ex: nom non nul, clé non vide).
+    public Domain(String name, String key) {
         this.name = name;
-        this.aesKey = aesKey;
-        this.nodeAddress = nodeAddress;
-        this.publicKey = publicKey;
-        this.active = true; // Par défaut, un domaine est actif
-    }
-
-    public Domain(String domain, String s, String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
-        this.name = name;
-        this.aesKey = aesKey;
-        this.nodeAddress = nodeAddress;
-        this.publicKey = publicKey;
+        this.aesKey = Base64.getDecoder().decode(key); // todo à vérifier
     }
 
     public String getName() {
@@ -44,13 +31,9 @@ public class Domain {
         this.active = active;
     }
 
-    public String getNodeAddress() {
-        return nodeAddress;
+
+    @Override
+    public String toString() {
+        return name;
     }
-
-    public byte[] getPublicKey() {
-        return publicKey;
-    }
-
-
 }

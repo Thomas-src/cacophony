@@ -2,6 +2,7 @@ package org.helmo.mapper;
 
 import org.helmo.domain.Domain;
 import org.helmo.dto.DomainDto;
+import org.helmo.dto.DomainsDto;
 
 import java.util.List;
 
@@ -26,10 +27,13 @@ public class JsonDomainMapper {
     /**
      * Convertit un DomainDto en liste d'objets Domain.
      *
-     * @param dto L'objet DomainDto à convertir
+     * @param dtos La liste d'objets DomainDto à convertir
      * @return Une liste contenant un seul objet Domain créé à partir du DTO
      */
-    public static List<Domain> mapToDomains(DomainDto dto) {
-        return List.of(DomainFromDto(dto));
+    public static List<Domain> mapToDomains(DomainsDto dtos) {
+        List<DomainDto> domainsDtos = dtos == null ? List.of() : dtos.domains();
+        return domainsDtos.stream().map(JsonDomainMapper::DomainFromDto).toList();
+
+
     }
 }
