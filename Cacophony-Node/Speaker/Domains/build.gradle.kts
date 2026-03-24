@@ -17,6 +17,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("com.google.code.gson:gson:2.13.2")
     testImplementation("org.mockito:mockito-core:5.5.0")
+    implementation(project(":Grammar"))
 }
 
 tasks.test {

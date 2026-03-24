@@ -10,6 +10,7 @@ import org.helmo.repository.ITagRepository;
 import org.helmo.repository.IUserRepository;
 import org.helmo.server.IServer;
 import org.helmo.server.ServerFactory;
+import org.helmo.server.threads.AdvertThread;
 import org.helmo.server.threads.TaskThread;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
@@ -39,8 +40,12 @@ public class Program {
                 menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
                 menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
 
+
                 TaskThread taskthread = new TaskThread(menu);
                 taskthread.start();
+
+                AdvertThread advertThread = new AdvertThread(config);
+                advertThread.start();
 
                 // Création du serveur + démarrage
                 IServer server = ServerFactory.createServer(configReader, taskthread);
