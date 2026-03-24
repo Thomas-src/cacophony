@@ -39,7 +39,7 @@ public class OnboardingHandler implements CommandHandler {
         }
         String name = args.getFirst();
 
-        int rotation = Integer.parseInt(args.get(2).split("\\$")[2]);
+        int rotation = Integer.parseInt(args.get(2).split("\\$")[2]); // TODO supprimer les split, extraire via les pattern REGEX
         var saltLength = Integer.parseInt(args.get(1));
         var salt = args.get(2).split("\\$")[3].substring(0, saltLength);
         var hashpassword = args.get(2).split("\\$")[3].substring(saltLength);
