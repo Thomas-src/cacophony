@@ -103,6 +103,7 @@ public class WestThread extends Thread {
         }
     }
 
+    /*
     public void stopThread() {
         try {
             socket.close();
@@ -110,5 +111,6 @@ public class WestThread extends Thread {
             LOGGER.error("Erreur fermeture socket", e);
         }
     }
+     */
 
 }

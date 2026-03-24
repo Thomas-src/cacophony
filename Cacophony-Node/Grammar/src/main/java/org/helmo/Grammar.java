@@ -47,8 +47,7 @@ public class Grammar {
     public static final String SHA3_HEXSTRING = DIGIT_LETTER + "{30,200}";
     public static final String RANDOM_STRING = DIGIT_LETTER_OR_SPECIAL + "{22}";
 
-
-    public static final String TAG_WITH_OPTIONAL_DOMAIN = "#(" + USER + ")(?:@(" + DOMAIN + "))?";
+     public static final String TAG_WITH_OPTIONAL_DOMAIN = "#(" + USER + ")(?:@(" + DOMAIN + "))?";
     // --- COMPILATION DES PATTERNS POUR UTILISATION ---
 
     public static final Pattern P_USER_AT_DOMAIN = Pattern.compile("^" + USER_AT_DOMAIN + "$");

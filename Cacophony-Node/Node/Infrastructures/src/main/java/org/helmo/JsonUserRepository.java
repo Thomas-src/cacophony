@@ -76,12 +76,10 @@ public class JsonUserRepository implements IUserRepository {
                     }
                 }
                 UserDto newUserDto = JsonUserMapper.toUserDto(client);
-                String newUserJson = gson.toJson(newUserDto);
                 boolean updated = false;
                 for (int i = 0; i < existingUserDtos.size(); i++) {
                     UserDto existingUserDto = existingUserDtos.get(i);
-                    String existingUserJson = gson.toJson(existingUserDto);
-                    if (existingUserJson.equals(newUserJson)) {
+                    if (existingUserDto.login().equals(newUserDto.login())) {
                         existingUserDtos.set(i, newUserDto);
                         updated = true;
                         break;

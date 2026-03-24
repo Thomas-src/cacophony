@@ -13,11 +13,11 @@ import java.util.Objects;
  * Un User peut être abonné à d'autres Users, et d'autres Users ou Tags peuvent être abonnés à lui. La classe fournit des méthodes pour vérifier les réponses aux challenges, gérer les abonnements, et vérifier si un Subscriber est déjà abonné.
  */
 public class Client {
-    private String name;
-    private HashPassword hashPassword;
-    private List<IUserSubscriber> subscribers = new ArrayList<>();
-    private List<ITag> internalTags = new ArrayList<>();
-    private String fullName;
+    private final String name;
+    private final HashPassword hashPassword;
+    private final List<IUserSubscriber> subscribers = new ArrayList<>();
+    private final List<ITag> internalTags = new ArrayList<>();
+    private final String fullName;
 
     /**
      * Constructeur de l'objet User.

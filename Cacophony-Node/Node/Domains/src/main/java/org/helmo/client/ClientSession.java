@@ -54,7 +54,7 @@ public class ClientSession {
 
     public void closeSession() {
         this.shouldKeepOpen = false;
-        ActiveSession.remove(client.getName());
+        ActiveSession.remove(client.getFullName());
     }
 
     public String getDomain() {

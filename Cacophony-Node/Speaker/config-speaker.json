@@ -1,5 +1,5 @@
 {
-  "multicastAddress": "224.224.200.200",
+  "multicastAddress": "localhost",
   "multicastPort": 13001,
   "networkInterface": "ethernet_32769",
   "configuredDomains": [

@@ -89,32 +89,6 @@ public class SpeakerMulticastListener {
         }
     }
 
-    /**
-     * Obtient une interface réseau valide pour le multicast IPv4.
-     * Tente d'utiliser l'interface spécifiée, sinon trouve automatiquement une interface appropriée.
-     */
-    private NetworkInterface getValidNetworkInterface(String interfaceName) throws IOException {
-        NetworkInterface netIf = null;
-
-        // Essayer d'obtenir l'interface par son nom
-        if (interfaceName != null && !interfaceName.isEmpty()) {
-            netIf = NetworkInterface.getByName(interfaceName);
-        }
-
-        // Si l'interface spécifiée n'existe pas ou n'est pas valide, trouver une interface appropriée
-        if (netIf == null || !isValidMulticastInterface(netIf)) {
-            System.err.println("Warning: Network interface '" + interfaceName + "' not found or not valid for IPv4 multicast.");
-            System.err.println("Attempting to find a suitable network interface automatically...");
-            netIf = findSuitableNetworkInterface();
-        }
-
-        if (netIf == null) {
-            throw new IOException("No suitable network interface found for multicast. Available interfaces:\n" + listNetworkInterfaces());
-        }
-
-        System.out.println("Using network interface: " + netIf.getName() + " (" + netIf.getDisplayName() + ")");
-        return netIf;
-    }
 
     /**
      * Vérifie si une interface réseau est valide pour le multicast IPv4.

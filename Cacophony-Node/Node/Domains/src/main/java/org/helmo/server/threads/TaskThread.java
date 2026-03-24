@@ -1,5 +1,7 @@
 package org.helmo.server.threads;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.handler.CommandMenu;
 import org.helmo.task.Task;
@@ -8,6 +10,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class TaskThread extends Thread {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private final BlockingQueue<Task> queue = new LinkedBlockingQueue<>();
     private final CommandMenu menu;
 
@@ -27,9 +31,8 @@ public class TaskThread extends Thread {
             } catch (InterruptedException e){
                 Thread.currentThread().interrupt();
             } catch (HandlerException e) {
-                throw new RuntimeException(e); // todo à modifier
+                LOGGER.error(e.getMessage());
             }
-
         }
     }
 
