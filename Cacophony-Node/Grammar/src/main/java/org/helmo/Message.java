@@ -44,6 +44,8 @@ public class Message {
     // leave = "LEAVE" newline
     public static final String CMD_LEAVE = "LEAVE";
 
+    // advert = "ADVERT" newline
+    public static final String ADVERT = "ADVERT" + SP + "("+ PORT + ")" + SP + "("+ DOMAIN+ ")" + NEWLINE;
 
     // --- COMPILATION DES PATTERNS DES COMMANDES ---
 
@@ -59,4 +61,6 @@ public class Message {
     public static final Pattern P_CMD_OK = Pattern.compile("^" + CMD_OK + "$");
     public static final Pattern P_CMD_ERROR = Pattern.compile("^" + CMD_ERROR + "$");
     public static final Pattern P_CMD_LEAVE = Pattern.compile("^" + CMD_LEAVE + "$");
+    public static final Pattern P_ADVERT = Pattern.compile("^" + ADVERT + "$");
+
 }
