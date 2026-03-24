@@ -38,6 +38,8 @@ public class SpeakerApplication {
             consoleView.log("Application started.");
 
             // TODO: Initialiser le SpeakerDomainService avec les domaines et le CryptoService.
+
+
             // TODO: Le CryptoService doit être une implémentation de CryptoProvider.
 
             // Démarrer le listener UDP multicast

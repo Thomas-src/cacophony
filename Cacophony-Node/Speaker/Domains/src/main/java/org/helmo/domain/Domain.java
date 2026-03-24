@@ -21,7 +21,11 @@ public class Domain {
         this.active = true; // Par défaut, un domaine est actif
     }
 
-    public Domain(String domain, String s) {
+    public Domain(String domain, String s, String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
+        this.name = name;
+        this.aesKey = aesKey;
+        this.nodeAddress = nodeAddress;
+        this.publicKey = publicKey;
     }
 
     public String getName() {
