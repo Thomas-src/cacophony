@@ -2,8 +2,8 @@ package org.helmo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import org.helmo.exceptions.ConfigurationLoadException;
-import org.helmo.exceptions.NetworkConnectionException;
+import org.helmo.infrastructure.exceptions.ConfigurationLoadException;
+import org.helmo.network.exceptions.NetworkConnectionException;
 import org.helmo.network.SpeakerMulticastListener;
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package org.helmo.domain;
 
-import org.helmo.exceptions.InvalidAdvertMessageException;
+import org.helmo.domain.exceptions.InvalidAdvertMessageException;
 
 /**
  * DTO pour représenter un message ADVERT reçu en multicast.

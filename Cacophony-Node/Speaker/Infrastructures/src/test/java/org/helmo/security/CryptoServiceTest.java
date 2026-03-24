@@ -1,8 +1,8 @@
 package org.helmo.security;
 
 import org.helmo.domain.CryptoProvider;
-import org.helmo.exceptions.DecryptionException;
-import org.helmo.exceptions.EncryptionException;
+import org.helmo.security.exceptions.DecryptionException;
+import org.helmo.security.exceptions.EncryptionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
