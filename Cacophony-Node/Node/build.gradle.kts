@@ -2,6 +2,7 @@ import org.gradle.kotlin.dsl.implementation
 
 plugins {
     id("java")
+    id("application")
 }
 
 group = "org.helmo"

@@ -1,11 +1,11 @@
 {
-  "currentDomain": "node1.swilabus.xyz",
+  "currentDomain": "localhost",
   "saltSizeInBytes": 22,
   "multicastAddress": "224.224.200.200",
   "multicastPort": 13001,
   "unicastPort": 5002,
   "relayPort": 5003,
-  "networkInterface": "ethernet_32769",
+  "networkInterface": "wireless_32768",
   "base64AES": "1f2682Wgj/OGwmbUCBAH8fuCeKsBYz8E4o+HM4+50is\u003d",
   "tls": true,
   "certificateName" : "star.swilabus.xyz.p12",
