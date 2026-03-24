@@ -25,4 +25,7 @@ public record ConfigDto(String currentDomain,
                         String base64AES,
                         boolean tls
 ) {
+    // TODO: Ajouter une validation des champs de la configuration.
+    // Par exemple, vérifier que les ports sont dans une plage valide, que les adresses ne sont pas nulles, etc.
+    // Cette validation pourrait être faite dans un constructeur compact.
 };

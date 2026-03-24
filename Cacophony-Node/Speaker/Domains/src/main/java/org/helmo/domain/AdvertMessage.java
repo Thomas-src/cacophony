@@ -38,4 +38,6 @@ public class AdvertMessage {
     public int getPort() {
         return port;
     }
+
+    // TODO: Ajouter une méthode toString() pour faciliter le logging et le débogage.
 }

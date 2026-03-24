@@ -8,8 +8,11 @@ import java.util.List;
  */
 public class SpeakerAppConfig {
 
-    private static final String CONFIG_FILE = "Speaker/config-speaker.json";
+    // TODO: Ce chemin est relatif et peut être fragile. Envisager une méthode de localisation plus robuste.
+    private static final String CONFIG_FILE = "./Speaker/config-speaker.json";
+    // TODO: Le DEFAULT_NODE_ADDRESS devrait être remplacé par une adresse de node découverte dynamiquement.
     private static final String DEFAULT_NODE_ADDRESS = "";
+    // TODO: Le DEFAULT_BYTE_ARRAY pour la clé publique devrait être remplacé par une vraie clé publique si la vérification de signature est implémentée.
     private static final byte[] DEFAULT_BYTE_ARRAY = new byte[0];
 
     private List<ConfiguredDomain> configuredDomains;
@@ -18,6 +21,8 @@ public class SpeakerAppConfig {
     private String networkInterface;
 
     public List<ConfiguredDomain> getConfiguredDomains() {
+        // TODO: La conversion de ConfiguredDomain à Domain se fait à la volée.
+        // Envisager de la faire une seule fois lors du chargement de la configuration pour de meilleures performances.
         return java.util.Collections.unmodifiableList(configuredDomains);
     }
 
@@ -56,6 +61,8 @@ public class SpeakerAppConfig {
             } catch (IllegalArgumentException e) {
                 throw new IllegalStateException("La clé AES Base64 pour le domaine '" + domain + "' est invalide.", e);
             }
+            // TODO: La création du domaine utilise des valeurs par défaut pour l'adresse du nœud et la clé publique.
+            // Ces valeurs devraient être mises à jour dynamiquement.
             return new org.helmo.domain.Domain(domain, aesKeyBytes, DEFAULT_NODE_ADDRESS, DEFAULT_BYTE_ARRAY);
         }
     }

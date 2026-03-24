@@ -47,4 +47,7 @@ public interface CryptoProvider {
      */
     byte[] generateRandomKey();
 
+    // TODO: Envisager d'ajouter une méthode pour la signature et la vérification de messages.
+    // byte[] sign(byte[] message, byte[] privateKey);
+    // boolean verify(byte[] message, byte[] signature, byte[] publicKey);
 }

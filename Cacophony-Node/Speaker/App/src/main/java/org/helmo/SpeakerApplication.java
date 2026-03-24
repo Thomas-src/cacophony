@@ -17,6 +17,7 @@ import java.nio.file.Paths;
 public class SpeakerApplication {
      public static void main(String[] args) {
         try {
+            // TODO: Mettre en place une injection de dépendances  pour mieux gérer les services.
             // Charger la configuration
             SpeakerAppConfig config = loadConfiguration();
 
@@ -36,12 +37,17 @@ public class SpeakerApplication {
             consoleView.displayInitializationStatus("Services initialized successfully.");
             consoleView.log("Application started.");
 
+            // TODO: Initialiser le SpeakerDomainService avec les domaines et le CryptoService.
+            // TODO: Le CryptoService doit être une implémentation de CryptoProvider.
+
             // Démarrer le listener UDP multicast
+            // TODO: Le listener devrait probablement être géré par le SpeakerDomainService.
             SpeakerMulticastListener multicastListener = new SpeakerMulticastListener(
                 config.getMulticastAddress(),
                 config.getMulticastPort(),
                 config.getNetworkInterface(),
                 (advert, sourceIp) -> {
+                    // TODO: Traiter les messages ADVERT reçus. Mettre à jour l'adresse du nœud pour le domaine correspondant.
                     if (advert == null) {
                         consoleView.log("Received null advert from " + sourceIp);
                         return;
@@ -59,17 +65,22 @@ public class SpeakerApplication {
             });
             listenerThread.start();
 
+            // TODO: Démarrer le serveur HTTP (API REST) pour écouter les messages POST des Nodes.
+            // Le serveur devrait utiliser le SpeakerDomainService pour router les messages.
+
             // Gérer l'arrêt propre
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     multicastListener.stop();
                     listenerThread.join();
+                    // TODO: Arrêter proprement le serveur HTTP.
                     consoleView.displayShutdownMessage();
                 } catch (InterruptedException e) {
                     System.err.println("Error during listener shutdown: " + e.getMessage());
                 }
             }));
         } catch (ConfigurationLoadException | JsonSyntaxException | IllegalArgumentException e) {
+            // TODO: Améliorer la gestion des erreurs (ex: logger les exceptions, fournir des messages plus clairs).
             System.err.println("Error during application startup: " + e.getMessage());
             e.printStackTrace(System.err);
         }

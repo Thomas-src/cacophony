@@ -25,9 +25,11 @@ public class CryptoService implements CryptoProvider {
 
     @Override
     public byte[] encrypt(byte[] plaintext, byte[] key) {
+        // TODO: Valider que la clé a la bonne longueur (32 octets pour AES-256).
         try {
             // 1. Générer un IV (Initialization Vector) aléatoire de 12 octets
             final byte[] iv = new byte[IV_LENGTH_BYTES];
+            // TODO: Utiliser une seule instance de SecureRandom pour l'application pour de meilleures performances.
             SecureRandom random = new SecureRandom();
             random.nextBytes(iv);
 
@@ -47,12 +49,14 @@ public class CryptoService implements CryptoProvider {
 
             return encryptedData;
         } catch (GeneralSecurityException e) {
+            // TODO: Logger l'exception pour le débogage.
             throw new EncryptionException("Erreur de sécurité lors du chiffrement des données", e);
         }
     }
 
     @Override
     public byte[] decrypt(byte[] encryptedData, byte[] key) {
+        // TODO: Valider que la clé a la bonne longueur (32 octets pour AES-256).
         try {
             if (encryptedData == null || encryptedData.length < IV_LENGTH_BYTES) {
                 throw new DecryptionException("Données chiffrées invalides : taille insuffisante pour contenir l'IV.", null);
@@ -74,6 +78,7 @@ public class CryptoService implements CryptoProvider {
             // 3. Effectuer le déchiffrement
             return cipher.doFinal(cipherText);
         } catch (GeneralSecurityException e) {
+            // TODO: Logger l'exception pour le débogage.
             throw new DecryptionException("Erreur de sécurité lors du déchiffrement. La clé est peut-être incorrecte ou les données sont corrompues.", e);
         }
     }
@@ -82,6 +87,7 @@ public class CryptoService implements CryptoProvider {
     public byte[] generateRandomKey() {
         // Une clé AES-256 a une longueur de 32 octets (256 bits)
         byte[] key = new byte[32];
+        // TODO: Utiliser une seule instance de SecureRandom pour l'application.
         new SecureRandom().nextBytes(key);
         return key;
     }

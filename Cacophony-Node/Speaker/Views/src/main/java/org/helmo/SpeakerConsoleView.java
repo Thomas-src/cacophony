@@ -63,6 +63,7 @@ public class SpeakerConsoleView {
      * @param domainsConfigured
      */
     public void displayConfiguration(String multicastAddr, int multicastPort, String networkInterface, int domainsConfigured) {
+        // TODO: Améliorer la présentation de la configuration, par exemple en utilisant un format de tableau.
         String configMessage = "===== CONFIGURATION =====\n" +
                 "Multicast address   : " + multicastAddr + "\n" +
                 "Multicast port      : " + multicastPort + "\n" +
@@ -72,4 +73,8 @@ public class SpeakerConsoleView {
         System.out.println(configMessage);
         LOGGER.info(configMessage);
     }
+
+    // TODO: Ajouter des méthodes pour afficher les messages de manière plus structurée.
+    // public void displayReceivedMessage(String from, String to, String content) { ... }
+    // public void displaySentMessage(String to, String content) { ... }
 }

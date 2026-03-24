@@ -26,6 +26,7 @@ public class SpeakerMulticastListener {
 
     public interface AdvertListener {
         void onAdvertReceived(AdvertMessage advert, String sourceIp);
+        // TODO: Ajouter une méthode pour notifier les erreurs de parsing ou de réception d'advert.
     }
 
     public SpeakerMulticastListener(String multicastAddress, int multicastPort, String networkInterface, AdvertListener listener) {
@@ -37,6 +38,8 @@ public class SpeakerMulticastListener {
     }
 
     public void startListening() throws IOException {
+        // TODO: Gérer les exceptions spécifiques pour la création du socket et la jointure du groupe.
+        // Par exemple, si le port est déjà utilisé ou si l'adresse multicast est invalide.
         socket = new MulticastSocket(multicastPort);
         InetAddress group = InetAddress.getByName(multicastAddress);
         NetworkInterface networkInterface = getValidNetworkInterface(networkInterfaceName);
@@ -53,10 +56,14 @@ public class SpeakerMulticastListener {
                 String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                 String sourceIp = packet.getAddress().getHostAddress();
 
+                // TODO: Implémenter un parsing plus robuste de l'AdvertMessage.
+                // Actuellement, il s'agit d'une simple encapsulation de la chaîne.
                 AdvertMessage advert = new AdvertMessage(message);
                 listener.onAdvertReceived(advert, sourceIp);
             } catch (IOException e) {
                 if (running) {
+                    // TODO: Utiliser un logger au lieu de printStackTrace.
+                    // Gérer les erreurs de réception de manière plus fine (ex: socket fermé, timeout).
                     e.printStackTrace();
                 }
             }
@@ -70,11 +77,13 @@ public class SpeakerMulticastListener {
                 if (groupJoined) {
                     InetAddress group = InetAddress.getByName(multicastAddress);
                     NetworkInterface networkInterface = NetworkInterface.getByName(networkInterfaceName);
+                    // TODO: Gérer les exceptions spécifiques pour leaveGroup.
                     socket.leaveGroup(new java.net.InetSocketAddress(group, multicastPort), networkInterface);
                     groupJoined = false;
                 }
                 socket.close();
             } catch (IOException e) {
+                // TODO: Utiliser un logger au lieu de printStackTrace.
                 e.printStackTrace();
             }
         }
@@ -126,6 +135,7 @@ public class SpeakerMulticastListener {
             }
             return false;
         } catch (SocketException e) {
+            // TODO: Utiliser un logger pour cette exception.
             return false;
         }
     }
