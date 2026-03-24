@@ -7,9 +7,9 @@ public class Domain {
     private final String name;
     private final byte[] aesKey;
     private boolean active;
-    // TODO: Le nodeAddress est final, mais il devrait être mutable pour être mis à jour après la découverte via ADVERT.
+
     private final String nodeAddress;
-    // TODO: Le publicKey est final, mais il pourrait devoir être mis à jour si les clés peuvent être renouvelées.
+
     private final byte[] publicKey;
 
     public Domain(String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
@@ -19,6 +19,13 @@ public class Domain {
         this.nodeAddress = nodeAddress;
         this.publicKey = publicKey;
         this.active = true; // Par défaut, un domaine est actif
+    }
+
+    public Domain(String domain, String s, String name, byte[] aesKey, String nodeAddress, byte[] publicKey) {
+        this.name = name;
+        this.aesKey = aesKey;
+        this.nodeAddress = nodeAddress;
+        this.publicKey = publicKey;
     }
 
     public String getName() {
@@ -45,9 +52,5 @@ public class Domain {
         return publicKey;
     }
 
-    // TODO: Ajouter une méthode pour mettre à jour l'adresse du nœud.
-    // public void setNodeAddress(String nodeAddress) { ... }
 
-    // TODO: Ajouter une méthode pour mettre à jour la clé publique.
-    // public void setPublicKey(byte[] publicKey) { ... }
 }
