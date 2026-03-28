@@ -22,10 +22,6 @@ public class InternalTag implements ITag {
         return fullName;
     }
 
-    public String getTagName() {
-        return fullName.split("@")[0];
-    }
-
     public List<IUserSubscriber> getSubscribers() {
         return subscribers;
     }

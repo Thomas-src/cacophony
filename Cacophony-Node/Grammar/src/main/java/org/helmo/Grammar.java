@@ -28,14 +28,14 @@ public class Grammar {
     public static final String INNER_MESSAGE = CHARACTER + "{1,500}";
 
     public static final String USER = DIGIT_LETTER + "{5,20}";
-    public static final String TAG = "#" + USER; // "#" suivi de 5 à 20 digit_letter
+    public static final String TAG = "#" + '(' + USER + ')'; // "#" suivi de 5 à 20 digit_letter
 
     // Domaine : digit_letter ou "."
     public static final String DOMAIN = "[A-Za-z0-9.]{5,200}";
 
     // Adresses
-    public static final String USER_AT_DOMAIN = USER + "@" + DOMAIN;
-    public static final String TAG_AT_DOMAIN = TAG + "@" + DOMAIN;
+    public static final String USER_AT_DOMAIN = "(" + USER + ")@(" + DOMAIN + ")";
+    public static final String TAG_AT_DOMAIN =   TAG + "@(" + DOMAIN + ")";
     public static final String ID_AT_DOMAIN = "\\d{1,5}@" + DOMAIN;
 
     // Règles complexes combinées

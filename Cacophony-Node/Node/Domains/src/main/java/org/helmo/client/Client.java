@@ -39,8 +39,8 @@ public class Client {
     }
 
     public String getName() {
-        return name.split("@")[0];
-    } // todo supprimer le split
+        return name;
+    }
 
     public String getFullName() {
         return fullName;

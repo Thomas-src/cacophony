@@ -29,6 +29,7 @@ public class CommandMenu {
             if (matcher.matches()) {
                 List<String> args = new ArrayList<>();
                 for (int i = 1; i <= matcher.groupCount(); i++) {
+                    LOGGER.info("Arg {}: {}", i,  matcher.group(i));
                     args.add(matcher.group(i));
                 }
 
