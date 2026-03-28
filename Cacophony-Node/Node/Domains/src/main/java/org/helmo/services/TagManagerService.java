@@ -6,6 +6,8 @@ import org.helmo.client.Client;
 import org.helmo.tag.InternalTag;
 import org.helmo.repository.ITagRepository;
 import org.helmo.subscriber.IUserSubscriber;
+
+import java.util.Collections;
 import java.util.List;
 
 public class TagManagerService {
@@ -23,7 +25,7 @@ public class TagManagerService {
                 .filter(u -> u.getFullName().equals(tagName)) // todo equalsIgnoreCase ????
                 .findFirst()
                 .map(InternalTag::getSubscribers)
-                .orElse(null);
+                .orElse(Collections.emptyList());
     }
 
     public void createTag(Client client, String tag) throws TagSaveException {

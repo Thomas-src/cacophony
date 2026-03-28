@@ -12,6 +12,9 @@ import org.helmo.server.ActiveSession;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
 import org.helmo.subscriber.IUserSubscriber;
+import org.helmo.tag.ITag;
+import org.helmo.tag.InternalTag;
+import org.helmo.tag.TagReference;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -36,12 +39,13 @@ public class SendHandler implements CommandHandler {
         }
         Set<String> localSubscribers = new LinkedHashSet<>();
         Set<String> remoteSubscribers = new LinkedHashSet<>();
+        Set<String> remoteTags = new LinkedHashSet<>();
         String message = args.getFirst();
         String username = session.getUserFullName();
 
         // Ajout des abonnés internes et externes
         addUsers(username, localSubscribers, remoteSubscribers);
-        addTags(username, message, localSubscribers, remoteSubscribers,session.getDomain());
+        addTags(username, message, localSubscribers, remoteSubscribers,session.getDomain(), remoteTags);
 
         // Pour ne pas envoyer msg à l'envoyeur
         localSubscribers.remove(session.getUserFullName());
@@ -58,20 +62,21 @@ public class SendHandler implements CommandHandler {
         return MessageBuilder.buildOk();
     }
 
-    private List<String> extractTags(String message, String actualDomain) {
-        List<String> tags = new ArrayList<>();
+    private List<ITag> extractTags(String message, String actualDomain) throws TagReaderException {
+        List<ITag> tags = new ArrayList<>();
         Matcher m = Grammar.P_TAG_FULL.matcher(message);
 
         while (m.find()) {
             String tagName = m.group(1);
             String domain = m.group(2);
-            LOGGER.info(actualDomain);
-            LOGGER.info(domain);
 
-            if (domain != null && !domain.equalsIgnoreCase(actualDomain)) {
-                tags.add("#" + tagName + "@" + domain);
-            } else {
-                tags.add("#" + tagName);
+            LOGGER.info("Tag détecté: {}", tagName);
+            if (domain == null  || domain.equalsIgnoreCase(actualDomain)) {
+                List<IUserSubscriber> subscribers = tagManagerService.getTagSubscriber(tagName);
+                tags.add(new InternalTag(tagName,subscribers));
+            } else  {
+                tags.add(new TagReference(tagName+"@"+domain));
+                // todo speaker
             }
         }
         return tags;
@@ -89,19 +94,22 @@ public class SendHandler implements CommandHandler {
         }
     }
 
-    private void addTags(String username, String message, Set<String> localSubscribers, Set<String> remoteSubscribers, String actualDomain) throws HandlerException {
-        List<String> tags = extractTags(message, actualDomain);
-        LOGGER.info("Tags du message: {}", tags);
+    private void addTags(String username, String message, Set<String> localSubscribers, Set<String> remoteSubscribers, String actualDomain, Set<String> remoteTags) throws HandlerException {
         try {
-            for (String tag : tags) {
-                List<IUserSubscriber> subscribers = tagManagerService.getTagSubscriber(tag);
-                if (subscribers != null) {
-                    if (subscribers.stream().anyMatch(sub -> sub.getFullName().equals(username))) {  // vérifier si l'utilisateur est abonné au tag
-                        LOGGER.info("Le tag {} possède {} abonnés", tag, subscribers.size());
-                        createUsers(subscribers, localSubscribers, remoteSubscribers);
-                    }
-                    LOGGER.info("L'exécutant n'est pas abonné à la liste");
+            List<ITag> tags = extractTags(message, actualDomain);
 
+            for (ITag tag : tags) {
+                if (tag.isInternal()) {
+                    InternalTag internal = (InternalTag) tag;
+                    LOGGER.info("Abonnés au tag {} : {}", internal.getFullName(),
+                            internal.getSubscribers().stream().map(IUserSubscriber::getFullName).toList());
+                    if (internal.hasSubscriber(username)) {
+                        createUsers(internal.getSubscribers(), localSubscribers, remoteSubscribers);
+                    } else {
+                        LOGGER.info("L'exécutant {} n'est pas abonné au tag {}", username, tag.getFullName());
+                    }
+                    } else {
+                    remoteTags.add(tag.getFullName());
                 }
             }
         } catch (TagReaderException e) {
@@ -112,8 +120,7 @@ public class SendHandler implements CommandHandler {
 
     private void createUsers(List<IUserSubscriber> subscribers, Set<String> localSubscribers, Set<String> remoteSubscribers) {
         for (IUserSubscriber subscriber : subscribers) {
-            LOGGER.info("Vérification Subscriber {}", subscriber.getFullName());
-            if (subscriber.isLocal()) {
+           if (subscriber.isLocal()) {
                 localSubscribers.add(subscriber.getFullName());
             } else {
                 remoteSubscribers.add(subscriber.getFullName());

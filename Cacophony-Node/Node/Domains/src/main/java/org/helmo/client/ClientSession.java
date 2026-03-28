@@ -35,9 +35,8 @@ public class ClientSession {
         return client.getName();
     }
 
-    public void setAuthenticate() {
-        ActiveSession.add(getUserFullName(), thread);
-        authenticated = true;
+    public boolean setAuthenticate() {
+        return authenticated = ActiveSession.add(getUserFullName(), thread);
     }
 
     public boolean isAuthenticated() {

@@ -56,7 +56,12 @@ public class WestThread extends Thread {
 
                 taskThread.addTask(createTask(line, session));
             }
-        } catch (HandlerException e) {
+        }
+        catch (IllegalArgumentException e) {
+            LOGGER.info("Commande inconnue",e);
+            toClient.println(MessageBuilder.buildError());
+        }
+        catch (HandlerException e) {
             LOGGER.info("Une erreur s'est produite",e);
             toClient.println(MessageBuilder.buildError());
         }

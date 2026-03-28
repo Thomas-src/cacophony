@@ -51,11 +51,11 @@ public class OnboardingHandler implements CommandHandler {
             Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), new ArrayList<>(), session.getDomain(), new ArrayList<>());
             userManagerService.saveUser(client);
             session.setClient(client);
-            session.setAuthenticate();
 
+            return session.setAuthenticate() ? MessageBuilder.buildOk() : MessageBuilder.buildError();
         } catch (UserReaderException | UserSaveException e) {
             throw new HandlerException("Impossible d'inscrire l'utilisateur" + name + "\nException enfant => " + e);
         }
-        return MessageBuilder.buildOk();
+
     }
 }

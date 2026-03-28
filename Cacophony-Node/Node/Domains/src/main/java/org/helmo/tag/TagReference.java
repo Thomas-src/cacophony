@@ -11,4 +11,9 @@ public class TagReference implements ITag{
         return fullName;
     }
 
+    @Override
+    public boolean isInternal() {
+        return false;
+    }
+
 }

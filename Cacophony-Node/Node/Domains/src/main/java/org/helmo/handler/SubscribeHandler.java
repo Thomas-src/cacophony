@@ -33,7 +33,7 @@ public class SubscribeHandler implements CommandHandler {
         String sub = isUser ? args.get(0) : args.get(2);
         String domain = isUser ? args.get(1) : args.get(3);
 
-        if (domain.equals(session.getDomain())) {
+        if (domain.equalsIgnoreCase(session.getDomain())) {
             if(isUser) {
                 response = userSubscribe(sub, session);
             } else {
@@ -81,7 +81,7 @@ public class SubscribeHandler implements CommandHandler {
 
         for (InternalTag tag : tags) {
             LOGGER.info("Comparing {} with {}", tag.getFullName(), tagName);
-            if (tag.getFullName().equals(fullTagName)) {
+            if (tag.getFullName().equals(tagName)) {
                 // Si le tag existe deja
                 // Ajouter le tags pour le client dans la session
                 try {

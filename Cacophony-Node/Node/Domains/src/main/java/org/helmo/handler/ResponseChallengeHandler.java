@@ -31,9 +31,8 @@ public class ResponseChallengeHandler implements CommandHandler {
         String challenge = session.getRandomString();
 
         if (session.verifyChallenge(clientResponse, challenge)) {
-            session.setAuthenticate();
             LOGGER.info("Authentication successful for {}", session.getUsername());
-            return MessageBuilder.buildOk();
+            return session.setAuthenticate() ? MessageBuilder.buildOk() : MessageBuilder.buildError();
         }
 
         LOGGER.warn("Authentication failed for {}", session.getUsername());

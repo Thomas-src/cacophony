@@ -22,7 +22,16 @@ public class InternalTag implements ITag {
         return fullName;
     }
 
+    @Override
+    public boolean isInternal() {
+        return true;
+    }
+
     public List<IUserSubscriber> getSubscribers() {
         return subscribers;
+    }
+
+    public boolean hasSubscriber(String username) {
+        return subscribers.stream().anyMatch(sub -> sub.getFullName().equals(username));
     }
 }
