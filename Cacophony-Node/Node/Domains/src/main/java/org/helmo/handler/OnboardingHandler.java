@@ -6,11 +6,12 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
-import org.helmo.client.ClientSession;
+import org.helmo.task.ClientSession;
 import org.helmo.client.HashPassword;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.services.UserManagerService;
+import org.helmo.task.TaskContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,12 @@ public class OnboardingHandler implements CommandHandler {
      * @throws OnboardingException
      */
     @Override
-    public String handle(List<String> args, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, TaskContext task) throws HandlerException {
         LOGGER.info("New Onboarding request received with args: {}", args);
+        if (!(task instanceof ClientSession session)) {
+            throw new HandlerException("Task auth nécessite une session client");
+        }
+
         if (session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }

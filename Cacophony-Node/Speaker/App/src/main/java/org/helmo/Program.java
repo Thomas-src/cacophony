@@ -30,18 +30,17 @@ public class Program {
             CryptoService crypto = new CryptoService();
             SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto);
 
-            CommandMenu menu =  new CommandMenu();
-            menu.add(Message.P_ADVERT, new AdvertHandler(connector,domainMap));
+            CommandMenu menu = new CommandMenu();
+            menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainMap));
 
             SpeakerConfig speakerConfig = configReader.getConfig();
             LOGGER.info(speakerConfig.toString());
 
-            Speaker speaker =  new Speaker(speakerConfig,menu);
+            Speaker speaker = new Speaker(speakerConfig, menu);
             speaker.start();
         } catch (Exception e) {
             LOGGER.error("Erreur lors du démarrage du programme", e);
         }
-
 
 
     }

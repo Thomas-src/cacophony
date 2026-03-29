@@ -15,17 +15,19 @@ import java.util.List;
 
 public abstract class AbstractServer implements IServer {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final List<WestThread> westThreads = new ArrayList<WestThread>();
+    private final List<WestThread> westThreads = new ArrayList<>();
 
     private final Config config;
     private final TaskThread taskThread;
     private boolean stop = false;
     private boolean isStarted = false;
     private ServerSocket listener;
+    private ActiveSession activeSession;
 
-    public AbstractServer(Config config, TaskThread taskThread) {
+    public AbstractServer(Config config, TaskThread taskThread, ActiveSession activeSession) {
         this.config = config;
         this.taskThread = taskThread;
+        this.activeSession = activeSession;
     }
 
 
@@ -41,7 +43,7 @@ public abstract class AbstractServer implements IServer {
             while (!stop) {
                 Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-                WestThread thread = new WestThread(client, config, taskThread);
+                WestThread thread = new WestThread(client, config, taskThread,activeSession);
                 thread.start();
                 this.westThreads.add(thread);
             }

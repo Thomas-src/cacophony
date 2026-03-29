@@ -10,7 +10,8 @@ public enum TypeTask {
     USER(Message.P_CMD_USER),
     SEND(Message.P_CMD_SEND),
     RESPONSE(Message.P_CMD_RESPONSE),
-    SUBSCRIBE(Message.P_CMD_SUBSCRIBE);
+    SUBSCRIBE(Message.P_CMD_SUBSCRIBE),
+    POST(Message.P_POST);
 
     private final Pattern pattern;
 

@@ -8,7 +8,7 @@ import java.util.Base64;
 public class Domain {
     private final String name;
     private final byte[] aesKey;
-    private boolean active;
+    private boolean active = false;
 
     public Domain(String name, String key) {
         this.name = name;
@@ -27,8 +27,8 @@ public class Domain {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setActive() {
+        this.active = true;
     }
 
 

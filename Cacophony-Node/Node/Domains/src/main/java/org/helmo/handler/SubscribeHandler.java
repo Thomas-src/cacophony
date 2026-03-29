@@ -5,10 +5,11 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.*;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
-import org.helmo.client.ClientSession;
+import org.helmo.task.ClientSession;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
 import org.helmo.tag.InternalTag;
+import org.helmo.task.TaskContext;
 
 import java.util.List;
 
@@ -24,7 +25,10 @@ public class SubscribeHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(List<String> args, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, TaskContext task) throws HandlerException {
+        if (!(task instanceof ClientSession session)) {
+            throw new HandlerException("Task auth nécessite une session client");
+        }
         if (args.size() < 2) {
             throw new HandlerException("Demande invalide");
         }

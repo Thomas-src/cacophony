@@ -16,25 +16,21 @@ public class NodeConnectionImpl implements NodeConnection {
 
     private final String domain;
     private final Socket socket;
+    private PrintWriter writer;
 
-    public NodeConnectionImpl(String domain, Socket socket) {
+    public NodeConnectionImpl(String domain, Socket socket) throws IOException {
         this.domain = domain;
         this.socket = socket;
+        try {
+            this.writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+        } catch (IOException e) {
+            LOGGER.error("Erreur création writer vers {}", domain, e);
+        }
     }
 
     @Override
     public void sendMessage(String line) {
-        try {
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-            writer.print(line );
-        } catch (IOException e) {
-            LOGGER.error("Erreur envoi vers {}", domain, e);
-        }
-    }
-
-    public BufferedReader getReader() throws IOException {
-        return new BufferedReader(
-                new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+        writer.println(line);
     }
 
     @Override
@@ -42,8 +38,12 @@ public class NodeConnectionImpl implements NodeConnection {
         try {
             socket.close();
         } catch (IOException e) {
-            LOGGER.error("Erreur envoi vers {}", domain, e);
+            LOGGER.error("Erreur fermeture du socket {}", domain, e);
         }
+    }
+    @Override
+    public boolean isAlive() {
+        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
     @Override

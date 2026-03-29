@@ -2,7 +2,6 @@ package org.helmo.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.helmo.MessageBuilder;
 import org.helmo.exceptions.HandlerException;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
             handlers.put(command, handler);
         }
 
-        public String execute(String message) throws HandlerException {
+        public void execute(String message) throws HandlerException {
             for (var entry : handlers.entrySet()) {
                 Pattern pattern = entry.getKey();
                 CommandHandler handler = entry.getValue();
@@ -32,11 +31,10 @@ import java.util.regex.Pattern;
                         args.add(matcher.group(i));
                     }
 
-                    return handler.handle(args);
+                    handler.handle(args);
                 }
             }
 
             LOGGER.warn("Command {} not found", message);
-            return MessageBuilder.buildError();
         }
     }

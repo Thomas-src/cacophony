@@ -18,14 +18,15 @@ public class Speaker extends Thread {
 
     public Speaker(SpeakerConfig speakerConfig, CommandMenu commandMenu) {
         this.speakerConfig = speakerConfig;
-        this.commandMenu =commandMenu;
+        this.commandMenu = commandMenu;
     }
+
     @Override
     public void run() {
-        try(MulticastSocket socket =  new MulticastSocket(speakerConfig.multicastPort())) {
+        try (MulticastSocket socket = new MulticastSocket(speakerConfig.multicastPort())) {
             InetAddress group = InetAddress.getByName(speakerConfig.multicastAdress());
             NetworkInterface networkInterface = getValidNetworkInterface(speakerConfig.networkInterface());
-            socket.joinGroup(new java.net.InetSocketAddress(group, speakerConfig.multicastPort()), networkInterface);
+            socket.joinGroup(new InetSocketAddress(group, speakerConfig.multicastPort()), networkInterface);
             groupJoined = true;
             isStarted = true;
 
@@ -36,14 +37,14 @@ public class Speaker extends Thread {
                     socket.receive(packet);
 
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-                      String sourceIp = packet.getAddress().getHostAddress();
+                    String sourceIp = packet.getAddress().getHostAddress();
 
 
-                    LOGGER.info("Input from {}: {}",sourceIp, message);
+                    LOGGER.info("Input from {}: {}", sourceIp, message);
                     commandMenu.execute(message);
 
                 } catch (IOException e) {
-                    LOGGER.error("Le serveur s'est arrêté:",e);
+                    LOGGER.error("Le serveur s'est arrêté:", e);
                 }
             }
 

@@ -1,10 +1,10 @@
-package org.helmo.client;
+package org.helmo.task;
 
+import org.helmo.client.Client;
 import org.helmo.server.ActiveSession;
-import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
 
-public class ClientSession {
+public class ClientSession implements TaskContext {
 
     private final String randomString;
     private Client client;
@@ -12,6 +12,7 @@ public class ClientSession {
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
     private String domain;
+    private ActiveSession activeSession;
 
     public void setClient(Client client) {
         this.client = client;
@@ -21,10 +22,11 @@ public class ClientSession {
         return client;
     }
 
-    public ClientSession(String randomString, WestThread thread, String domain ) {
+    public ClientSession(String randomString, WestThread thread, String domain,ActiveSession activeSession) {
         this.randomString = randomString;
         this.thread = thread;
         this.domain = domain;
+        this.activeSession = activeSession;
     }
 
     public String getRandomString() {
@@ -36,7 +38,7 @@ public class ClientSession {
     }
 
     public boolean setAuthenticate() {
-        return authenticated = ActiveSession.add(getUserFullName(), thread);
+        return authenticated = activeSession.add(getUserFullName(), thread);
     }
 
     public boolean isAuthenticated() {
@@ -53,16 +55,17 @@ public class ClientSession {
 
     public void closeSession() {
         this.shouldKeepOpen = false;
-        ActiveSession.remove(client.getFullName());
+        activeSession.remove(client.getFullName());
     }
-
+    @Override
     public String getDomain() {
         return domain;
     }
-
+    @Override
     public void send(String message) {
         this.thread.send(message);
     }
+
     public boolean verifyChallenge(String clientResponse, String challengeResponse) {
         return client.verifyChallengeResponse(clientResponse, challengeResponse);
     }

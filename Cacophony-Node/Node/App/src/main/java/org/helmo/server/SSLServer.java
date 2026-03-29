@@ -2,7 +2,6 @@ package org.helmo.server;
 
 import org.helmo.Config;
 import org.helmo.Exception.ServerException;
-import org.helmo.handler.CommandMenu;
 import org.helmo.server.threads.TaskThread;
 
 import javax.net.ssl.*;
@@ -18,8 +17,8 @@ import java.security.KeyStore;
  */
 public class SSLServer extends AbstractServer {
 
-    public SSLServer(Config config, TaskThread taskThread) {
-        super(config,  taskThread);
+    public SSLServer(Config config, TaskThread taskThread,ActiveSession activeSession) {
+        super(config,  taskThread, activeSession);
     }
 
     private static String findKeyStoreFile() {

@@ -2,17 +2,10 @@ package org.helmo.handler;
 
 import org.apache.logging.log4j.*;
 import org.helmo.Exception.HandlerException;
-import org.helmo.Exception.UserReaderException;
 import org.helmo.MessageBuilder;
-import org.helmo.client.Client;
-import org.helmo.client.ClientSession;
-import org.helmo.client.HashPassword;
-import org.helmo.repository.IUserRepository;
-import org.helmo.server.ActiveSession;
+import org.helmo.task.ClientSession;
+import org.helmo.task.TaskContext;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public class ResponseChallengeHandler implements CommandHandler {
@@ -22,7 +15,11 @@ public class ResponseChallengeHandler implements CommandHandler {
     }
 
     @Override
-    public String handle(List<String> args, ClientSession session) {
+    public String handle(List<String> args, TaskContext task) throws HandlerException {
+        if (!(task instanceof ClientSession session)) {
+            throw new HandlerException("Task auth nécessite une session client");
+        }
+
         if(session.isAuthenticated()) {
             return MessageBuilder.buildError();
         }

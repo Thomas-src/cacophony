@@ -7,7 +7,7 @@ import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
 import org.helmo.MessageBuilder;
-import org.helmo.client.ClientSession;
+import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
@@ -15,6 +15,7 @@ import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.tag.InternalTag;
 import org.helmo.tag.TagReference;
+import org.helmo.task.TaskContext;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -24,16 +25,22 @@ public class SendHandler implements CommandHandler {
 
     private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
+    private final ActiveSession activeSession;
 
-    public SendHandler(UserManagerService userManagerService, TagManagerService tagManagerService) {
+    public SendHandler(UserManagerService userManagerService, TagManagerService tagManagerService, ActiveSession activeSession) {
         Objects.requireNonNull(userManagerService, "userManagerService is null");
         Objects.requireNonNull(tagManagerService, "tagManagerService is null");
         this.userManagerService = userManagerService;
         this.tagManagerService = tagManagerService;
+        this.activeSession = activeSession;
     }
 
     @Override
-    public String handle(List<String> args, ClientSession session) throws HandlerException {
+    public String handle(List<String> args, TaskContext task) throws HandlerException {
+        if (!(task instanceof ClientSession session)) {
+            throw new HandlerException("Task auth nécessite une session client");
+        }
+
         if (!session.isAuthenticated() || args.isEmpty()) {
             return MessageBuilder.buildError();
         }
@@ -54,7 +61,7 @@ public class SendHandler implements CommandHandler {
         // 2. Pour abonnés locaux appel via WestThread
         String localResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
-            ActiveSession.send(localSubscriber, localResponse);
+            activeSession.send(localSubscriber, localResponse);
         }
         // 3. todo Pour abonnés externes envoie msg au EastThread
 
