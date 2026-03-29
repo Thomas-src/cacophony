@@ -35,6 +35,10 @@ public class MessageBuilder {
         return "USER" + SP + user + NEWLINE;
     }
 
+    public static String buildAdvert(int port,String domain) {
+        return "ADVERT" + SP + port + SP +domain+ NEWLINE;
+    }
+
     // challenge = "CHALLENGE" sp counter sp random_string newline
 
     /**
@@ -147,6 +151,13 @@ public class MessageBuilder {
     public static String buildError(String message) {
         if (message == null || message.isEmpty()) return buildError();
         return "ERROR" + SP + message + NEWLINE;
+    }
+
+    public static String buildPost(String idAtDomain, String fromUserAtDomain, String to, String msg) {
+        if (idAtDomain == null || fromUserAtDomain == null || to == null || msg == null || idAtDomain.isEmpty() || fromUserAtDomain.isEmpty() || to.isEmpty() || msg.isEmpty()) {
+            return buildError();
+        }
+        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg + NEWLINE;
     }
 
     // leave = "LEAVE" newline

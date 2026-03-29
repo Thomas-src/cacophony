@@ -47,6 +47,8 @@ public class Message {
     // advert = "ADVERT" newline
     public static final String ADVERT = "ADVERT" + SP + "("+ PORT + ")" + SP + "("+ DOMAIN+ ")" + NEWLINE;
 
+    // "POST" sp id_at_domain sp user_at_domain sp (user_at_domain / tag_at_domain) sp inner_message newline
+    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+MESSAGE+")"+ NEWLINE;
     // --- COMPILATION DES PATTERNS DES COMMANDES ---
 
     // On ajoute "^" et "$" pour s'assurer que la chaîne correspond exactement à la commande, du début à la fin.
@@ -62,5 +64,5 @@ public class Message {
     public static final Pattern P_CMD_ERROR = Pattern.compile("^" + CMD_ERROR + "$");
     public static final Pattern P_CMD_LEAVE = Pattern.compile("^" + CMD_LEAVE + "$");
     public static final Pattern P_ADVERT = Pattern.compile("^" + ADVERT + "$");
-
+    public static final Pattern P_POST = Pattern.compile("^" + CMD_POST + "$");
 }
