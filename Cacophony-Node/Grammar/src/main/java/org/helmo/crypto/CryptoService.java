@@ -1,8 +1,7 @@
-package org.helmo.security;
+package org.helmo.crypto;
 
-import org.helmo.domain.CryptoProvider;
-import org.helmo.security.exceptions.DecryptionException;
-import org.helmo.security.exceptions.EncryptionException;
+import org.helmo.crypto.exceptions.DecryptionException;
+import org.helmo.crypto.exceptions.EncryptionException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;

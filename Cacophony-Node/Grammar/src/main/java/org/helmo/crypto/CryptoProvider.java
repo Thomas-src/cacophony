@@ -1,4 +1,4 @@
-package org.helmo.domain;
+package org.helmo.crypto;
 
 /**
  * Interface fournissant des opérations cryptographiques pour AES-256 GCM.
@@ -47,7 +47,6 @@ public interface CryptoProvider {
      */
     byte[] generateRandomKey();
 
-    // TODO: Envisager d'ajouter une méthode pour la signature et la vérification de messages.
     // byte[] sign(byte[] message, byte[] privateKey);
     // boolean verify(byte[] message, byte[] signature, byte[] publicKey);
 }

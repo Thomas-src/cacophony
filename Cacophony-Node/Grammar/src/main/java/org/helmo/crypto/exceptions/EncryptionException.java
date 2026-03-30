@@ -1,4 +1,4 @@
-package org.helmo.security.exceptions;
+package org.helmo.crypto.exceptions;
 
 /**
  * Exception levée lorsqu'une erreur se produit lors du chiffrement des données.
