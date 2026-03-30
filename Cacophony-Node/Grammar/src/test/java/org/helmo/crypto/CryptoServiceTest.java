@@ -35,7 +35,7 @@ class CryptoServiceTest {
     }
 
     @Test
-    void testEncryptAndDecryptCycle() throws EncryptionException {
+    void testEncryptAndDecryptCycle() throws EncryptionException, DecryptionException {
         String encrypted = cryptoService.encrypt(message, base64Key);
         assertNotNull(encrypted, "Le message chiffré ne doit pas être nul.");
         assertNotEquals(message, encrypted, "Le message chiffré doit être différent du texte original.");
