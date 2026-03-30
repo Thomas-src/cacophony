@@ -1,4 +1,4 @@
-package org.helmo.security;
+package org.helmo.crypto;
 
 import org.helmo.domain.CryptoProvider;
 import org.helmo.crypto.exceptions.DecryptionException;
