@@ -11,6 +11,7 @@ import org.helmo.task.TypeTask;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +26,8 @@ public class EastThread extends Thread {
     private final Config config;
     private final TaskThread taskThread;
     private final ActiveSession activeSession;
+    private PrintWriter writer;
+    private Socket speakerSocket;
 
     public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession) {
         this.config = config;
@@ -40,11 +43,16 @@ public class EastThread extends Thread {
         try (ServerSocket serverSocket = new ServerSocket(relayPort)) {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket speaker = serverSocket.accept();
-                LOGGER.info("EastThread démarré");
+                LOGGER.info("Speaker connecté");
+
+                this.speakerSocket = speaker;
+                this.writer = new PrintWriter(speaker.getOutputStream(), true);
+
                 // taskThread.addTask(createTask(line));
                 Thread reader = new Thread(() -> read(speaker));
                 reader.setDaemon(true);
                 reader.start();
+
                 // créer un thread de lecture par connexion
 
             }
@@ -68,9 +76,18 @@ public class EastThread extends Thread {
         }
     }
 
-    private void createTask(String line) {
+    public void createTask(String line) {
         String id = UUID.randomUUID().toString();
+        LOGGER.info("createTask: {}", line);
         this.taskThread.addTask(new Task(id, TypeTask.POST, new SpeakerTask(config.currentDomain()), line));
     }
 
+    public void sendUncryptedMessage(String contextstr) {
+        if (writer != null) {
+            LOGGER.info("Envoi au speaker : {}", contextstr);
+            writer.println(contextstr);
+        } else {
+            LOGGER.warn("Aucune connexion au speaker !");
+        }
+    }
 }

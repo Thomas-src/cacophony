@@ -29,6 +29,7 @@ public class CommandMenu {
     }
 
     public void execute(String message) throws HandlerException {
+        LOGGER.info(message);
         if (tryExecute(message)) {
             return;
         }

@@ -2,11 +2,15 @@ package org.helmo.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
 import org.helmo.MessageBuilder;
+import org.helmo.crypto.CryptoService;
+import org.helmo.crypto.exceptions.EncryptionException;
+import org.helmo.server.threads.EastThread;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
 import org.helmo.services.TagManagerService;
@@ -26,13 +30,17 @@ public class SendHandler implements CommandHandler {
     private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
     private final ActiveSession activeSession;
+    private final EastThread eastThread;
+    private final Config config;
 
-    public SendHandler(UserManagerService userManagerService, TagManagerService tagManagerService, ActiveSession activeSession) {
+    public SendHandler(UserManagerService userManagerService, TagManagerService tagManagerService, ActiveSession activeSession, EastThread eastThread, Config config) {
         Objects.requireNonNull(userManagerService, "userManagerService is null");
         Objects.requireNonNull(tagManagerService, "tagManagerService is null");
         this.userManagerService = userManagerService;
         this.tagManagerService = tagManagerService;
         this.activeSession = activeSession;
+        this.eastThread = eastThread;
+        this.config = config;
     }
 
     @Override
@@ -64,9 +72,25 @@ public class SendHandler implements CommandHandler {
             activeSession.send(localSubscriber, localResponse);
         }
         // 3. todo Pour abonnés externes envoie msg au EastThread
+        if (!remoteSubscribers.isEmpty()) {
+            sendPostSubscribers(remoteSubscribers, session, message);
+        }
 
         // Message de retour (optionnel)
         return MessageBuilder.buildOk();
+    }
+
+    private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message) {
+        System.out.println();
+        LOGGER.info("Remote subscribers size : " + remoteSubscribers.size());
+
+        for (String remoteSubscriber : remoteSubscribers) {
+            LOGGER.info(remoteSubscriber);
+            String contextstr = MessageBuilder.buildPost( "1234 " + session.getDomain(), session.getUserFullName(), remoteSubscriber, message);
+
+            eastThread.sendUncryptedMessage(contextstr);
+        }
+        System.out.println();
     }
 
     private List<ITag> extractTags(String message, String actualDomain) throws TagReaderException {
