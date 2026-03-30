@@ -40,7 +40,7 @@ public class CryptoService implements CryptoProvider {
         try {
             byte[] decodedKey = Base64.getDecoder().decode(base64Key);
             if (decodedKey.length != 32) {
-                throw new IllegalArgumentException("Clé AES invalide (doit faire 256 bits)");
+                throw new EncryptionException("Clé AES invalide (doit faire 256 bits)");
             }
             SecretKeySpec key = new SecretKeySpec(decodedKey, "AES");
 

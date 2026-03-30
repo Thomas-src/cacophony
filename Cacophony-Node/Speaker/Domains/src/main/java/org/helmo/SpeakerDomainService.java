@@ -50,15 +50,15 @@ public class SpeakerDomainService implements MessageRouter {
         }
 
         // 3. Déchiffrer 'encryptedMessage' en utilisant la clé AES du domaine source
-        byte[] decryptedMessage = cryptoService.decrypt(encryptedMessage, fromDomain.getAesKey());
+        // byte[] decryptedMessage = cryptoService.decrypt(encryptedMessage, fromDomain.getAesKey());
 
 
         // 4. Valider le contenu du message déchiffré (format, intégrité)
-        validateMessageContent(decryptedMessage);
+       // validateMessageContent(decryptedMessage);
 
         // 5. Transformer ou logger le message si nécessaire pour le routage
         // TODO: La transformation du message doit être définie. Pour l'instant, c'est une simple concaténation.
-        String transformedMessage = "[Transformed] " + new String(decryptedMessage, StandardCharsets.UTF_8);
+       // String transformedMessage = "[Transformed] " + new String(decryptedMessage, StandardCharsets.UTF_8);
 
         // 6. Chiffrer le message avec la clé AES du domaine destinataire (chiffrement symétrique efficace)
 
@@ -72,7 +72,7 @@ public class SpeakerDomainService implements MessageRouter {
         // Le message pourrait être mis en file d'attente jusqu'à ce que l'adresse soit découverte via un message ADVERT.
 
         // 8. Envoyer le message via le client réseau approprié
-        sendMessage(destinationAddress, encryptedTransformedMessage);
+       // sendMessage(destinationAddress, encryptedTransformedMessage);
     }
 
     private void sendMessage(String destinationAddress, byte[] encryptedTransformedMessage) {

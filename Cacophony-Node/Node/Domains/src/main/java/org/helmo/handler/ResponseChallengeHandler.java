@@ -11,9 +11,6 @@ import java.util.List;
 public class ResponseChallengeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public ResponseChallengeHandler() {
-    }
-
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof ClientSession session)) {

@@ -7,6 +7,9 @@ public class DecryptionException extends Exception {
     public DecryptionException(String message, Throwable cause) {
         super(message, cause);
     }
+    public DecryptionException(String message) {
+        super(message);
+    }
 
     // TODO: Envisager d'ajouter des codes d'erreur pour distinguer les différents types d'erreurs de déchiffrement (ex: clé incorrecte, données corrompues, etc.).
 }
