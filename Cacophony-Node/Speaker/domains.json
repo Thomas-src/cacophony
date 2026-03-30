@@ -3,8 +3,8 @@
     {
       "domain": "node1.swilabus.xyz",
       "base64AES": "448H+AuQmuulKfleNffeTIrHbpEPdBptABd88gSRMi4=",
-      "messages": ["EdSjJKcriPiHS061IENtuPhbz2F8JAeS8hqLD2hLY1H1iEkvEnwdTNmIPFWNl2HMbtjhkRj0UX/uXoxmtFBtG5BjBKbbMs1LhMimCHfoveiPl/TdnEMYagczGpD637XYDahRLBSCGA9TFeqjIA1WzeV570Canz6p5H2cGzLXcrZ7em0kHGKACSwPZ50ncLqqK2vw9lC5"
-      ]},
+      "messages": []
+    },
     {
       "domain": "node2.swilabus.xyz",
       "base64AES": "dBVpplZPqK9k8KmCv/HodCkK1MnOYJ16QFKXjTGejq8=",
