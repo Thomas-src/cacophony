@@ -6,8 +6,12 @@ import org.helmo.crypto.exceptions.EncryptionException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 /**
  * Service qui implémente l'interface CryptoProvider pour fournir des fonctionnalités
@@ -17,77 +21,50 @@ import java.security.SecureRandom;
  * des sorties même avec des données en entrée identiques.
  */
 public class CryptoService implements CryptoProvider {
-    private static final String ALGORITHM = "AES/GCM/NoPadding";
-    private static final int IV_LENGTH_BYTES = 12; // 96 bits, recommandé pour GCM
-    private static final int TAG_LENGTH_BITS = 128;
+    private static final String SHA_CRYPT = "SHA-256";
+    private static final String AES_ALGORITHM = "AES";
+    private static final String AES_ALGORITHM_GCM = "AES/GCM/NoPadding";
 
+    private static final Integer IV_LENGTH_ENCRYPT = 12;
+    private static final Integer TAG_LENGTH_ENCRYPT = 16;
 
+    /**
+     * Code de <a href="https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409">johnvazna (Medium.com)</a>
+     *
+     * @param plainText les données en clair à chiffrer ; ne doit pas être {@code null}
+     * @return
+     * @throws EncryptionException
+     */
     @Override
-    public byte[] encrypt(byte[] plaintext, byte[] key) {
-        // TODO: Valider que la clé a la bonne longueur (32 octets pour AES-256).
+    public String encrypt(String plainText, String base64Key) throws EncryptionException {
         try {
-            // 1. Générer un IV (Initialization Vector) aléatoire de 12 octets
-            final byte[] iv = new byte[IV_LENGTH_BYTES];
-            // TODO: Utiliser une seule instance de SecureRandom pour l'application pour de meilleures performances.
-            SecureRandom random = new SecureRandom();
-            random.nextBytes(iv);
+            byte[] decodedKey = Base64.getDecoder().decode(base64Key);
+            if (decodedKey.length != 32) {
+                throw new IllegalArgumentException("Clé AES invalide (doit faire 256 bits)");
+            }
+            SecretKeySpec key = new SecretKeySpec(decodedKey, "AES");
 
-            // 2. Initialiser le Cipher avec AES/GCM/NoPadding
-            final Cipher cipher = Cipher.getInstance(ALGORITHM);
-            final SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-            final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
-            cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
+            byte[] iv = new byte[IV_LENGTH_ENCRYPT];
+            SecureRandom secureRandom = new SecureRandom();
+            secureRandom.nextBytes(iv);
+            Cipher cipher = Cipher.getInstance(AES_ALGORITHM_GCM);
+            GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_ENCRYPT * 8, iv);
+            cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
 
-            // 3. Effectuer le chiffrement
-            final byte[] cipherText = cipher.doFinal(plaintext);
+            byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
 
-            // 4. Concaténer l'IV et le texte chiffré pour le retour
-            final byte[] encryptedData = new byte[iv.length + cipherText.length];
-            System.arraycopy(iv, 0, encryptedData, 0, iv.length);
-            System.arraycopy(cipherText, 0, encryptedData, iv.length, cipherText.length);
+            byte[] combinedIvAndCipherText = new byte[iv.length + encryptedBytes.length];
+            System.arraycopy(iv, 0, combinedIvAndCipherText, 0, iv.length);
+            System.arraycopy(encryptedBytes, 0, combinedIvAndCipherText, iv.length, encryptedBytes.length);
 
-            return encryptedData;
+            return Base64.getEncoder().encodeToString(combinedIvAndCipherText);
         } catch (GeneralSecurityException e) {
-            // TODO: Logger l'exception pour le débogage.
-            throw new EncryptionException("Erreur de sécurité lors du chiffrement des données", e);
+            throw new EncryptionException("Encryption Exception", e);
         }
     }
 
     @Override
     public byte[] decrypt(byte[] encryptedData, byte[] key) {
-        // TODO: Valider que la clé a la bonne longueur (32 octets pour AES-256).
-        try {
-            if (encryptedData == null || encryptedData.length < IV_LENGTH_BYTES) {
-                throw new DecryptionException("Données chiffrées invalides : taille insuffisante pour contenir l'IV.", null);
-            }
-            // 1. Extraire l'IV du début du tableau de bytes
-            final byte[] iv = new byte[IV_LENGTH_BYTES];
-            System.arraycopy(encryptedData, 0, iv, 0, iv.length);
-
-            // Le reste est le texte chiffré
-            final byte[] cipherText = new byte[encryptedData.length - iv.length];
-            System.arraycopy(encryptedData, iv.length, cipherText, 0, cipherText.length);
-
-            // 2. Initialiser le Cipher pour le déchiffrement
-            final Cipher cipher = Cipher.getInstance(ALGORITHM);
-            final SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
-            final GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(TAG_LENGTH_BITS, iv);
-            cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
-
-            // 3. Effectuer le déchiffrement
-            return cipher.doFinal(cipherText);
-        } catch (GeneralSecurityException e) {
-            // TODO: Logger l'exception pour le débogage.
-            throw new DecryptionException("Erreur de sécurité lors du déchiffrement. La clé est peut-être incorrecte ou les données sont corrompues.", e);
-        }
-    }
-
-    @Override
-    public byte[] generateRandomKey() {
-        // Une clé AES-256 a une longueur de 32 octets (256 bits)
-        byte[] key = new byte[32];
-        // TODO: Utiliser une seule instance de SecureRandom pour l'application.
-        new SecureRandom().nextBytes(key);
-        return key;
+        return new byte[0];
     }
 }

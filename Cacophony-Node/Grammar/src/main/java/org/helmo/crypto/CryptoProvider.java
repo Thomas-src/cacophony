@@ -13,15 +13,14 @@ public interface CryptoProvider {
      * en utilisant l'algorithme AES-256 en mode GCM.
      *
      * @param plaintext les données en clair à chiffrer ; ne doit pas être {@code null}
-     * @param key la clé de chiffrement symétrique, généralement une clé de 256 bits
-     *            (32 octets) adaptée à AES-256 GCM ; ne doit pas être {@code null}
+     *
      * @return un tableau d'octets contenant les données chiffrées, incluant
      *         éventuellement le vecteur d'initialisation (IV) et le tag d'authentification
      * @throws IllegalArgumentException si {@code plaintext} ou {@code key} est {@code null}
      *                                  ou si la taille de la clé n'est pas valide pour AES-256
      * @throws RuntimeException si une erreur se produit lors de l'opération de chiffrement
      */
-    byte[] encrypt(byte[] plaintext, byte[] key);
+    String encrypt(String plaintext,String base64Key) throws Exception;
 
     /**
      * Déchiffre les données fournies à l'aide de la clé spécifiée
@@ -39,14 +38,4 @@ public interface CryptoProvider {
      */
     byte[] decrypt(byte[] encryptedData, byte[] key);
 
-
-    /**
-     * Génère une clé symétrique aléatoire pour AES-256.
-     *
-     * @return une clé symétrique aléatoire de 256 bits (32 octets) adaptée à AES-256 GCM
-     */
-    byte[] generateRandomKey();
-
-    // byte[] sign(byte[] message, byte[] privateKey);
-    // boolean verify(byte[] message, byte[] signature, byte[] publicKey);
 }

@@ -3,7 +3,7 @@ package org.helmo.crypto.exceptions;
 /**
  * Exception levée lorsqu'une erreur se produit lors du déchiffrement des données.
  */
-public class DecryptionException extends RuntimeException {
+public class DecryptionException extends Exception {
     public DecryptionException(String message, Throwable cause) {
         super(message, cause);
     }

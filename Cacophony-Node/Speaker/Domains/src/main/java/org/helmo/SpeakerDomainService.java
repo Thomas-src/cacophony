@@ -61,10 +61,10 @@ public class SpeakerDomainService implements MessageRouter {
         String transformedMessage = "[Transformed] " + new String(decryptedMessage, StandardCharsets.UTF_8);
 
         // 6. Chiffrer le message avec la clé AES du domaine destinataire (chiffrement symétrique efficace)
-        byte[] encryptedTransformedMessage = cryptoService.encrypt(
-                transformedMessage.getBytes(StandardCharsets.UTF_8),
-                toDomain.getAesKey()
-        );
+
+        // String encryptedTransformedMessage = cryptoService.encrypt(transformedMessage);
+
+
 
         // 7. Identifier l'adresse du Node destinataire
         String destinationAddress = toDomain.getName();

@@ -17,8 +17,9 @@ public class Program {
         try {
             JsonDomainRepository domainRepository = new JsonDomainRepository();
             JsonConfigReaderSpeaker configReader = new JsonConfigReaderSpeaker();
+            SpeakerConfig speakerConfig = configReader.getConfig();
 
-            CryptoService crypto = new CryptoService();
+            CryptoService crypto = new CryptoService(speakerConfig.);
             DomainService domainService = new DomainService(domainRepository);
 
             SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto, domainService);
@@ -26,7 +27,7 @@ public class Program {
             CommandMenu menu = new CommandMenu(crypto, connector);
             menu.add(Message.P_ADVERT, new AdvertHandler(connector,domainService));
 
-            SpeakerConfig speakerConfig = configReader.getConfig();
+
             LOGGER.info(speakerConfig.toString());
 
             Speaker speaker = new Speaker(speakerConfig, menu);
