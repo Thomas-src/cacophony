@@ -46,11 +46,6 @@ String encrypt(String plaintext, String key) throws IllegalArgumentException, En
  */
     String decypt(String encryptedData, String key) throws IllegalArgumentException, DecryptionException;
 
-    /**
-     * Génère une clé symétrique aléatoire pour AES-256.
-     *
-     * @return une clé symétrique aléatoire de 256 bits (32 octets) adaptée à AES-256 GCM
-     */
     byte[] generateRandomKey();
 
     // byte[] sign(byte[] message, byte[] privateKey);
