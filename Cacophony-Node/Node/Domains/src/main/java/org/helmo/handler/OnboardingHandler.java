@@ -36,7 +36,7 @@ public class OnboardingHandler implements CommandHandler {
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         LOGGER.info("New Onboarding request received with args: {}", args);
         if (!(task instanceof ClientSession session)) {
-            throw new HandlerException("Task auth nécessite une session client");
+            throw new HandlerException("Task onboarding nécessite une session client");
         }
 
         if (session.isAuthenticated()) {

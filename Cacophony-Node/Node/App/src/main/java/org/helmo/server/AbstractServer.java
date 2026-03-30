@@ -18,11 +18,11 @@ public abstract class AbstractServer implements IServer {
     private final List<WestThread> westThreads = new ArrayList<>();
 
     private final Config config;
+    private final ActiveSession activeSession;
     private final TaskThread taskThread;
     private boolean stop = false;
     private boolean isStarted = false;
     private ServerSocket listener;
-    private ActiveSession activeSession;
 
     public AbstractServer(Config config, TaskThread taskThread, ActiveSession activeSession) {
         this.config = config;

@@ -38,7 +38,7 @@ public class SendHandler implements CommandHandler {
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof ClientSession session)) {
-            throw new HandlerException("Task auth nécessite une session client");
+            throw new HandlerException("Task send nécessite une session client");
         }
 
         if (!session.isAuthenticated() || args.isEmpty()) {

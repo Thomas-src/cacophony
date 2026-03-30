@@ -17,7 +17,7 @@ public class ResponseChallengeHandler implements CommandHandler {
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof ClientSession session)) {
-            throw new HandlerException("Task auth nécessite une session client");
+            throw new HandlerException("Task response nécessite une session client");
         }
 
         if(session.isAuthenticated()) {

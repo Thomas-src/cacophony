@@ -13,7 +13,7 @@ public class PostHandler implements CommandHandler {
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof SpeakerTask session)) {
-            throw new HandlerException("AUTHMSG requires a client session");
+            throw new HandlerException("Task post requires a speaker session");
         }
 
         return null;
