@@ -1,16 +1,5 @@
 package org.helmo;
 
-import org.helmo.domain.CryptoProvider;
-import org.helmo.domain.Domain;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 class SpeakerDomainServiceTest {
 
     private SpeakerDomainService domainService;

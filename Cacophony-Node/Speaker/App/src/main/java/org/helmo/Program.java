@@ -2,17 +2,11 @@ package org.helmo;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.helmo.domain.Domain;
 import org.helmo.domain.DomainService;
 import org.helmo.handler.AdvertHandler;
 import org.helmo.handler.CommandMenu;
 import org.helmo.network.SpeakerTcpConnector;
-import org.helmo.repository.IDomainRepository;
-import org.helmo.security.CryptoService;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.helmo.crypto.CryptoService;
 
 public class Program {
     private static final Logger LOGGER = LogManager.getLogger();

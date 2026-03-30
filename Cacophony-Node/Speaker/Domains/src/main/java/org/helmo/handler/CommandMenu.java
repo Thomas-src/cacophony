@@ -2,7 +2,7 @@ package org.helmo.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.helmo.domain.CryptoProvider;
+import org.helmo.crypto.CryptoProvider;
 import org.helmo.exceptions.HandlerException;
 import org.helmo.network.SpeakerTcpConnector;
 

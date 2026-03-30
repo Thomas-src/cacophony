@@ -2,7 +2,7 @@ package org.helmo;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
-import org.helmo.domain.CryptoProvider;
+import org.helmo.crypto.CryptoProvider;
 import org.helmo.domain.Domain;
 import org.helmo.domain.MessageRouter;
 import org.helmo.dto.DecryptedMessageDto;
