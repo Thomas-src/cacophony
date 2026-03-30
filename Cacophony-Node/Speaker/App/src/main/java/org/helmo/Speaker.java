@@ -37,10 +37,7 @@ public class Speaker extends Thread {
                     socket.receive(packet);
 
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
-                    String sourceIp = packet.getAddress().getHostAddress();
 
-
-                    LOGGER.info("Input from {}: {}", sourceIp, message);
                     commandMenu.execute(message);
 
                 } catch (IOException e) {

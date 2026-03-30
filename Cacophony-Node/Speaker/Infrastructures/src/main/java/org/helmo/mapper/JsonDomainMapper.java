@@ -4,7 +4,9 @@ import org.helmo.domain.Domain;
 import org.helmo.dto.DomainDto;
 import org.helmo.dto.DomainsDto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Classe utilitaire pour mapper les objets DomainDto vers des objets Domain.
@@ -20,7 +22,8 @@ public class JsonDomainMapper {
     public static Domain DomainFromDto(DomainDto dto) {
         return new Domain(
                 dto.domain(),
-                dto.base64AES()
+                dto.base64AES(),
+                dto.messages()
         );
     }
 
@@ -33,7 +36,23 @@ public class JsonDomainMapper {
     public static List<Domain> mapToDomains(DomainsDto dtos) {
         List<DomainDto> domainsDtos = dtos == null ? List.of() : dtos.domains();
         return domainsDtos.stream().map(JsonDomainMapper::DomainFromDto).toList();
+    }
 
+    public static DomainsDto updateMessages(DomainsDto dto, String domain, List<String> messages) {
+        Objects.requireNonNull(dto);
 
+        List<DomainDto> updated = dto.domains().stream()
+                .map(d -> {
+                    if (!d.domain().equals(domain)) return d;
+
+                    List<String> merged = new ArrayList<>();
+                    if (d.messages() != null) merged.addAll(d.messages());
+                    merged.addAll(messages);
+
+                    return new DomainDto(d.domain(), d.base64AES(), merged);
+                })
+                .toList();
+
+        return new DomainsDto(updated);
     }
 }

@@ -20,12 +20,12 @@ public class Program {
             SpeakerConfig speakerConfig = configReader.getConfig();
 
             CryptoService crypto = new CryptoService();
-            DomainService domainService = new DomainService(domainRepository);
+            DomainService domainService = new DomainService(domainRepository, crypto, speakerConfig);
 
-            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto, domainService);
+            SpeakerTcpConnector connector = new SpeakerTcpConnector();
 
             CommandMenu menu = new CommandMenu(crypto, connector);
-            menu.add(Message.P_ADVERT, new AdvertHandler(connector,domainService));
+            menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
 
 
             LOGGER.info(speakerConfig.toString());

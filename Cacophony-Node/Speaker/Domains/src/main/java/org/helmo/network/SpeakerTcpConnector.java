@@ -8,9 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
-import org.helmo.domain.DomainService;
 import org.helmo.network.impl.NodeConnectionImpl;
-import org.helmo.crypto.CryptoService;
 
 // todo Utile ? je pense que le traffic est seulement en udp
 
@@ -21,13 +19,6 @@ import org.helmo.crypto.CryptoService;
 public class SpeakerTcpConnector {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<String, NodeConnection> connections = new ConcurrentHashMap<>();
-    private final CryptoService cryptoService;
-    private final DomainService domainService;
-
-    public SpeakerTcpConnector(CryptoService cryptoService, DomainService domainService) {
-        this.cryptoService = cryptoService;
-        this.domainService = domainService;
-    }
 
     /**
      * Ouvre une connexion TCP avec un Node.

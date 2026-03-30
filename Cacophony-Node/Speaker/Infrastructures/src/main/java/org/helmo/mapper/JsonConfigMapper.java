@@ -12,7 +12,8 @@ public class JsonConfigMapper {
         return new SpeakerConfig(
                 dto.multicastAddress(),
                 dto.multicastPort(),
-                dto.networkInterface()
+                dto.networkInterface(),
+                dto.aesKey()
         );
     }
 }

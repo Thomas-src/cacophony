@@ -3,6 +3,8 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.crypto.CryptoService;
+import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.server.ActiveSession;
 import org.helmo.task.SpeakerTask;
 import org.helmo.task.Task;
@@ -28,11 +30,13 @@ public class EastThread extends Thread {
     private final ActiveSession activeSession;
     private PrintWriter writer;
     private Socket speakerSocket;
+    private final CryptoService cryptoService;
 
-    public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession) {
+    public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession, CryptoService cryptoService) {
         this.config = config;
         this.taskThread = taskThread;
         this.activeSession = activeSession;
+        this.cryptoService = cryptoService;
         setName("EastThread");
     }
 
@@ -48,12 +52,9 @@ public class EastThread extends Thread {
                 this.speakerSocket = speaker;
                 this.writer = new PrintWriter(speaker.getOutputStream(), true);
 
-                // taskThread.addTask(createTask(line));
                 Thread reader = new Thread(() -> read(speaker));
                 reader.setDaemon(true);
                 reader.start();
-
-                // créer un thread de lecture par connexion
 
             }
         } catch (IOException e) {
@@ -67,8 +68,17 @@ public class EastThread extends Thread {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
-                    LOGGER.info("POST reçu: {}", line);
-                    createTask(line);
+                    LOGGER.info("Message chiffré reçu: {}", line);
+                    LOGGER.info("Longueur message reçu: {}", line.length());
+                    try {
+                        LOGGER.info("Msg avec clé: {}", config.base64AES());
+                        String messageDecrypted = cryptoService.decrypt(line, config.base64AES());
+
+                        LOGGER.info("Message déchiffré: {}", messageDecrypted);
+                        createTask(messageDecrypted);
+                    } catch (DecryptionException e) {
+                        LOGGER.error("Échec du déchiffrement: {}", e.getMessage());
+                    }
                 }
             }
         } catch (IOException e) {

@@ -25,7 +25,11 @@ public class CryptoService implements CryptoProvider {
     private static final Integer IV_LENGTH_ENCRYPT = 12;
     private static final Integer TAG_LENGTH_ENCRYPT = 16;
 
-
+    /**
+     * Code de <a href="https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409">johnvazna (Medium.com)</a>
+     *
+     * @param plainText les données en clair à chiffrer ; ne doit pas être {@code null}
+     */
     @Override
     public String encrypt(String plainText, String base64Key) throws EncryptionException {
         try {
@@ -54,7 +58,11 @@ public class CryptoService implements CryptoProvider {
         }
     }
 
-
+    /**
+     * Code de <a href="https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409">johnvazna (Medium.com)</a>
+     *
+     * @param encryptedData les données à déchiffrer ; ne doit pas être {@code null}
+     */
     @Override
     public String decrypt(String encryptedData, String base64Key) throws DecryptionException {
         try {

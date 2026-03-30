@@ -1,13 +1,14 @@
 package org.helmo;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
-import org.helmo.dto.DomainDto;
 import org.helmo.dto.DomainsDto;
 import org.helmo.exceptions.DomainReaderException;
+import org.helmo.exceptions.DomainSaveException;
 import org.helmo.mapper.JsonDomainMapper;
 import org.helmo.repository.IDomainRepository;
 
@@ -70,7 +71,7 @@ public class JsonDomainRepository implements IDomainRepository {
                 if (dto == null || dto.domains() == null || dto.domains().isEmpty()) {
                     throw new DomainReaderException("Invalid or empty domains configuration");
                 }
-               
+
                 return JsonDomainMapper.mapToDomains(dto);
             } catch (IOException e) {
                 throw new DomainReaderException("Failed to read domains file: " + configPath);
@@ -80,6 +81,34 @@ public class JsonDomainRepository implements IDomainRepository {
         } catch (IOException e) {
             LOGGER.error("Failed to read domains file: {}", configPath, e);
             throw new DomainReaderException("Failed to initialize domains storage");
+        }
+    }
+
+    @Override
+    public void saveMessages(String domain, List<String> messages) throws DomainSaveException {
+        try {
+            ensureStorage();
+
+            DomainsDto dto;
+            try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                dto = gson.fromJson(reader, DomainsDto.class);
+            }
+
+            if (dto == null || dto.domains() == null) {
+                throw new DomainSaveException("Fichier domains invalide");
+            }
+            Gson exporter = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+
+            DomainsDto updatedDto = JsonDomainMapper.updateMessages(dto, domain, messages);
+
+            try (var writer = Files.newBufferedWriter(configPath)) {
+                exporter.toJson(updatedDto, writer);
+            }
+
+        } catch (IOException e) {
+            throw new DomainSaveException("Impossible de sauvegarder les messages du domaine : " + domain);
         }
     }
 
@@ -98,8 +127,8 @@ public class JsonDomainRepository implements IDomainRepository {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(configPath, gson.toJson(List.of()));
-            
+            Files.writeString(configPath, gson.toJson(new DomainsDto(List.of())));
+
         }
     }
 

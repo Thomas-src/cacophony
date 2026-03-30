@@ -18,7 +18,11 @@ public class PostHandler implements CommandHandler{
     @Override
     public void handle(List<String> args) throws HandlerException {
         LOGGER.info(args.toString());
-    // todo
-        // 1. décrypter le message avec la clé node1 puis envoyer vers le node2 crypté avec sa clé
+    // todo soit subscribe soit message
+        // résoudre localement si le message a été traité (id)
+        // Message
+        // résoudre tous les abonnements du message (locaux et distants des tags locaux) et locaux des users
+        // Subscribe
+        // ajouter dans le user ou dans le tag
     }
 }

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.ConfigReaderException;
 import org.helmo.Exception.ServerException;
+import org.helmo.crypto.CryptoService;
 import org.helmo.handler.*;
 import org.helmo.handler.speaker.PostHandler;
 import org.helmo.repository.IConfigReaderRepository;
@@ -36,19 +37,24 @@ public class Program {
                 ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);
                 TagManagerService tagManagerService = new TagManagerService(tagRepository);
 
+                CryptoService cryptoService = new CryptoService();
+
                 CommandMenu menu = new CommandMenu();
+                AdvertThread advertThread = new AdvertThread(config);
 
                 TaskThread taskthread = new TaskThread(menu);
-                AdvertThread advertThread = new AdvertThread(config);
-                EastThread eastThread= new EastThread(config, taskthread, activeSession);
+                EastThread eastThread= new EastThread(config, taskthread, activeSession,cryptoService);
+
+                SendHandler sendHandler = new SendHandler(userManagerService, tagManagerService, activeSession, eastThread, config);
+                SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService);
 
                 menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
                 menu.add(Message.P_CMD_USER, new AuthentificateHandler(userManagerService));
-                menu.add(Message.P_CMD_SEND, new SendHandler(userManagerService, tagManagerService, activeSession, eastThread, config));
-                menu.add(Message.P_CMD_SUBSCRIBE, new SubscribeHandler(userManagerService, tagManagerService));
+                menu.add(Message.P_CMD_SEND, sendHandler);
+                menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
                 menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
                 menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
-                menu.add(Message.P_POST, new PostHandler());
+                menu.add(Message.P_POST, new PostHandler(activeSession, sendHandler, subscribeHandler));
 
                 taskthread.start();
                 advertThread.start();
