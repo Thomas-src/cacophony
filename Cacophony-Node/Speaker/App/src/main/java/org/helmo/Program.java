@@ -19,7 +19,7 @@ public class Program {
             JsonConfigReaderSpeaker configReader = new JsonConfigReaderSpeaker();
             SpeakerConfig speakerConfig = configReader.getConfig();
 
-            CryptoService crypto = new CryptoService(speakerConfig.);
+            CryptoService crypto = new CryptoService();
             DomainService domainService = new DomainService(domainRepository);
 
             SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto, domainService);
