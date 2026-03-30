@@ -3,9 +3,11 @@ package org.helmo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
+import org.helmo.domain.DomainService;
 import org.helmo.handler.AdvertHandler;
 import org.helmo.handler.CommandMenu;
 import org.helmo.network.SpeakerTcpConnector;
+import org.helmo.repository.IDomainRepository;
 import org.helmo.security.CryptoService;
 
 import java.util.List;
@@ -20,18 +22,15 @@ public class Program {
         // todo ajouter post msg
         try {
             JsonDomainRepository domainRepository = new JsonDomainRepository();
-
-            List<Domain> domainList = domainRepository.getDomains();
-            LOGGER.info("{} domaines", domainList.size());
-            Map<String, Domain> domainMap = domainList.stream().collect(Collectors.toMap(Domain::getName, d -> d));
-
-
             JsonConfigReaderSpeaker configReader = new JsonConfigReaderSpeaker();
-            CryptoService crypto = new CryptoService();
-            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto);
 
-            CommandMenu menu = new CommandMenu();
-            menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainMap));
+            CryptoService crypto = new CryptoService();
+            DomainService domainService = new DomainService(domainRepository);
+
+            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto, domainService);
+
+            CommandMenu menu = new CommandMenu(crypto, connector);
+            menu.add(Message.P_ADVERT, new AdvertHandler(connector,domainService));
 
             SpeakerConfig speakerConfig = configReader.getConfig();
             LOGGER.info(speakerConfig.toString());

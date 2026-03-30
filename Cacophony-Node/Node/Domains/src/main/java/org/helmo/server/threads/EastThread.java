@@ -59,12 +59,12 @@ public class EastThread extends Thread {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
-                    LOGGER.info("[ET] POST reçu: {}", line);
+                    LOGGER.info("POST reçu: {}", line);
                     createTask(line);
                 }
             }
         } catch (IOException e) {
-            LOGGER.info("[ET] Speaker déconnecté");
+            LOGGER.info("Speaker déconnecté");
         }
     }
 

@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.domain.Domain;
 import org.helmo.network.NodeConnection;
 
 /**
@@ -14,11 +15,11 @@ import org.helmo.network.NodeConnection;
 public class NodeConnectionImpl implements NodeConnection {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final String domain;
+    private final Domain domain;
     private final Socket socket;
     private PrintWriter writer;
 
-    public NodeConnectionImpl(String domain, Socket socket) throws IOException {
+    public NodeConnectionImpl(Domain domain, Socket socket) throws IOException {
         this.domain = domain;
         this.socket = socket;
         try {
@@ -48,6 +49,6 @@ public class NodeConnectionImpl implements NodeConnection {
 
     @Override
     public String getDomain() {
-        return domain;
+        return domain.getName();
     }
 }
