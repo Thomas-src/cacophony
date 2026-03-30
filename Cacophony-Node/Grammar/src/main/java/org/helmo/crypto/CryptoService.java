@@ -60,15 +60,16 @@ public class CryptoService implements CryptoProvider {
         try {
             byte[] decodedKey = Base64.getDecoder().decode(base64Key);
             if (decodedKey.length != 32) {
-                throw new IllegalArgumentException("Clé AES invalide (doit faire 256 bits)");
+                throw new DecryptionException("Clé AES invalide (doit faire 256 bits)");
             }
             SecretKeySpec key = new SecretKeySpec(decodedKey, "AES");
 
+            byte[] decodedCipherText = Base64.getDecoder().decode(encryptedData);
             // Extract IV and encrypted text
             byte[] iv = new byte[IV_LENGTH_ENCRYPT];
-            System.arraycopy(decodedKey, 0, iv, 0, iv.length);
-            byte[] encryptedText = new byte[decodedKey.length - IV_LENGTH_ENCRYPT];
-            System.arraycopy(decodedKey, IV_LENGTH_ENCRYPT, encryptedText, 0, encryptedText.length);
+            System.arraycopy(decodedCipherText, 0, iv, 0, iv.length);
+            byte[] encryptedText = new byte[decodedCipherText.length - IV_LENGTH_ENCRYPT];
+            System.arraycopy(decodedCipherText, IV_LENGTH_ENCRYPT, encryptedText, 0, encryptedText.length);
 
             // Initialize cipher in AES-GCM mode
             GCMParameterSpec gcmSpec = new GCMParameterSpec(TAG_LENGTH_ENCRYPT * 8, iv);

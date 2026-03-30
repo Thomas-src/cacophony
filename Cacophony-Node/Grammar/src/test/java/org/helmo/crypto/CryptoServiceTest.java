@@ -47,7 +47,9 @@ class CryptoServiceTest {
     @Test
     void testEncryptRandomness() throws EncryptionException {
         String encrypted1 = cryptoService.encrypt(message, base64Key);
+        System.out.println(encrypted1);
         String encrypted2 = cryptoService.encrypt(message, base64Key);
+        System.out.println(encrypted2);
         assertNotEquals(encrypted1, encrypted2, "Deux chiffrements du même message doivent être différents grâce à l'IV.");
     }
 
