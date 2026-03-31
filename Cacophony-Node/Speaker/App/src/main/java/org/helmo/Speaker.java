@@ -3,6 +3,7 @@ package org.helmo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.handler.CommandMenu;
+import org.helmo.network.SpeakerTcpConnector;
 
 import java.io.IOException;
 import java.net.*;
@@ -12,13 +13,15 @@ import java.util.Enumeration;
 public class Speaker extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
     private final SpeakerConfig speakerConfig;
+    private final SpeakerTcpConnector speakerTcpConnector;
     private boolean isStarted = false;
     private boolean groupJoined = false;
     private final CommandMenu commandMenu;
 
-    public Speaker(SpeakerConfig speakerConfig, CommandMenu commandMenu) {
+    public Speaker(SpeakerConfig speakerConfig, CommandMenu commandMenu, SpeakerTcpConnector connector) {
         this.speakerConfig = speakerConfig;
         this.commandMenu = commandMenu;
+        this.speakerTcpConnector = connector;
     }
 
     @Override
@@ -35,6 +38,11 @@ public class Speaker extends Thread {
                     byte[] buffer = new byte[1024];
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
+
+                    var node = speakerTcpConnector.getNodeConnection();
+                    if (speakerTcpConnector.getNodeConnection() != null) {
+                        node.startReader();
+                    }
 
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                     String sourceIp = packet.getAddress().getHostAddress();

@@ -31,7 +31,7 @@ public class Program {
 
             LOGGER.info(speakerConfig.toString());
 
-            Speaker speaker = new Speaker(speakerConfig, menu);
+            Speaker speaker = new Speaker(speakerConfig, menu, connector);
             speaker.start();
         } catch (Exception e) {
             LOGGER.error("Erreur lors du démarrage du programme", e);
