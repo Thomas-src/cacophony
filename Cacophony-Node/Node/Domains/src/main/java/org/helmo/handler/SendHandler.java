@@ -26,6 +26,9 @@ import org.helmo.task.TaskContext;
 import java.util.*;
 import java.util.regex.Matcher;
 
+/**
+ * Gère l'envoi de messages d'un utilisateur vers ses abonnés locaux et distants.
+ */
 public class SendHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -34,6 +37,13 @@ public class SendHandler implements CommandHandler {
     private final EastThread eastThread;
     private final Config config;
 
+    /**
+     * Initialise le gestionnaire d'envoi.
+     * @param subscriberService Service pour récupérer les abonnés.
+     * @param activeSession Gestionnaire des sessions actives locales.
+     * @param eastThread Thread gérant les communications sortantes vers d'autres domaines.
+     * @param config Configuration du noeud.
+     */
     public SendHandler(SubscriberService subscriberService, ActiveSession activeSession, EastThread eastThread, Config config) {
         Objects.requireNonNull(subscriberService, "userManagerService is null");
         this.subscriberService = subscriberService;
@@ -71,6 +81,12 @@ public class SendHandler implements CommandHandler {
         }
     }
 
+    /**
+     * Envoie le message aux abonnés présents sur le même domaine.
+     * @param localSubscribers Liste des noms d'utilisateurs locaux.
+     * @param session Session de l'expéditeur.
+     * @param message Contenu du message.
+     */
     private void sendToLocal(Set<String> localSubscribers, ClientSession session, String message ) {
         String localResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
@@ -78,6 +94,12 @@ public class SendHandler implements CommandHandler {
         }
     }
 
+    /**
+     * Envoie le message aux abonnés situés sur des domaines distants via le EastThread.
+     * @param remoteSubscribers Liste des identifiants complets des abonnés distants.
+     * @param session Session de l'expéditeur.
+     * @param message Contenu du message.
+     */
     private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message) {
         System.out.println();
         LOGGER.info("Remote subscribers size : " + remoteSubscribers.size());

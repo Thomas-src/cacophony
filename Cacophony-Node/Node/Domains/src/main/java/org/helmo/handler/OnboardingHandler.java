@@ -16,11 +16,18 @@ import org.helmo.task.TaskContext;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Gère le processus d'inscription (onboarding) des nouveaux utilisateurs.
+ */
 public class OnboardingHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     private final UserManagerService userManagerService;
 
+    /**
+     * Initialise le gestionnaire d'inscription avec le service de gestion des utilisateurs.
+     *
+     * @param userManagerService
+     */
     public OnboardingHandler(UserManagerService userManagerService) {
         this.userManagerService = userManagerService;
     }
@@ -28,8 +35,8 @@ public class OnboardingHandler implements CommandHandler {
     /**
      * Permet l'inscription ou non d'un nouvel utilisateur. Prend en paramètre la demande d'inscription, compare ce potentiel nouvel utilisateur avec ceux déjà enregistré, l'inscrit si c'est possbile
      *
-     * @param args
-     * @return le message "OK" si l'inscription peut se faire, "ERR" sinon
+     * @param args Les arguments de la commande (nom, longueur du sel, hash complet)
+     * @return le message "OK" si l'inscription peut se faire, "ERR" sinon (ex: utilisateur déjà existant)
      * @throws OnboardingException
      */
     @Override

@@ -18,8 +18,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 
 
-/*
-Echange avec clients
+/**
+ * Gère les échanges réseau avec un client spécifique (Interface Ouest).
+ * Cette classe lit les commandes entrantes, les transforme en tâches et envoie les réponses.
  */
 public class WestThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -31,6 +32,14 @@ public class WestThread extends Thread {
 
     private PrintWriter toClient;
 
+    /**
+     * Initialise un nouveau thread de communication pour un client.
+     *
+     * @param socket        Le socket de connexion du client.
+     * @param config        La configuration du serveur.
+     * @param taskThread    Le thread de traitement des tâches.
+     * @param activeSession Le gestionnaire des sessions actives.
+     */
     public WestThread(Socket socket, Config config, TaskThread taskThread, ActiveSession activeSession) {
         this.socket = socket;
         this.config = config;
@@ -39,6 +48,10 @@ public class WestThread extends Thread {
         setName("WestThread");
     }
 
+    /**
+     * Boucle principale du thread : gère l'accueil, la lecture des messages
+     * et la fermeture de la connexion.
+     */
     @Override
     public void run() {
         ClientSession session = null;
@@ -77,13 +90,24 @@ public class WestThread extends Thread {
         }
     }
 
+    /**
+     * Génère un identifiant unique pour une tâche.
+     *
+     * @return Un UUID sous forme de chaîne de caractères.
+     */
     private String creatId() {
 
         return UUID.randomUUID().toString();
 
     }
 
-
+    /**
+     * Analyse une ligne de texte pour créer la tâche correspondante.
+     *
+     * @param line    La ligne brute reçue du client.
+     * @param session La session associée au client.
+     * @return Une instance de Task prête à être traitée.
+     */
     private Task createTask(String line, ClientSession session) {
         String input = line.trim();
 
@@ -99,6 +123,11 @@ public class WestThread extends Thread {
     }
 
 
+    /**
+     * Envoie un message au client de manière synchronisée.
+     *
+     * @param message Le message à envoyer.
+     */
     public synchronized void send(String message) {
         if (toClient != null && !socket.isClosed()) {
             toClient.println(message);

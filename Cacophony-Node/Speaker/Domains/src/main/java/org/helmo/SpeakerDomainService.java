@@ -57,7 +57,7 @@
 //        validateMessageContent(decryptedMessage);
 //
 //        // 5. Transformer ou logger le message si nécessaire pour le routage
-//        // TODO: La transformation du message doit être définie. Pour l'instant, c'est une simple concaténation.
+//        // : La transformation du message doit être définie. Pour l'instant, c'est une simple concaténation.
 //        String transformedMessage = "[Transformed] " + new String(decryptedMessage, StandardCharsets.UTF_8);
 //
 //        // 6. Chiffrer le message avec la clé AES du domaine destinataire (chiffrement symétrique efficace)
@@ -68,7 +68,7 @@
 //
 //        // 7. Identifier l'adresse du Node destinataire
 //        String destinationAddress = toDomain.getName();
-//        // TODO: Gérer le cas où l'adresse du nœud n'est pas encore connue (DEFAULT_NODE_ADDRESS).
+//        // : Gérer le cas où l'adresse du nœud n'est pas encore connue (DEFAULT_NODE_ADDRESS).
 //        // Le message pourrait être mis en file d'attente jusqu'à ce que l'adresse soit découverte via un message ADVERT.
 //
 //        // 8. Envoyer le message via le client réseau approprié
@@ -76,7 +76,7 @@
 //    }
 //
 //    private void sendMessage(String destinationAddress, byte[] encryptedTransformedMessage) {
-//        // TODO: Implémenter un client HTTP pour envoyer le message chiffré au Node destinataire.
+//        // : Implémenter un client HTTP pour envoyer le message chiffré au Node destinataire.
 //        // Utiliser une bibliothèque comme OkHttp ou le client HTTP de Java 11.
 //        // Gérer les erreurs réseau (ex: connexion refusée, timeout).
 //        System.out.println("Envoi du message à l'adresse : " + destinationAddress);
@@ -103,12 +103,12 @@
 //            if (messageDto == null || messageDto.getType() == null || messageDto.getPayload() == null) {
 //                throw new IllegalArgumentException("Le message déchiffré est invalide : champs requis manquants ou format JSON incorrect.");
 //            }
-//            // TODO: Ajouter une validation plus poussée du payload en fonction du type de message.
+//            // : Ajouter une validation plus poussée du payload en fonction du type de message.
 //        } catch (JsonParseException e) {
 //            throw new IllegalArgumentException("Le message déchiffré n'est pas un JSON valide.", e);
 //        }
 //    }
 //
-//    // TODO: Ajouter une méthode pour mettre à jour l'adresse d'un nœud (appelée après la réception d'un message ADVERT).
+//    // : Ajouter une méthode pour mettre à jour l'adresse d'un nœud (appelée après la réception d'un message ADVERT).
 //    // public void updateNodeAddress(String domainName, String nodeAddress) { ... }
 //}
