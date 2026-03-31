@@ -12,11 +12,18 @@ import org.helmo.task.TaskContext;
 
 import java.util.List;
 
+/**
+ * Gère la commande d'authentification d'un utilisateur.
+ */
 public class AuthentificateHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final UserManagerService userManagerService;
 
+    /**
+     * Initialise le gestionnaire d'authentification.
+     * @param userManagerService Le service de gestion des utilisateurs.
+     */
     public AuthentificateHandler(UserManagerService userManagerService) {
         this.userManagerService = userManagerService;
     }

@@ -4,7 +4,7 @@ package org.helmo;
 import static org.helmo.Grammar.*;
 
 
-/* * Cette classe fournit des méthodes statiques pour construire les messages du protocole de communication.
+/** Cette classe fournit des méthodes statiques pour construire les messages du protocole de communication.
  * Chaque méthode correspond à une commande spécifique et prend les paramètres nécessaires pour construire le message.
  * Les messages sont formatés selon les règles définies dans la grammaire, avec les espaces et les nouvelles lignes appropriés.
  */

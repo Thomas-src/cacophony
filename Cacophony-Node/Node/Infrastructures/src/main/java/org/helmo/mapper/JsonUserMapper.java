@@ -18,14 +18,31 @@ import java.util.regex.Matcher;
 import org.helmo.Grammar;
 import org.helmo.tag.TagReference;
 
+/**
+ * Mapper responsable de la conversion entre les objets DTO JSON et les entités Client.
+ */
 public class JsonUserMapper {
     private static final List<String> EMPTY_TAGS = List.of();
 
+    /**
+     * Mappe une liste d'utilisateurs DTO vers une liste d'objets Client.
+     *
+     * @param dto           L'objet UsersDto contenant la liste des utilisateurs.
+     * @param currentDomain Le domaine actuel du serveur.
+     * @return Une liste d'objets Client.
+     */
     public static List<Client> mapUsers(UsersDto dto, String currentDomain) {
         List<UserDto> userDtos = dto.users() == null ? List.of() : dto.users();
         return userDtos.stream().map(u -> JsonUserMapper.createUser(u,currentDomain)).toList();
     }
 
+    /**
+     * Crée une instance de Client à partir d'un UserDto.
+     *
+     * @param dto           Le DTO contenant les informations de l'utilisateur.
+     * @param currentDomain Le domaine actuel du serveur.
+     * @return Un objet Client initialisé, ou null si les données sont incomplètes.
+     */
     private static Client createUser(UserDto dto, String currentDomain) {
         List<IUserSubscriber> subscribers = new ArrayList<>();
         List<ITag> userInternalTags = new ArrayList<>();
@@ -63,6 +80,12 @@ public class JsonUserMapper {
     }
 
 
+    /**
+     * Convertit un objet Client en UserDto pour la sérialisation.
+     *
+     * @param client L'objet client à convertir.
+     * @return Un UserDto contenant les informations du client.
+     */
     public static UserDto toUserDto(Client client) {
         HashPassword hashPassword = client.getHashPassword();
         return new UserDto(

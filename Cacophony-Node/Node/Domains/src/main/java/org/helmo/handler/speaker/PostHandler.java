@@ -17,12 +17,22 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Gère la commande POST reçue d'un Speaker.
+ */
 public class PostHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ActiveSession activeSession;
     private final Set<String> processedIds = ConcurrentHashMap.newKeySet();
 
+    /**
+     * Initialise le gestionnaire de POST.
+     *
+     * @param activeSession La session active actuelle.
+     * @param sendHandler Le gestionnaire d'envoi de messages.
+     * @param subscribeHandler Le gestionnaire d'abonnements.
+     */
     public PostHandler(ActiveSession activeSession, SendHandler sendHandler, SubscribeHandler subscribeHandler) {
         this.activeSession = Objects.requireNonNull(activeSession, "activeSession is null");
     }
