@@ -19,14 +19,10 @@ public class PostHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final ActiveSession activeSession;
-    private final SendHandler sendHandler;
-    private final SubscribeHandler subscribeHandler;
     private final Set<String> processedIds = ConcurrentHashMap.newKeySet();
 
     public PostHandler(ActiveSession activeSession, SendHandler sendHandler, SubscribeHandler subscribeHandler) {
         this.activeSession = Objects.requireNonNull(activeSession, "activeSession is null");
-        this.sendHandler = Objects.requireNonNull(sendHandler, "sendHandler is null");
-        this.subscribeHandler = Objects.requireNonNull(subscribeHandler, "subscribeHandler is null");
     }
 
     @Override
@@ -40,6 +36,8 @@ public class PostHandler implements CommandHandler {
             return null;
         }
         LOGGER.info("Exécution du post: {}", idAtDomain);
+
+        // attention sur msg => si contient un tag #salut => #salut@node1 pas #salut@node2 ???
 
        return null;
     }

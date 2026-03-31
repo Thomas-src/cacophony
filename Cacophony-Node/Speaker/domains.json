@@ -3,7 +3,7 @@
     {
       "domain": "node1.swilabus.xyz",
       "base64AES": "448H+AuQmuulKfleNffeTIrHbpEPdBptABd88gSRMi4=",
-      "messages": []
+      "messages": ["message chiffré (à supprimer)"]
     },
     {
       "domain": "node2.swilabus.xyz",

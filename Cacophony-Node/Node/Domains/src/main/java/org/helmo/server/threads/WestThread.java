@@ -59,9 +59,6 @@ public class WestThread extends Thread {
         } catch (IllegalArgumentException e) {
             LOGGER.info("Commande inconnue", e);
             toClient.println(MessageBuilder.buildError());
-        } catch (HandlerException e) {
-            LOGGER.info("Une erreur s'est produite", e);
-            toClient.println(MessageBuilder.buildError());
         } catch (IOException e) {
             LOGGER.info("Client {} disconnected", socket.getInetAddress());
         } finally {

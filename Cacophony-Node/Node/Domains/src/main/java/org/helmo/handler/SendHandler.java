@@ -11,6 +11,8 @@ import org.helmo.MessageBuilder;
 import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.server.threads.EastThread;
+import org.helmo.services.SubscriberResultData;
+import org.helmo.services.SubscriberService;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
 import org.helmo.services.TagManagerService;
@@ -27,17 +29,14 @@ import java.util.regex.Matcher;
 public class SendHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final UserManagerService userManagerService;
-    private final TagManagerService tagManagerService;
+    private final SubscriberService subscriberService;
     private final ActiveSession activeSession;
     private final EastThread eastThread;
     private final Config config;
 
-    public SendHandler(UserManagerService userManagerService, TagManagerService tagManagerService, ActiveSession activeSession, EastThread eastThread, Config config) {
-        Objects.requireNonNull(userManagerService, "userManagerService is null");
-        Objects.requireNonNull(tagManagerService, "tagManagerService is null");
-        this.userManagerService = userManagerService;
-        this.tagManagerService = tagManagerService;
+    public SendHandler(SubscriberService subscriberService, ActiveSession activeSession, EastThread eastThread, Config config) {
+        Objects.requireNonNull(subscriberService, "userManagerService is null");
+        this.subscriberService = subscriberService;
         this.activeSession = activeSession;
         this.eastThread = eastThread;
         this.config = config;
@@ -52,32 +51,31 @@ public class SendHandler implements CommandHandler {
         if (!session.isAuthenticated() || args.isEmpty()) {
             return MessageBuilder.buildError();
         }
-        Set<String> localSubscribers = new LinkedHashSet<>();
-        Set<String> remoteSubscribers = new LinkedHashSet<>();
-        Set<String> remoteTags = new LinkedHashSet<>();
+
         String message = args.getFirst();
         String username = session.getUserFullName();
 
-        // Ajout des abonnés internes et externes
-        addUsers(username, localSubscribers, remoteSubscribers);
-        addTags(username, message, localSubscribers, remoteSubscribers,session.getDomain(), remoteTags);
+        try {
+            SubscriberResultData result = subscriberService.getSubscribers(username, message, session.getDomain());
+            // 2. Pour abonnés locaux appel via WestThread
+            sendToLocal(result.localSubscribers(),session, message);
+            // 3. todo Pour abonnés externes envoie msg au EastThread
+            sendPostSubscribers(result.remoteSubscribers(),session, message);
 
-        // Pour ne pas envoyer msg à l'envoyeur
-        localSubscribers.remove(session.getUserFullName());
-        remoteSubscribers.remove(session.getUserFullName());
 
-        // 2. Pour abonnés locaux appel via WestThread
+            // Message de retour (optionnel)
+            return MessageBuilder.buildOk();
+
+        } catch (Exception e) {
+            throw new HandlerException("Erreur lors de l'envoi", e);
+        }
+    }
+
+    private void sendToLocal(Set<String> localSubscribers, ClientSession session, String message ) {
         String localResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
             activeSession.send(localSubscriber, localResponse);
         }
-        // 3. todo Pour abonnés externes envoie msg au EastThread
-        if (!remoteSubscribers.isEmpty()) {
-            sendPostSubscribers(remoteSubscribers, session, message);
-        }
-
-        // Message de retour (optionnel)
-        return MessageBuilder.buildOk();
     }
 
     private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message) {
@@ -86,6 +84,7 @@ public class SendHandler implements CommandHandler {
 
         for (String remoteSubscriber : remoteSubscribers) {
             LOGGER.info(remoteSubscriber);
+            // todo supprimer le hardcode + crypter
             String contextstr = MessageBuilder.buildPost( "1234 " + session.getDomain(), session.getUserFullName(), remoteSubscriber, message);
 
             eastThread.sendUncryptedMessage(contextstr);
@@ -93,69 +92,4 @@ public class SendHandler implements CommandHandler {
         System.out.println();
     }
 
-    private List<ITag> extractTags(String message, String actualDomain) throws TagReaderException {
-        List<ITag> tags = new ArrayList<>();
-        Matcher m = Grammar.P_TAG_FULL.matcher(message);
-
-        while (m.find()) {
-            String tagName = m.group(1);
-            String domain = m.group(2);
-
-            LOGGER.info("Tag détecté: {}", tagName);
-            if (domain == null  || domain.equalsIgnoreCase(actualDomain)) {
-                List<IUserSubscriber> subscribers = tagManagerService.getTagSubscriber(tagName);
-                tags.add(new InternalTag(tagName,subscribers));
-            } else  {
-                tags.add(new TagReference(tagName+"@"+domain));
-                // todo speaker
-            }
-        }
-        return tags;
-    }
-
-    private void addUsers(String username, Set<String> localSubscribers, Set<String> remoteSubscribers) throws HandlerException {
-        try {
-            List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(username);
-            if (subscribers != null) {
-                LOGGER.info("L'utilisateur {} possède {} abonnés", username, subscribers.size());
-                createUsers(subscribers, localSubscribers, remoteSubscribers);
-            }
-        } catch (UserReaderException e) {
-            throw new HandlerException("Impossible de lire le fichier des utilisateurs");
-        }
-    }
-
-    private void addTags(String username, String message, Set<String> localSubscribers, Set<String> remoteSubscribers, String actualDomain, Set<String> remoteTags) throws HandlerException {
-        try {
-            List<ITag> tags = extractTags(message, actualDomain);
-
-            for (ITag tag : tags) {
-                if (tag.isInternal()) {
-                    InternalTag internal = (InternalTag) tag;
-                    LOGGER.info("Abonnés au tag {} : {}", internal.getFullName(),
-                            internal.getSubscribers().stream().map(IUserSubscriber::getFullName).toList());
-                    if (internal.hasSubscriber(username)) {
-                        createUsers(internal.getSubscribers(), localSubscribers, remoteSubscribers);
-                    } else {
-                        LOGGER.info("L'exécutant {} n'est pas abonné au tag {}", username, tag.getFullName());
-                    }
-                    } else {
-                    remoteTags.add(tag.getFullName());
-                }
-            }
-        } catch (TagReaderException e) {
-            throw new HandlerException("Impossible de lire le fichier des tags");
-        }
-    }
-
-
-    private void createUsers(List<IUserSubscriber> subscribers, Set<String> localSubscribers, Set<String> remoteSubscribers) {
-        for (IUserSubscriber subscriber : subscribers) {
-           if (subscriber.isLocal()) {
-                localSubscribers.add(subscriber.getFullName());
-            } else {
-                remoteSubscribers.add(subscriber.getFullName());
-            }
-        }
-    }
 }
