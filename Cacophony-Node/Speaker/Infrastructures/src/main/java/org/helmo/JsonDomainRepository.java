@@ -112,6 +112,35 @@ public class JsonDomainRepository implements IDomainRepository {
         }
     }
 
+
+    @Override
+    public void saveMessage(String domain, String message) throws DomainSaveException {
+        try {
+            ensureStorage();
+
+            DomainsDto dto;
+            try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                dto = gson.fromJson(reader, DomainsDto.class);
+            }
+
+            if (dto == null || dto.domains() == null) {
+                throw new DomainSaveException("Fichier domains invalide");
+            }
+            Gson exporter = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .create();
+
+            DomainsDto updatedDto = JsonDomainMapper.updateMessage(dto, domain, message);
+
+            try (var writer = Files.newBufferedWriter(configPath)) {
+                exporter.toJson(updatedDto, writer);
+            }
+
+        } catch (IOException e) {
+            throw new DomainSaveException("Impossible de sauvegarder les messages du domaine : " + domain);
+        }
+    }
+
     /**
      * Assure l'existence du fichier de stockage des domaines.
      * <p>

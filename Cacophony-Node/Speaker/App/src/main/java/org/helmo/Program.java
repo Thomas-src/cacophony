@@ -27,7 +27,7 @@ public class Program {
 
             CommandMenu menu = new CommandMenu(crypto, connector);
             menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
-            menu.add(Message.P_POST, new PostHandler(connector, crypto, domainService) );
+            menu.add(Message.P_POST, new PostHandler(connector, crypto, domainService, domainRepository) );
 
             LOGGER.info(speakerConfig.toString());
 
