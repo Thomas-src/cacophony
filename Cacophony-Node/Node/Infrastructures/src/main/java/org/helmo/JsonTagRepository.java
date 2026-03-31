@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+/**
+ * Implémentation de ITagRepository stockant les tags dans un fichier JSON local.
+ */
 public class JsonTagRepository implements ITagRepository {
     private static final String FILE_NAME = "Node/tags.json";
     private static final Gson gson = new Gson();
@@ -39,12 +42,24 @@ public class JsonTagRepository implements ITagRepository {
     private final UserManagerService userService;
     private final Config config;
 
+    /**
+     * Initialise une nouvelle instance de JsonTagRepository.
+     *
+     * @param config      La configuration de l'application.
+     * @param userService Le service de gestion des utilisateurs.
+     */
     public JsonTagRepository(Config config, UserManagerService userService){
         Objects.requireNonNull(config);
         this.config = config;
         this.userService = userService;
     }
 
+    /**
+     * Récupère la liste de tous les tags depuis le fichier JSON.
+     *
+     * @return Une liste d'InternalTag.
+     * @throws TagReaderException Si une erreur survient lors de la lecture ou du parsing.
+     */
     @Override
     public List<InternalTag> getTags() throws TagReaderException {
         synchronized (TAGS_FILE_LOCK) {
@@ -73,6 +88,12 @@ public class JsonTagRepository implements ITagRepository {
         }
     }
 
+    /**
+     * Sauvegarde ou met à jour un tag existant dans le fichier JSON.
+     *
+     * @param internalTag Le tag à sauvegarder.
+     * @throws TagSaveException Si une erreur survient lors de l'écriture.
+     */
     @Override
     public void saveTag(InternalTag internalTag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
@@ -111,6 +132,13 @@ public class JsonTagRepository implements ITagRepository {
         }
     }
 
+    /**
+     * Crée un nouveau tag et y abonne automatiquement son créateur.
+     *
+     * @param client Le client créateur du tag.
+     * @param tag    Le nom du tag à créer.
+     * @throws TagSaveException Si le tag ne peut pas être sauvegardé.
+     */
     @Override
     public void createTag(Client client, String tag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
@@ -159,6 +187,13 @@ public class JsonTagRepository implements ITagRepository {
         }
     }
 
+    /**
+     * Ajoute un utilisateur à la liste des abonnés d'un tag spécifique.
+     *
+     * @param client Le client à ajouter.
+     * @param tag    Le nom du tag.
+     * @throws TagSaveException Si une erreur survient lors de la mise à jour du fichier.
+     */
     @Override
     public void addUserToTag(Client client, String tag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
@@ -225,6 +260,11 @@ public class JsonTagRepository implements ITagRepository {
         }
     }
 
+    /**
+     * S'assure que le fichier de stockage et ses répertoires parents existent.
+     *
+     * @throws IOException Si la création du répertoire ou du fichier échoue.
+     */
     private void ensureStorage() throws IOException {
         if (Files.notExists(configPath)) {
             Path parent = configPath.getParent();

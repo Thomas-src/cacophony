@@ -16,11 +16,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
+/**
+ * Implémentation de IConfigReaderRepository pour la lecture de fichiers de configuration JSON.
+ */
 public class JsonConfigReaderNode implements IConfigReaderRepository {
     private static final Gson gson = new Gson();
     private static final Path configPath = findConfigFile();
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * Recherche le fichier de configuration dans les répertoires parents probables.
+     * @return Le chemin vers le fichier de configuration trouvé.
+     */
     private static Path findConfigFile() {
         String fileName = "config-node.json";
 
@@ -40,6 +47,11 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
         return Paths.get("../Node/config-node.json");
     }
 
+    /**
+     * Lit et convertit le fichier JSON en objet Config.
+     * @return L'objet de configuration.
+     * @throws ConfigReaderException Si le fichier est introuvable ou invalide.
+     */
     @Override
     public Config getConfig() throws ConfigReaderException {
         try (BufferedReader reader = Files.newBufferedReader(configPath)){

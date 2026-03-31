@@ -11,14 +11,30 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * Représente un menu de commandes qui associe des motifs Regex à des gestionnaires de commandes.
+ */
 public class CommandMenu {
     private static final Logger LOGGER = LogManager.getLogger();
     private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>();
 
+    /**
+     * Ajoute une nouvelle commande au menu.
+     *
+     * @param command Le motif Regex correspondant à la commande.
+     * @param handler Le gestionnaire qui sera exécuté si le motif correspond.
+     */
     public void add(Pattern command, CommandHandler handler) {
         handlers.put(command, handler);
     }
 
+    /**
+     * Exécute la commande correspondant au message contenu dans la tâche.
+     *
+     * @param task La tâche contenant le message et l'expéditeur.
+     * @return La réponse générée par le gestionnaire de commande.
+     * @throws HandlerException Si une erreur survient lors du traitement de la commande.
+     */
     public String execute(Task task) throws HandlerException {
         for (var entry : handlers.entrySet()) {
             Pattern pattern = entry.getKey();

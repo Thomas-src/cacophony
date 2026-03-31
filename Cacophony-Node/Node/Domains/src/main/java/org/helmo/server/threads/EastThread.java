@@ -19,8 +19,10 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-/*
-Receptions des messages du speaker
+/**
+ * Gère la réception des messages provenant du Speaker.
+ * Ce thread écoute sur un port spécifique, déchiffre les messages reçus
+ * et les transforme en tâches pour le système.
  */
 public class EastThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -32,6 +34,14 @@ public class EastThread extends Thread {
     private Socket speakerSocket;
     private final CryptoService cryptoService;
 
+    /**
+     * Initialise une nouvelle instance de EastThread.
+     *
+     * @param config        La configuration du serveur.
+     * @param taskThread    Le thread de gestion des tâches.
+     * @param activeSession La session active actuelle.
+     * @param cryptoService Le service utilisé pour le déchiffrement.
+     */
     public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession, CryptoService cryptoService) {
         this.config = config;
         this.taskThread = taskThread;
@@ -40,6 +50,10 @@ public class EastThread extends Thread {
         setName("EastThread");
     }
 
+    /**
+     * Démarre le serveur d'écoute pour le Speaker.
+     * Accepte les connexions entrantes et lance un thread de lecture pour chaque socket.
+     */
     @Override
     public void run() {
         int relayPort = config.relayPort();
@@ -62,6 +76,11 @@ public class EastThread extends Thread {
         }
     }
 
+    /**
+     * Lit les messages entrants sur le socket, les déchiffre et crée les tâches correspondantes.
+     *
+     * @param socket Le socket de communication avec le Speaker.
+     */
     private void read(Socket socket) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
             LOGGER.info("lecture du socket");
@@ -73,7 +92,6 @@ public class EastThread extends Thread {
                     try {
                         LOGGER.info("Msg avec clé: {}", config.base64AES());
                         String messageDecrypted = cryptoService.decrypt(line, config.base64AES());
-
                         LOGGER.info("Message déchiffré: {}", messageDecrypted);
                         createTask(messageDecrypted);
                     } catch (DecryptionException e) {
@@ -86,12 +104,22 @@ public class EastThread extends Thread {
         }
     }
 
+    /**
+     * Crée une nouvelle tâche de type POST à partir du message déchiffré.
+     *
+     * @param line Le contenu du message déchiffré.
+     */
     public void createTask(String line) {
         String id = UUID.randomUUID().toString();
         LOGGER.info("createTask: {}", line);
         this.taskThread.addTask(new Task(id, TypeTask.POST, new SpeakerTask(config.currentDomain()), line));
     }
 
+    /**
+     * Envoie un message non-chiffré au Speaker connecté.
+     *
+     * @param contextstr Le message à envoyer.
+     */
     public void sendUncryptedMessage(String contextstr) {
         if (writer != null) {
             LOGGER.info("Envoi au speaker : {}", contextstr);

@@ -23,12 +23,11 @@ public class Program {
             CryptoService crypto = new CryptoService();
             DomainService domainService = new DomainService(domainRepository, crypto, speakerConfig);
 
-            SpeakerTcpConnector connector = new SpeakerTcpConnector();
+            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto,  domainService);
 
             CommandMenu menu = new CommandMenu(crypto, connector);
             menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
-            menu.add(Message.P_POST, new PostHandler(connector));
-
+            menu.add(Message.P_POST, new PostHandler(connector, crypto, domainService) );
 
             LOGGER.info(speakerConfig.toString());
 

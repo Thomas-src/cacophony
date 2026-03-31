@@ -3,6 +3,7 @@ package org.helmo.handler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.crypto.CryptoProvider;
+import org.helmo.domain.Domain;
 import org.helmo.exceptions.HandlerException;
 import org.helmo.network.SpeakerTcpConnector;
 
@@ -28,19 +29,20 @@ public class CommandMenu {
         handlers.put(command, handler);
     }
 
-    public void execute(String message) throws HandlerException {
-        LOGGER.info(message);
+    public void execute(String message, String sourceIp) throws HandlerException {
+
         if (tryExecute(message)) {
             return;
         }
+        Domain sourceDomain = connector.getDomain(sourceIp);
+        String key = sourceDomain.getAesKey();
         try {
-
-            String decrypted = message; // todo cryptoProvider.decrypt(message);
+            String decryptedMessage = cryptoProvider.decrypt(message,key);
 
             LOGGER.info("Message crypted, {}", message);
-            LOGGER.info("Message decrypted, {}", decrypted);
+            LOGGER.info("Message decrypted, {}", decryptedMessage);
 
-            if (tryExecute(decrypted)) {
+            if (tryExecute(decryptedMessage)) {
                 LOGGER.info("Exécution de la commande avec le msg décrypté");
                 return;
             }

@@ -13,12 +13,20 @@ import org.helmo.task.TaskContext;
 
 import java.util.List;
 
+/**
+ * Gère les commandes d'abonnement (SUBSCRIBE) pour les utilisateurs et les tags.
+ */
 public class SubscribeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
 
+    /**
+     * Initialise le gestionnaire d'abonnement.
+     * @param userManagerService Service de gestion des utilisateurs.
+     * @param tagManagerService Service de gestion des tags.
+     */
     public SubscribeHandler(UserManagerService userManagerService, TagManagerService tagManagerService) {
         this.userManagerService = userManagerService;
         this.tagManagerService = tagManagerService;
@@ -51,7 +59,12 @@ public class SubscribeHandler implements CommandHandler {
         return response;
     }
 
-
+    /**
+     * Gère l'abonnement d'un utilisateur à un autre utilisateur.
+     * @param targetName Nom de l'utilisateur cible.
+     * @param session Session du client actuel.
+     * @return Message de réponse (OK ou ERROR).
+     */
     private String userSubscribe(String targetName, ClientSession session) {
         LOGGER.info("SUBSCRIBE USER");
         List<Client> clients;
@@ -74,6 +87,13 @@ public class SubscribeHandler implements CommandHandler {
         return MessageBuilder.buildOk();
     }
 
+    /**
+     * Gère l'abonnement d'un utilisateur à un tag.
+     * @param tagName Nom du tag.
+     * @param session Session du client actuel.
+     * @return Message de réponse (OK).
+     * @throws HandlerException Si une erreur survient lors de la lecture ou sauvegarde.
+     */
     private String tagSubscribe(String tagName, ClientSession session) throws HandlerException {
         List<InternalTag> tags;
         String fullTagName = tagName+"@"+session.getDomain();

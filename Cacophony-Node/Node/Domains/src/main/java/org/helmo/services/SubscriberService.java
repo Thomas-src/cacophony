@@ -13,17 +13,34 @@ import org.helmo.tag.TagReference;
 import java.util.*;
 import java.util.regex.Matcher;
 
+/**
+ * Service responsable de la gestion et de la récupération des abonnés pour un utilisateur ou un message donné.
+ */
 public class SubscriberService {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
 
+    /**
+     * Initialise une nouvelle instance de SubscriberService.
+     *
+     * @param userManagerService Le service de gestion des utilisateurs.
+     * @param tagManagerService  Le service de gestion des tags.
+     */
     public SubscriberService(UserManagerService userManagerService, TagManagerService tagManagerService) {
         this.userManagerService = Objects.requireNonNull(userManagerService);
         this.tagManagerService = Objects.requireNonNull(tagManagerService);
     }
 
+    /**
+     * Récupère la liste des abonnés (locaux et distants) ainsi que les tags distants concernés par un message.
+     *
+     * @param username Le nom de l'utilisateur émetteur.
+     * @param message  Le contenu du message contenant potentiellement des tags.
+     * @param domain   Le domaine local actuel.
+     * @return Un objet {@link SubscriberResultData} contenant les ensembles d'abonnés et de tags.
+     */
     public SubscriberResultData getSubscribers(String username, String message, String domain) throws UserReaderException, TagReaderException {
         Set<String> localSubscribers = new LinkedHashSet<>();
         Set<String> remoteSubscribers = new LinkedHashSet<>();

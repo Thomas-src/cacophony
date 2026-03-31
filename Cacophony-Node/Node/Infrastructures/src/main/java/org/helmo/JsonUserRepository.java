@@ -22,6 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Implémentation de {@link IUserRepository} utilisant un fichier JSON pour le stockage persistant.
+ * Cette classe gère la lecture et l'écriture des utilisateurs et de leurs métadonnées (abonnés, tags).
+ */
 public class JsonUserRepository implements IUserRepository {
     private final Config config;
 
@@ -33,12 +37,23 @@ public class JsonUserRepository implements IUserRepository {
     private static final Path configPath = Paths.get(FILE_NAME);
     private static final Logger LOGGER = LogManager.getLogger();
 
-
+    /**
+     * Initialise une nouvelle instance du dépôt JSON.
+     *
+     * @param config La configuration du nœud pour la gestion des domaines.
+     * @throws NullPointerException si la configuration est nulle.
+     */
     public JsonUserRepository(Config config){
         Objects.requireNonNull(config);
         this.config = config;
     }
 
+    /**
+     * Récupère la liste de tous les utilisateurs stockés dans le fichier JSON.
+     *
+     * @return Une liste d'objets {@link Client}.
+     * @throws UserReaderException Si le fichier est inaccessible ou corrompu.
+     */
     @Override
     public List<Client> getUsers() throws UserReaderException {
         synchronized (USERS_FILE_LOCK) {
@@ -61,6 +76,12 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    /**
+     * Sauvegarde ou met à jour un utilisateur dans le fichier JSON.
+     *
+     * @param client L'utilisateur à sauvegarder.
+     * @throws UserSaveException Si une erreur survient lors de l'écriture.
+     */
     @Override
     public void saveUsers(Client client) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
@@ -101,6 +122,13 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    /**
+     * Ajoute un abonné à la liste des abonnés d'un utilisateur spécifique.
+     *
+     * @param client L'utilisateur qui reçoit un nouvel abonné.
+     * @param sub    L'identifiant de l'abonné à ajouter.
+     * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
+     */
     @Override
     public void addSubscribersFor(Client client, String sub) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
@@ -170,6 +198,13 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    /**
+     * Ajoute un tag à la liste des tags d'un utilisateur spécifique.
+     *
+     * @param client L'utilisateur concerné.
+     * @param tag    Le tag à ajouter.
+     * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
+     */
     @Override
     public void addTagFor(Client client, String tag) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
@@ -238,6 +273,11 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    /**
+     * S'assure que le fichier de stockage et ses répertoires parents existent.
+     *
+     * @throws IOException Si la création du répertoire ou du fichier échoue.
+     */
     private void ensureStorage() throws IOException {
         if (Files.notExists(configPath)) {
             Path parent = configPath.getParent();

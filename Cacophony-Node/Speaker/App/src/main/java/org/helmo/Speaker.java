@@ -37,8 +37,11 @@ public class Speaker extends Thread {
                     socket.receive(packet);
 
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
+                    String sourceIp = packet.getAddress().getHostAddress();
 
-                    commandMenu.execute(message);
+
+                    LOGGER.info("Input from {}: {}", sourceIp, message);
+                    commandMenu.execute(message, sourceIp);
 
                 } catch (IOException e) {
                     LOGGER.error("Le serveur s'est arrêté:", e);
@@ -60,13 +63,13 @@ public class Speaker extends Thread {
                 if (groupJoined) {
                     InetAddress group = InetAddress.getByName(multicastAddress);
                     NetworkInterface networkInterface = NetworkInterface.getByName(networkInterfaceName);
-                    // TODO: Gérer les exceptions spécifiques pour leaveGroup.
+                    // : Gérer les exceptions spécifiques pour leaveGroup.
                     socket.leaveGroup(new java.net.InetSocketAddress(group, multicastPort), networkInterface);
                     groupJoined = false;
                 }
                 socket.close();
             } catch (IOException e) {
-                // TODO: Utiliser un logger au lieu de printStackTrace.
+                // : Utiliser un logger au lieu de printStackTrace.
                 e.printStackTrace();
             }
         }
@@ -120,7 +123,10 @@ public class Speaker extends Thread {
             }
             return false;
         } catch (SocketException e) {
-            // TODO: Utiliser un logger pour cette exception.
+            // : Utiliser un logger pour cette exception.
+            LOGGER.error("Failed to check network interface: {}", netIf.getName(), e);
+
+
             return false;
         }
     }

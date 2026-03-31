@@ -8,8 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
-import org.helmo.handler.CommandMenu;
+import org.helmo.domain.DomainService;
 import org.helmo.network.impl.NodeConnectionImpl;
+import org.helmo.crypto.CryptoService;
 
 // todo Utile ? je pense que le traffic est seulement en udp
 
@@ -20,6 +21,14 @@ import org.helmo.network.impl.NodeConnectionImpl;
 public class SpeakerTcpConnector {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<String, NodeConnection> connections = new ConcurrentHashMap<>();
+    private final CryptoService cryptoService;
+    private final DomainService domainService;
+    private final Map<String, Domain> ipToDomains = new ConcurrentHashMap<>();
+
+    public SpeakerTcpConnector(CryptoService cryptoService, DomainService domainService) {
+        this.cryptoService = cryptoService;
+        this.domainService = domainService;
+    }
 
     /**
      * Ouvre une connexion TCP avec un Node.
@@ -38,6 +47,7 @@ public class SpeakerTcpConnector {
             Socket socket = new Socket(ip, port);
             NodeConnection connection = new NodeConnectionImpl(domain, socket);
             connections.put(domain.getName(), connection);
+            ipToDomains.put(ip, domain);
         } catch (IOException e) {
             LOGGER.error("Erreur lors de la création du socket {}", e.getMessage());
         }
@@ -56,7 +66,6 @@ public class SpeakerTcpConnector {
         } else if (connection != null) {
             LOGGER.info("No connection found for domain: " + domainName);
             connections.remove(domainName);
-
         }
     }
 
@@ -77,4 +86,16 @@ public class SpeakerTcpConnector {
 
         }
     }
+
+    /**
+     * Retourne le domaine à partir de l'ip donné
+     * @param ip Ip qui permet de retrouver le domaine
+     * @return
+     */
+    public Domain getDomain(String ip) {
+        return ipToDomains.get(ip);
+    }
+
+
+
 }
