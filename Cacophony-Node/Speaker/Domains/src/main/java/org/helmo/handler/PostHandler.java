@@ -45,10 +45,7 @@ public class PostHandler implements CommandHandler{
                 throw new HandlerException("Domaine destination inconnu : " + domainDest);
             }
 
-            // Rechiffrer avec la clé destination
-            String destKey = destDomain.getAesKey();
-            String reEncrypted = crypto.encrypt(plainText, destKey);
-
+            
             // Reconstruire et envoyer le message POST
             String post = MessageBuilder.buildPost(idAtDomain, userSrc + "@" + domainSrc, dest + "@" + domainDest, plainText);
             // Rechiffrer avec la clé destination
