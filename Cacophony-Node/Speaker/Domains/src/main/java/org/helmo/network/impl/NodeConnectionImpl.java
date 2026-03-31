@@ -1,5 +1,6 @@
 package org.helmo.network.impl;
 
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -7,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
+import org.helmo.exceptions.HandlerException;
+import org.helmo.handler.CommandMenu;
 import org.helmo.network.NodeConnection;
 
 /**
@@ -17,16 +20,37 @@ public class NodeConnectionImpl implements NodeConnection {
 
     private final Domain domain;
     private final Socket socket;
-    private PrintWriter writer;
+    private final PrintWriter writer;
 
     public NodeConnectionImpl(Domain domain, Socket socket) throws IOException {
         this.domain = domain;
         this.socket = socket;
-        try {
-            this.writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
-        } catch (IOException e) {
-            LOGGER.error("Erreur création writer vers {}", domain, e);
-        }
+        this.writer = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+
+        startReader();
+    }
+
+    private void startReader() {
+        Thread reader = new Thread(() -> {
+            try (BufferedReader br = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8))) {
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.isBlank()) {
+                        LOGGER.info("[{}] reçu : {}", domain.getName(), line);
+
+                        // Todo envoyer au menu
+                    }
+                }
+
+            } catch (IOException e) {
+                LOGGER.info("Connexion fermée avec {}", domain.getName());
+            }
+        });
+
+        reader.setDaemon(true);
+        reader.start();
     }
 
     @Override

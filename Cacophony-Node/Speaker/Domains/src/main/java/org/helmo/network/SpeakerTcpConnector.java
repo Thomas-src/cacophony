@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
+import org.helmo.handler.CommandMenu;
 import org.helmo.network.impl.NodeConnectionImpl;
 
 // todo Utile ? je pense que le traffic est seulement en udp

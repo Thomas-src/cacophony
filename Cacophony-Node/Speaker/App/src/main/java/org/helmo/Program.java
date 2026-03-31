@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.domain.DomainService;
 import org.helmo.handler.AdvertHandler;
 import org.helmo.handler.CommandMenu;
+import org.helmo.handler.PostHandler;
 import org.helmo.network.SpeakerTcpConnector;
 import org.helmo.crypto.CryptoService;
 
@@ -26,6 +27,7 @@ public class Program {
 
             CommandMenu menu = new CommandMenu(crypto, connector);
             menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
+            menu.add(Message.P_POST, new PostHandler(connector));
 
 
             LOGGER.info(speakerConfig.toString());
