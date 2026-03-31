@@ -11,12 +11,13 @@ import org.helmo.network.SpeakerTcpConnector;
 
 import java.util.List;
 
-public class PostHandler implements CommandHandler{
+public class PostHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final SpeakerTcpConnector connector;
     private final CryptoProvider crypto;
     private final DomainService domainService;
+
     public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService) {
         this.connector = connector;
         this.crypto = cryptoProvider;
@@ -27,14 +28,14 @@ public class PostHandler implements CommandHandler{
     @Override
     public void handle(List<String> args) throws HandlerException {
         LOGGER.info(args.toString());
-    // todo
+        // todo
         //  envoyer vers le node2 crypté avec sa clé
-        String idAtDomain      = args.get(0);
-        String userSrc         = args.get(1);
-        String domainSrc       = args.get(2);
-        String dest            = args.get(3);
-        String domainDest      = args.get(4);
-        String plainText       = args.get(5);
+        String idAtDomain = args.get(0);
+        String userSrc = args.get(1);
+        String domainSrc = args.get(2);
+        String dest = args.get(3);
+        String domainDest = args.get(4);
+        String plainText = args.get(5);
         try {
             // Récupérer la clé du domaine destination
             Domain destDomain = domainService.findDomain(domainDest);
@@ -54,7 +55,7 @@ public class PostHandler implements CommandHandler{
         } catch (Exception e) {
             throw new HandlerException("Erreur PostHandler : " + e.getMessage());
         }
-    // todo soit subscribe soit message
+        // todo soit subscribe soit message
         // résoudre localement si le message a été traité (id)
         // Message
         // résoudre tous les abonnements du message (locaux et distants des tags locaux) et locaux des users

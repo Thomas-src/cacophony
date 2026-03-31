@@ -13,7 +13,6 @@ import java.util.Objects;
 public class ActiveSession {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<String, WestThread> sessions = new ConcurrentHashMap<>();
-    private EastThread eastThread;
 
     public boolean add(String fullName, WestThread wt) {
         Objects.requireNonNull(wt, "WestThread is null");
@@ -41,13 +40,5 @@ public class ActiveSession {
                 sessions.get(fullName).send(message);
             }
         }
-    }
-
-    public void setEastThread(EastThread eastThread) {
-        this.eastThread = eastThread;
-    }
-
-    public void sendSpeaker(String msg) {
-        LOGGER.info("Message envoyé au speaker : " + msg);
     }
 }

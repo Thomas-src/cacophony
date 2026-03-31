@@ -73,7 +73,6 @@ public class EastThread extends Thread {
                     try {
                         LOGGER.info("Msg avec clé: {}", config.base64AES());
                         String messageDecrypted = cryptoService.decrypt(line, config.base64AES());
-
                         LOGGER.info("Message déchiffré: {}", messageDecrypted);
                         createTask(messageDecrypted);
                     } catch (DecryptionException e) {
