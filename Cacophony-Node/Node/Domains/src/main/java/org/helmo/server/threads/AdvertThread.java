@@ -16,8 +16,10 @@ public class AdvertThread extends Thread {
 
     private final Config config;
 
+    private final String advert;
     public AdvertThread(Config config) {
         this.config = config;
+        this.advert =  MessageBuilder.buildAdvert(config.relayPort(), config.currentDomain());
         setName("AdvertThread");
     }
 
@@ -31,8 +33,8 @@ public class AdvertThread extends Thread {
             InetAddress group = InetAddress.getByName(config.multicastAddress());
 
             while (!Thread.currentThread().isInterrupted()) {
+                Thread.sleep(30000);
 
-                String advert = MessageBuilder.buildAdvert(config.relayPort(), config.currentDomain());
 
                 byte[] buffer = advert.getBytes(StandardCharsets.UTF_8);
 
@@ -46,8 +48,6 @@ public class AdvertThread extends Thread {
                 socket.send(packet);
 
                 LOGGER.info("ADVERT envoyé : {}", advert.trim());
-
-                Thread.sleep(30000);
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

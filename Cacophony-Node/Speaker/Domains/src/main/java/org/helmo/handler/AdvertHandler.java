@@ -69,7 +69,6 @@ public class AdvertHandler implements CommandHandler {
                 } catch (EncryptionException e) {
                     LOGGER.error("Erreur de decryption du message : {}. Résultat :{}", cryptedMessage, e);
                 }
-
             }
 
         } catch (UnknownHostException e) {

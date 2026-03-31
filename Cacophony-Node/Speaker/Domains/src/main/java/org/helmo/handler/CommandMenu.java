@@ -30,14 +30,13 @@ public class CommandMenu {
     }
 
     public void execute(String message, String sourceIp) throws HandlerException {
-        LOGGER.info(message);
+
+        if (tryExecute(message)) {
+            return;
+        }
         Domain sourceDomain = connector.getDomain(sourceIp);
         String key = sourceDomain.getAesKey();
-
-
         try {
-
-
             String decryptedMessage = cryptoProvider.decrypt(message,key);
 
             LOGGER.info("Message crypted, {}", message);

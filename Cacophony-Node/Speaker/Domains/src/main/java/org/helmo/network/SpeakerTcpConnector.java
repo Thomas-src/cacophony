@@ -66,7 +66,6 @@ public class SpeakerTcpConnector {
         } else if (connection != null) {
             LOGGER.info("No connection found for domain: " + domainName);
             connections.remove(domainName);
-
         }
     }
 
@@ -96,6 +95,7 @@ public class SpeakerTcpConnector {
     public Domain getDomain(String ip) {
         return ipToDomains.get(ip);
     }
+
 
 
 }
