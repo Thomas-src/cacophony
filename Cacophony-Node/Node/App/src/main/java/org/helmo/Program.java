@@ -21,7 +21,6 @@ import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
 
 import java.io.PrintStream;
-import java.util.concurrent.CountDownLatch;
 
 public class Program {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -63,12 +62,12 @@ public class Program {
 
             taskthread.start();
             eastThread.start();
-
+            advertThread.start();
             IServer server = ServerFactory.createServer(configReader, taskthread, activeSession);
 
             server.run();
 
-            advertThread.start();
+
         } catch (ConfigReaderException e) {
             LOGGER.error("Erreur lors de la lecture de la config node", e);
         } catch (ServerException e) {
