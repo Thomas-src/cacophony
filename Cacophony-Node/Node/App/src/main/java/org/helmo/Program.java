@@ -16,6 +16,7 @@ import org.helmo.server.ServerFactory;
 import org.helmo.server.threads.AdvertThread;
 import org.helmo.server.threads.EastThread;
 import org.helmo.server.threads.TaskThread;
+import org.helmo.services.MessageService;
 import org.helmo.services.SubscriberService;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
@@ -38,8 +39,8 @@ public class Program {
 
             ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);
             TagManagerService tagManagerService = new TagManagerService(tagRepository);
-
-            SubscriberService subscriberService = new SubscriberService(userManagerService, tagManagerService);
+            MessageService messageService = new MessageService(userManagerService, tagManagerService);
+            SubscriberService subscriberService = new SubscriberService();
             CryptoService cryptoService = new CryptoService();
             CommandMenu menu = new CommandMenu();
             AdvertThread advertThread = new AdvertThread(config);
@@ -49,7 +50,7 @@ public class Program {
             EastThread eastThread = new EastThread(config, taskthread, activeSession, cryptoService);
 
 
-            SendHandler sendHandler = new SendHandler(subscriberService, activeSession, eastThread, config);
+            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, config);
             SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService);
 
             menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
@@ -58,7 +59,7 @@ public class Program {
             menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
             menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
             menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
-            menu.add(Message.P_POST, new PostHandler(activeSession, sendHandler, subscribeHandler));
+            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, messageService, userManagerService));
 
             taskthread.start();
             eastThread.start();

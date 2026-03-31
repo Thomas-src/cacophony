@@ -11,12 +11,9 @@ import org.helmo.MessageBuilder;
 import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.server.threads.EastThread;
-import org.helmo.services.SubscriberResultData;
-import org.helmo.services.SubscriberService;
+import org.helmo.services.*;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
-import org.helmo.services.TagManagerService;
-import org.helmo.services.UserManagerService;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.tag.InternalTag;
@@ -32,21 +29,21 @@ import java.util.regex.Matcher;
 public class SendHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final SubscriberService subscriberService;
+    private final MessageService messageService;
     private final ActiveSession activeSession;
     private final EastThread eastThread;
     private final Config config;
 
     /**
      * Initialise le gestionnaire d'envoi.
-     * @param subscriberService Service pour récupérer les abonnés.
+     * @param messageService Service pour récupérer les abonnés d'un message.
      * @param activeSession Gestionnaire des sessions actives locales.
      * @param eastThread Thread gérant les communications sortantes vers d'autres domaines.
      * @param config Configuration du noeud.
      */
-    public SendHandler(SubscriberService subscriberService, ActiveSession activeSession, EastThread eastThread, Config config) {
-        Objects.requireNonNull(subscriberService, "userManagerService is null");
-        this.subscriberService = subscriberService;
+    public SendHandler(MessageService messageService, ActiveSession activeSession, EastThread eastThread, Config config) {
+        Objects.requireNonNull(messageService, "userManagerService is null");
+        this.messageService = messageService;
         this.activeSession = activeSession;
         this.eastThread = eastThread;
         this.config = config;
@@ -66,7 +63,7 @@ public class SendHandler implements CommandHandler {
         String username = session.getUserFullName();
 
         try {
-            SubscriberResultData result = subscriberService.getSubscribers(username, message, session.getDomain());
+            SubscriberResultData result = messageService.getSubscribers(username, message, session.getDomain());
             // 2. Pour abonnés locaux appel via WestThread
             sendToLocal(result.localSubscribers(),session, message);
             // 3. todo Pour abonnés externes envoie msg au EastThread

@@ -41,7 +41,7 @@ public class Speaker extends Thread {
 
 
                     LOGGER.info("Input from {}: {}", sourceIp, message);
-                    commandMenu.execute(message, sourceIp);
+                   // commandMenu.execute(message, sourceIp);
 
                 } catch (IOException e) {
                     LOGGER.error("Le serveur s'est arrêté:", e);

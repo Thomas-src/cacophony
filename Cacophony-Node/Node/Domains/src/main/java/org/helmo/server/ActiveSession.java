@@ -17,10 +17,11 @@ public class ActiveSession {
     public boolean add(String fullName, WestThread wt) {
         Objects.requireNonNull(wt, "WestThread is null");
         if (sessions.containsKey(fullName)) {
-            return false; // todo que faire si le user se connecte avec +2 appareils ?
+            return false;
         }
         if (fullName != null && !fullName.isBlank()) {
             sessions.put(fullName, wt);
+            // todo ajouter les messages (send)
         }
         return true;
     }
@@ -34,6 +35,7 @@ public class ActiveSession {
     public void send(String fullName, String message) {
         if (fullName != null && !fullName.isBlank()) {
             if (!sessions.containsKey(fullName)) {
+                // todo implémenter le stockage etc
                 LOGGER.info("Le client {} n'est pas connecté", fullName);
             } else {
                 LOGGER.info("Message envoyé à {}", fullName);
