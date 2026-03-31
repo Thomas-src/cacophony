@@ -10,4 +10,5 @@ public interface IDomainRepository {
     List<Domain> getDomains() throws DomainReaderException;
 
     void saveMessages(String domain, List<String> messages) throws DomainSaveException;
+    void saveMessage(String domain, String message) throws DomainSaveException;
 }
