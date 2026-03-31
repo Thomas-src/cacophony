@@ -48,7 +48,7 @@ public class Message {
     public static final String ADVERT = "ADVERT" + SP + "("+ PORT + ")" + SP + "("+ DOMAIN+ ")" + NEWLINE;
 
     // "POST" sp id_at_domain sp user_at_domain sp (user_at_domain / tag_at_domain) sp inner_message newline
-    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+MESSAGE+")"+ NEWLINE;
+    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+INNER_MESSAGE+")"+ NEWLINE;
     // --- COMPILATION DES PATTERNS DES COMMANDES ---
 
     // On ajoute "^" et "$" pour s'assurer que la chaîne correspond exactement à la commande, du début à la fin.

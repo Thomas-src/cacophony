@@ -2,8 +2,11 @@ package org.helmo.Exception;
 
 import java.io.IOException;
 
-public class HandlerException extends IOException {
+public class HandlerException extends Exception {
     public HandlerException(String message) {
         super(message);
+    }
+    public HandlerException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

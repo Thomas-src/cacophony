@@ -1,6 +1,7 @@
 package org.helmo.domain;
 
-import java.util.Base64;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Représente un domaine connu du Speaker (nom, clé AES, etc.).
@@ -10,9 +11,13 @@ public class Domain {
     private final String aesKey;
     private boolean active = false;
 
-    public Domain(String name, String key) {
+    private final List<String> messages = new ArrayList<>();
+    public Domain(String name, String key, List<String> messages) {
         this.name = name;
-        this.aesKey = key; // todo à vérifier
+        this.aesKey = key;
+        if(messages != null) {
+            this.messages.addAll(messages);
+        }
     }
 
     public String getName() {
@@ -21,6 +26,14 @@ public class Domain {
 
     public String getAesKey() {
         return aesKey;
+    }
+
+    public boolean hasMessages() {
+        return !messages.isEmpty();
+    }
+
+    public List<String> getMessages() {
+        return messages;
     }
 
     public boolean isActive() {

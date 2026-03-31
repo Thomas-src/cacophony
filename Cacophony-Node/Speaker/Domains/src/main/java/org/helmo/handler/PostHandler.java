@@ -54,5 +54,11 @@ public class PostHandler implements CommandHandler{
         } catch (Exception e) {
             throw new HandlerException("Erreur PostHandler : " + e.getMessage());
         }
+    // todo soit subscribe soit message
+        // résoudre localement si le message a été traité (id)
+        // Message
+        // résoudre tous les abonnements du message (locaux et distants des tags locaux) et locaux des users
+        // Subscribe
+        // ajouter dans le user ou dans le tag
     }
 }

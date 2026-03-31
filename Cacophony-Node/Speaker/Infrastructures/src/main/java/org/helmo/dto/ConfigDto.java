@@ -7,7 +7,8 @@ package org.helmo.dto;
 public record ConfigDto(
         String multicastAddress,
         int multicastPort,
-        String networkInterface
+        String networkInterface,
+        String aesKey
 ) {
 
-};
+}

@@ -6,7 +6,7 @@
   "unicastPort": 5002,
   "relayPort": 5003,
   "networkInterface": "wireless_32768",
-  "base64AES": "8N+2qBU5K0IJ/65xOldmicvA99zZwQdEk4kr0ifvZVk=",
+  "base64AES": "448H+AuQmuulKfleNffeTIrHbpEPdBptABd88gSRMi4=",
   "tls": true,
   "certificateName" : "star.swilabus.xyz.p12",
   "certificatePassword" : "labo2026"

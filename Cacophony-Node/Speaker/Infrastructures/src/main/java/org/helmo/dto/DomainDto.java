@@ -13,6 +13,7 @@ import java.util.List;
  */
 public record DomainDto(
         String domain,
-        String base64AES
+        String base64AES,
+        List<String> messages
 ) {
 }

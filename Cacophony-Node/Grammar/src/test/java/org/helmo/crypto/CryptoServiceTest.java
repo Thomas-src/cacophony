@@ -1,6 +1,5 @@
 package org.helmo.crypto;
 
-import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +31,7 @@ class CryptoServiceTest {
         cryptoService = new CryptoService();
         base64Key = generateRandomBase64Key();
         message = "This is a secret message for String/Base64 test!";
+        System.out.println("base64Key: " + base64Key);
     }
 
     @Test
@@ -70,4 +70,17 @@ class CryptoServiceTest {
             cryptoService.encrypt(message, invalidKey);
         }, "Chiffrer avec une clé invalide doit lancer une EncryptionException.");
     }
+
+    @Test
+    void testEncryptKey() throws EncryptionException, DecryptionException {
+        String mybase64 = "8N+2qBU5K0IJ/65xOldmicvA99zZwQdEk4kr0ifvZVk=";
+        String encrypted = cryptoService.encrypt(message, mybase64);
+        assertNotNull(encrypted, "Le message chiffré ne doit pas être nul.");
+        assertNotEquals(message, encrypted, "Le message chiffré doit être différent du texte original.");
+
+        String decrypted = cryptoService.decrypt(encrypted, mybase64);
+        System.out.println(decrypted);
+        assertEquals(message, decrypted, "Le message déchiffré doit correspondre au texte original.");
+    }
+
 }
