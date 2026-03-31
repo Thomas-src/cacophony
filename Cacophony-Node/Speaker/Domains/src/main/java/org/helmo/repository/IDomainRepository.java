@@ -26,4 +26,5 @@ public interface IDomainRepository {
      * @throws DomainSaveException if an error occurs while saving the messages.
      */
     void saveMessages(String domain, List<String> messages) throws DomainSaveException;
+    void saveMessage(String domain, String message) throws DomainSaveException;
 }

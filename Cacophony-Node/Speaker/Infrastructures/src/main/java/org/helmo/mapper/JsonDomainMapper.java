@@ -55,4 +55,24 @@ public class JsonDomainMapper {
 
         return new DomainsDto(updated);
     }
+
+    public static DomainsDto updateMessage(DomainsDto dto, String domain, String message) {
+        Objects.requireNonNull(dto);
+
+        List<DomainDto> updated = dto.domains().stream()
+                .map(d -> {
+                    if (!d.domain().equals(domain)) return d;
+
+                    List<String> merged = new ArrayList<>();
+                    if (d.messages() != null) merged.addAll(d.messages());
+                    merged.add(message);
+
+                    return new DomainDto(d.domain(), d.base64AES(), merged);
+                })
+                .toList();
+
+        return new DomainsDto(updated);
+    }
+
+
 }

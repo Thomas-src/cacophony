@@ -8,6 +8,7 @@ import org.helmo.domain.Domain;
 import org.helmo.domain.DomainService;
 import org.helmo.exceptions.HandlerException;
 import org.helmo.network.SpeakerTcpConnector;
+import org.helmo.repository.IDomainRepository;
 
 import java.util.List;
 
@@ -17,18 +18,19 @@ public class PostHandler implements CommandHandler {
     private final SpeakerTcpConnector connector;
     private final CryptoProvider crypto;
     private final DomainService domainService;
-
-    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService) {
+    private final IDomainRepository domainRepository;
+    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, IDomainRepository jsonDomainRepository) {
         this.connector = connector;
         this.crypto = cryptoProvider;
         this.domainService = domainService;
+        this.domainRepository = jsonDomainRepository;
 
     }
 
     @Override
     public void handle(List<String> args) throws HandlerException {
         LOGGER.info(args.toString());
-        // todo
+    // todo
         //  envoyer vers le node2 crypté avec sa clé
         String idAtDomain = args.get(0);
         String userSrc = args.get(1);
@@ -43,14 +45,20 @@ public class PostHandler implements CommandHandler {
                 throw new HandlerException("Domaine destination inconnu : " + domainDest);
             }
 
-            // Rechiffrer avec la clé destination
-            String destKey = destDomain.getAesKey();
-            String reEncrypted = crypto.encrypt(plainText, destKey);
 
             // Reconstruire et envoyer le message POST
-            String post = MessageBuilder.buildPost(idAtDomain, userSrc + "@" + domainSrc, dest + "@" + domainDest, reEncrypted);
-            connector.sendToNode(domainDest, post);
-            LOGGER.info("Message rechiffré et envoyé à {}", domainDest);
+            String post = MessageBuilder.buildPost(idAtDomain, userSrc + "@" + domainSrc, dest + "@" + domainDest, plainText);
+            // Rechiffrer avec la clé destination
+            String destKey = destDomain.getAesKey();
+            String reEncrypted = crypto.encrypt(post, destKey);
+
+            if(connector.containsNode(destDomain)){
+                connector.sendToNode(domainDest, reEncrypted);
+                LOGGER.info("Message rechiffré et envoyé à {}", domainDest);
+            } else{
+                domainRepository.saveMessage(destDomain.getName(), post);
+            }
+
 
         } catch (Exception e) {
             throw new HandlerException("Erreur PostHandler : " + e.getMessage());
