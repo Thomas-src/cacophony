@@ -7,19 +7,19 @@ import java.util.Base64;
  */
 public class Domain {
     private final String name;
-    private final byte[] aesKey;
+    private final String aesKey;
     private boolean active = false;
 
     public Domain(String name, String key) {
         this.name = name;
-        this.aesKey = Base64.getDecoder().decode(key); // todo à vérifier
+        this.aesKey = key; // todo à vérifier
     }
 
     public String getName() {
         return name;
     }
 
-    public byte[] getAesKey() {
+    public String getAesKey() {
         return aesKey;
     }
 

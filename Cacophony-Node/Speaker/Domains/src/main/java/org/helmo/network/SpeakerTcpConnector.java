@@ -23,6 +23,7 @@ public class SpeakerTcpConnector {
     private final Map<String, NodeConnection> connections = new ConcurrentHashMap<>();
     private final CryptoService cryptoService;
     private final DomainService domainService;
+    private final Map<String, Domain> ipToDomains = new ConcurrentHashMap<>();
 
     public SpeakerTcpConnector(CryptoService cryptoService, DomainService domainService) {
         this.cryptoService = cryptoService;
@@ -46,6 +47,7 @@ public class SpeakerTcpConnector {
             Socket socket = new Socket(ip, port);
             NodeConnection connection = new NodeConnectionImpl(domain, socket);
             connections.put(domain.getName(), connection);
+            ipToDomains.put(ip, domain);
         } catch (IOException e) {
             LOGGER.error("Erreur lors de la création du socket {}", e.getMessage());
         }
@@ -85,4 +87,15 @@ public class SpeakerTcpConnector {
 
         }
     }
+
+    /**
+     * Retourne le domaine à partir de l'ip donné
+     * @param ip Ip qui permet de retrouver le domaine
+     * @return
+     */
+    public Domain getDomain(String ip) {
+        return ipToDomains.get(ip);
+    }
+
+
 }

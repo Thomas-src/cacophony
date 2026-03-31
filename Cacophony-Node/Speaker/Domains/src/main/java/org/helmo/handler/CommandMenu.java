@@ -28,19 +28,21 @@ public class CommandMenu {
         handlers.put(command, handler);
     }
 
-    public void execute(String message) throws HandlerException {
+    public void execute(String message, String sourceIp) throws HandlerException {
         LOGGER.info(message);
-        if (tryExecute(message)) {
-            return;
-        }
+        Domain sourceDomain = connector.getDomain(sourceIp);
+        String key = sourceDomain.getAesKey();
+
+
         try {
 
-            String decrypted = message; // todo cryptoProvider.decrypt(message);
+
+            String decryptedMessage = cryptoProvider.decrypt(message,key);
 
             LOGGER.info("Message crypted, {}", message);
-            LOGGER.info("Message decrypted, {}", decrypted);
+            LOGGER.info("Message decrypted, {}", decryptedMessage);
 
-            if (tryExecute(decrypted)) {
+            if (tryExecute(decryptedMessage)) {
                 LOGGER.info("Exécution de la commande avec le msg décrypté");
                 return;
             }
