@@ -14,6 +14,7 @@ import org.helmo.crypto.CryptoService;
 
 // todo Utile ? je pense que le traffic est seulement en udp
 
+
 /**
  * Gestion des connexions TCP unicast entre le Speaker et les Nodes.
  * À implémenter : ouverture/fermeture de connexions, envoi/réception de messages.

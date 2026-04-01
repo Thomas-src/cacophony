@@ -1,93 +1,214 @@
-# cacophony
+
+# Cacophony
 
 
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://git.helmo.be/students/info/q240206/cacophony.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-* [Set up project integrations](https://git.helmo.be/students/info/q240206/cacophony/-/settings/integrations)
-
-## Collaborate with your team
-
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+![Statut](https://img.shields.io/badge/Statut-En%20d%C3%A9veloppement-F0AD4E)   ![Java](https://img.shields.io/badge/Java-OpenJDK-007396?logo=openjdk&logoColor=white) ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white) ![Gradle](https://img.shields.io/badge/Gradle-Wrapper-02303A?logo=gradle&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows-0078D4?logo=windows&logoColor=white)
 
 ## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Badges de statut et de stack affichés ci-dessus (Shields.io).
+
+> Messagerie distribuée academique composee d'un Node Java, d'un Speaker Java et d'un client desktop Python.
+
+
+## Points forts
+
+- Architecture hybride Java + Python, separee en composants clairs.
+- Demarrage local rapide avec Gradle Wrapper (pas de Gradle global requis).
+- Client GUI Python compatible TLS.
+- Configuration simple via fichiers JSON.
+
+
+## Présentation
+
+Cacophony est un projet de messagerie distribuee organise autour de trois composants :
+
+- `Node` : coeur serveur en Java (multi-modules Gradle).
+- `Speaker` : composant Java de diffusion/traitement.
+- `cacophony-client` : client GUI Python pour se connecter au Node.
+
+Le depot a ete pense pour un usage pedagogique, avec une structure lisible et des points d'entree explicites pour lancer chaque composant.
+
+
+### Statut du projet
+
+Projet academique en developpement actif.
+
+
+### Auteurs
+
+Contributeurs principaux (historique Git) :
+
+- Thomas Derdeyn (GitLab : `t.derdeyn`)
+- Clement Franchimont (GitLab : `cl.franchimont`)
+- Tibo Maes (GitLab : `ti.maes`)
+- Antoine Toussaint (GitLab : `an.toussaint`)
+
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Prérequis
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+- OpenJDK installe (pour les modules Java).
+- Python 3.x et `pip` (pour le client).
+- Windows PowerShell (commandes ci-dessous donnees pour Windows).
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Installation du client Python
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Depuis la racine du depot :
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+```powershell
+cd cacophony-client
+pip install bcrypt
+```
 
-## License
-For open source projects, say how it is licensed.
+Option recommandee (environnement virtuel) :
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```powershell
+cd cacophony-client
+python -m venv .venv
+.venv\Scripts\activate.bat
+pip install bcrypt
+```
+
+
+## Exécution locale
+
+Ouvrez trois terminaux depuis la racine du projet.
+
+
+### 1) Lancer le Node
+
+```powershell
+cd Cacophony-Node
+.\gradlew :Node:App:run
+```
+
+Configuration utilisee : `Cacophony-Node/Node/config-node.json`
+
+
+### 2) Lancer le Speaker
+
+```powershell
+cd Cacophony-Node
+.\gradlew :Speaker:App:run
+```
+
+Configuration utilisee : `Cacophony-Node/Speaker/config-speaker.json`
+
+
+### 3) Lancer le client
+
+```powershell
+cd cacophony-client
+python main.py
+```
+
+Arguments optionnels pour pre-remplir l'interface :
+
+```powershell
+python main.py <host> <port> <login> <password> [tls]
+```
+
+Exemple :
+
+```powershell
+python main.py node1.swilabus.xyz 5002 louisswinnen rootroot tls
+```
+
+
+## Exécuter les tests
+
+Pour executer les tests Java :
+
+```powershell
+cd Cacophony-Node
+.\gradlew test
+```
+
+Commande utile supplémentaire (build) :
+
+```powershell
+cd Cacophony-Node
+.\gradlew build
+```
+
+
+## Captures d'écran
+
+Capture d'ecran a ajouter.
+
+
+## Structure du dépôt
+
+- `Cacophony-Node/` : code Java (Node, Speaker, Grammar)
+- `cacophony-client/` : client desktop Python
+- `logs/` : journaux generes a la racine du projet
+
+
+## Configuration
+
+Node :
+
+- `Cacophony-Node/Node/config-node.json`
+- `Cacophony-Node/Node/users.json`
+- `Cacophony-Node/Node/tags.json`
+
+Speaker :
+
+- `Cacophony-Node/Speaker/config-speaker.json`
+- `Cacophony-Node/Speaker/domains.json`
+
+
+## Journaux
+
+Les journaux sont produits notamment dans :
+
+- `Cacophony-Node/Node/logs/`
+- `Cacophony-Node/Speaker/logs/`
+- `logs/`
+
+
+## Dépannage
+
+- Si les modules Java ne demarrent pas, verifiez que les commandes sont lancees depuis `Cacophony-Node/`.
+- Si Python ne trouve pas `bcrypt`, relancez `pip install bcrypt`.
+- En cas d'erreur reseau, verifiez host/port/interfaces dans les JSON de configuration.
+- En cas d'echec TLS cote client, verifiez certificat et configuration TLS du Node.
+
+
+
+## Documentation
+
+- Client Python : `cacophony-client/README.md`
+
+
+## Ressources de cours
+
+Les ressources suivantes sont fournies via la plateforme du cours ("disponible ici") :
+
+- `InterfaceIdentifier.jar` : affiche le nom des interfaces reseau (Java 21 a modifie certains noms d'interfaces).
+- `MulticastSpy21.jar` : affiche les echanges multicast.
+- `cacophony-node.json` : exemple de configuration JSON pour le Node.
+- `cacophony-speaker.json` : exemple de configuration JSON pour le Speaker.
+- `star.swilabus.xyz.p12` : certificat TLS pour le client (mot de passe : `labo2026`).
+- Certificats CA : `Swilabus Root CA RSA 2025` et `Swilabus Education CA RSA TLS 2025`.
+- `MulticastForwarder.py` (projet fourni) : simulation des envois multicast via VPN.
+- Fichier Excel d'inscription des membres du groupe.
+- Video d'exemple de gestion de projet dans GitLab.
+
+Important pour le multicast :
+
+- Selectionner l'interface reseau avant tout echange multicast (Node/Speaker/outils multicast).
+- Verifier que la valeur `networkInterface` dans les fichiers JSON correspond bien a l'interface active sur votre machine.
+
+
+## Variables d'environnement
+
+Ce projet n'utilise pas de fichier `.env` obligatoire dans sa forme actuelle.
+La configuration est geree via des fichiers JSON :
+
+- `Cacophony-Node/Node/config-node.json`
+- `Cacophony-Node/Speaker/config-speaker.json`
