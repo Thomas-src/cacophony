@@ -14,13 +14,14 @@ import org.helmo.network.SpeakerTcpConnector;
 /**
  * Implémentation de l'interface NodeConnection pour gérer une connexion TCP avec un Node.
  */
-public class NodeConnectionImpl implements NodeConnection {
+public class NodeConnectionImpl extends Thread implements NodeConnection  {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Domain domain;
     private final Socket socket;
     private final PrintWriter writer;
     private Thread readerThread;
+
 
 
     public NodeConnectionImpl(Domain domain, Socket socket, String ip) throws IOException {
@@ -30,7 +31,8 @@ public class NodeConnectionImpl implements NodeConnection {
 
     }
 
-    public void startReader() {
+    @Override
+    public void start() {
         if (readerThread != null && readerThread.isAlive()) return;
 
         readerThread = new Thread(() -> {

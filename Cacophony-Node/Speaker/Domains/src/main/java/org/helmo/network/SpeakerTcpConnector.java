@@ -46,7 +46,9 @@ public class SpeakerTcpConnector {
             }
 
             Socket socket = new Socket(ip, port);
+            // créer un tcp
             connection = new NodeConnectionImpl(domain, socket, ip);
+            connection.startReader();
             connections.put(domain.getName(), connection);
             ipToDomains.put(ip, domain);
         } catch (IOException e) {

@@ -39,11 +39,6 @@ public class Speaker extends Thread {
                     DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                     socket.receive(packet);
 
-                    var node = speakerTcpConnector.getNodeConnection();
-                    if (speakerTcpConnector.getNodeConnection() != null) {
-                        node.startReader();
-                    }
-
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                     String sourceIp = packet.getAddress().getHostAddress();
 
