@@ -106,7 +106,7 @@ public class MessageBuilder {
      * @return
      */
     public static String buildMsg(String userAtDomain, String message) {
-        return "MSG" + SP + userAtDomain + SP + message + NEWLINE;
+        return "MSG" + SP + userAtDomain + SP + message;
     }
 
     // ok = "OK" newline (Version sans message)

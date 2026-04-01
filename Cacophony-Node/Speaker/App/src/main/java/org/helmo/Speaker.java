@@ -22,6 +22,7 @@ public class Speaker extends Thread {
         this.speakerConfig = speakerConfig;
         this.commandMenu = commandMenu;
         this.speakerTcpConnector = connector;
+        setName("UDP:R");
     }
 
     @Override
@@ -43,8 +44,8 @@ public class Speaker extends Thread {
                     String sourceIp = packet.getAddress().getHostAddress();
 
 
-                    LOGGER.info("Input from {}: {}", sourceIp, message);
-                   // commandMenu.execute(message, sourceIp);
+                    LOGGER.info("[UDP] msg de {}: {}", sourceIp, message);
+                    commandMenu.execute(message);
 
                 } catch (IOException e) {
                     LOGGER.error("Le serveur s'est arrêté:", e);

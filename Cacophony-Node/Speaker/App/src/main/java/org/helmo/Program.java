@@ -23,15 +23,18 @@ public class Program {
             CryptoService crypto = new CryptoService();
             DomainService domainService = new DomainService(domainRepository, crypto, speakerConfig);
 
-            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto,  domainService);
+            CommandMenu tcpMenu = new CommandMenu();
+            CommandMenu udpMenu = new CommandMenu();
 
-            CommandMenu menu = new CommandMenu(crypto, connector);
-            menu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
-            menu.add(Message.P_POST, new PostHandler(connector, crypto, domainService, domainRepository) );
+            SpeakerTcpConnector connector = new SpeakerTcpConnector(crypto, tcpMenu);
+
+
+            udpMenu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
+            tcpMenu.add(Message.P_POST, new PostHandler(connector, crypto, domainService, domainRepository, speakerConfig));
 
             LOGGER.info(speakerConfig.toString());
 
-            Speaker speaker = new Speaker(speakerConfig, menu, connector);
+            Speaker speaker = new Speaker(speakerConfig, udpMenu, connector);
             speaker.start();
         } catch (Exception e) {
             LOGGER.error("Erreur lors du démarrage du programme", e);

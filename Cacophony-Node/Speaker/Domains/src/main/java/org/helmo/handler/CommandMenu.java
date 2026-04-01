@@ -18,41 +18,18 @@ public class CommandMenu {
     private static final Logger LOGGER = LogManager.getLogger();
     private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>();
 
-    private final CryptoProvider cryptoProvider;
-    private final SpeakerTcpConnector connector;
-    public CommandMenu(CryptoProvider cryptoProvider,SpeakerTcpConnector connector) {
-        this.cryptoProvider = cryptoProvider;
-        this.connector = connector;
+    public CommandMenu() {
     }
 
     public void add(Pattern command, CommandHandler handler) {
         handlers.put(command, handler);
     }
 
-    public void execute(String message, String sourceIp) throws HandlerException {
-
+    public void execute(String message) throws HandlerException {
         if (tryExecute(message)) {
             return;
         }
-        Domain sourceDomain = connector.getDomain(sourceIp);
-        String key = sourceDomain.getAesKey();
-        try {
-            String decryptedMessage = cryptoProvider.decrypt(message,key);
-
-            LOGGER.info("Message crypted, {}", message);
-            LOGGER.info("Message decrypted, {}", decryptedMessage);
-
-            if (tryExecute(decryptedMessage)) {
-                LOGGER.info("Exécution de la commande avec le msg décrypté");
-                return;
-            }
-
-        } catch (Exception e) {
-            LOGGER.warn("Decryption failed: {}", e.getMessage());
-        }
-
-
-        LOGGER.warn("Command {} not found", message);
+        LOGGER.warn("[UDP] Command {} not found", message);
     }
 
     private boolean tryExecute(String message) throws HandlerException {

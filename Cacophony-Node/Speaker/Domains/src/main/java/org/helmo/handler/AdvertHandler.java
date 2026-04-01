@@ -32,7 +32,6 @@ public class AdvertHandler implements CommandHandler {
 
     @Override
     public void handle(List<String> args) {
-        LOGGER.info("Execution de advert: {}", args);
         String port = args.get(0);
         String domain = args.get(1);
 
@@ -45,7 +44,7 @@ public class AdvertHandler implements CommandHandler {
                 LOGGER.info("domaine déjà connecté {}", domain);
                 return;
             }
-            // résoudre l'ip depuis le domaine
+            // résoudre l'ip depuis le domaine du message -> sinon ajouter arg socket.getInetAddress().getHostAddress();
             String ip = InetAddress.getByName(domain).getHostAddress();
             connector.connectToNode(d, ip, Integer.parseInt(port));
 

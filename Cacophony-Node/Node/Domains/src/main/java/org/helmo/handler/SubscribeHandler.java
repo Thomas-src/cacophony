@@ -51,9 +51,8 @@ public class SubscribeHandler implements CommandHandler {
             } else {
                 response = tagSubscribe(sub, session);
             }
-
         } else {
-            // todo speaker
+            // todo speaker ! au double newline du create msg de subscribe
         }
 
         return response;

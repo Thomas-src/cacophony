@@ -3,9 +3,13 @@ package org.helmo.handler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.MessageBuilder;
+import org.helmo.SpeakerConfig;
 import org.helmo.crypto.CryptoProvider;
+import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.domain.Domain;
 import org.helmo.domain.DomainService;
+import org.helmo.exceptions.DomainReaderException;
+import org.helmo.exceptions.DomainSaveException;
 import org.helmo.exceptions.HandlerException;
 import org.helmo.network.SpeakerTcpConnector;
 import org.helmo.repository.IDomainRepository;
@@ -19,25 +23,24 @@ public class PostHandler implements CommandHandler {
     private final CryptoProvider crypto;
     private final DomainService domainService;
     private final IDomainRepository domainRepository;
-    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, IDomainRepository jsonDomainRepository) {
+    private final SpeakerConfig speakerConfig;
+
+    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, IDomainRepository jsonDomainRepository, SpeakerConfig speakerConfig) {
         this.connector = connector;
         this.crypto = cryptoProvider;
         this.domainService = domainService;
         this.domainRepository = jsonDomainRepository;
-
+        this.speakerConfig = speakerConfig;
     }
 
     @Override
     public void handle(List<String> args) throws HandlerException {
-        LOGGER.info(args.toString());
-    // todo
-        //  envoyer vers le node2 crypté avec sa clé
         String idAtDomain = args.get(0);
         String userSrc = args.get(1);
-        String domainSrc = args.get(2);
-        String dest = args.get(3);
-        String domainDest = args.get(4);
-        String plainText = args.get(5);
+        String dest = args.get(4);
+        String domainDest = args.get(6);
+        String plainText = args.getLast();
+
         try {
             // Récupérer la clé du domaine destination
             Domain destDomain = domainService.findDomain(domainDest);
@@ -45,29 +48,26 @@ public class PostHandler implements CommandHandler {
                 throw new HandlerException("Domaine destination inconnu : " + domainDest);
             }
 
-
             // Reconstruire et envoyer le message POST
-            String post = MessageBuilder.buildPost(idAtDomain, userSrc + "@" + domainSrc, dest + "@" + domainDest, plainText);
-            // Rechiffrer avec la clé destination
-            String destKey = destDomain.getAesKey();
-            String reEncrypted = crypto.encrypt(post, destKey);
+            String post = MessageBuilder.buildPost(idAtDomain, userSrc, dest, plainText);
 
-            if(connector.containsNode(destDomain)){
-                connector.sendToNode(domainDest, reEncrypted);
+            if (connector.containsNode(destDomain)) {
+                // Rechiffrer avec la clé destination
+                String destKey = destDomain.getAesKey();
+                String reEncrypted = crypto.encrypt(post, destKey);
                 LOGGER.info("Message rechiffré et envoyé à {}", domainDest);
-            } else{
-                domainRepository.saveMessage(destDomain.getName(), post);
+                connector.sendToNode(domainDest, reEncrypted);
+            } else {
+                String localEncrypted = crypto.encrypt(post, speakerConfig.aesKey());
+                LOGGER.info("Node absent, enregistrement du message {}", domainDest);
+                domainRepository.saveMessage(destDomain.getName(), localEncrypted);
             }
-
-
-        } catch (Exception e) {
-            throw new HandlerException("Erreur PostHandler : " + e.getMessage());
+        } catch (DomainReaderException e) {
+            throw new HandlerException("Impossible de lire les domaines : " + e.getMessage());
+        } catch (EncryptionException e) {
+            throw new HandlerException("Impssible d'encrypter le message : " + e.getMessage());
+        } catch (DomainSaveException e) {
+            throw new HandlerException("Impossible de sauvegarder le message : " + e.getMessage());
         }
-        // todo soit subscribe soit message
-        // résoudre localement si le message a été traité (id)
-        // Message
-        // résoudre tous les abonnements du message (locaux et distants des tags locaux) et locaux des users
-        // Subscribe
-        // ajouter dans le user ou dans le tag
     }
 }

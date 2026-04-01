@@ -5,5 +5,7 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MessageTest {
-
+    @Test
+    void shouldPostPass() {
+    }
 }

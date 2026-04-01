@@ -34,6 +34,8 @@ public class EastThread extends Thread {
     private Socket speakerSocket;
     private final CryptoService cryptoService;
 
+    private Thread currentReaderThread;
+
     /**
      * Initialise une nouvelle instance de EastThread.
      *
@@ -63,16 +65,31 @@ public class EastThread extends Thread {
                 Socket speaker = serverSocket.accept();
                 LOGGER.info("Speaker connecté");
 
+                closeCurrentConnection();
                 this.speakerSocket = speaker;
                 this.writer = new PrintWriter(speaker.getOutputStream(), true);
 
-                Thread reader = new Thread(() -> read(speaker));
-                reader.setDaemon(true);
-                reader.start();
+                currentReaderThread = new Thread(() -> read(speaker));
+                currentReaderThread.setDaemon(true);
+                currentReaderThread.setName("ET:R");
+                currentReaderThread.start();
 
             }
         } catch (IOException e) {
             LOGGER.error("Erreur création socket: {}", e.getMessage());
+        }
+    }
+
+    private void closeCurrentConnection() {
+        if (currentReaderThread != null && currentReaderThread.isAlive()) {
+            currentReaderThread.interrupt();
+        }
+        if (speakerSocket != null && !speakerSocket.isClosed()) {
+            try {
+                speakerSocket.close();
+            } catch (IOException e) {
+                LOGGER.warn("Fermeture ancienne connexion : {}", e.getMessage());
+            }
         }
     }
 
@@ -120,11 +137,12 @@ public class EastThread extends Thread {
      *
      * @param contextstr Le message à envoyer.
      */
-    public void sendUncryptedMessage(String contextstr) {
+    public void sendMessage(String contextstr) {
         if (writer != null) {
             LOGGER.info("Envoi au speaker : {}", contextstr);
             writer.println(contextstr);
         } else {
+            // todo stocker le message dans le speaker
             LOGGER.warn("Aucune connexion au speaker !");
         }
     }

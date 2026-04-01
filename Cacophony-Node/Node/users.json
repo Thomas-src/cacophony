@@ -26,7 +26,8 @@
       "bcryptRound": 14,
       "bcryptSalt": "8uPghkd3g45aFzyOSjqmru",
       "subscribers": [
-        "thomas@node1.swilabus.xyz"
+        "thomas@node1.swilabus.xyz",
+        "louis@node2.swilabus.xyz"
       ],
       "userTags": [
         "#monTag1@node1.swilabus.xyz"

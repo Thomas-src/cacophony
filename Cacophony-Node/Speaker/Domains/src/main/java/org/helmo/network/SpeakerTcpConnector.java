@@ -8,9 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
-import org.helmo.domain.DomainService;
-import org.helmo.network.impl.NodeConnectionImpl;
 import org.helmo.crypto.CryptoService;
+import org.helmo.handler.CommandMenu;
 
 // todo Utile ? je pense que le traffic est seulement en udp
 
@@ -19,17 +18,15 @@ import org.helmo.crypto.CryptoService;
  * Gestion des connexions TCP unicast entre le Speaker et les Nodes.
  * À implémenter : ouverture/fermeture de connexions, envoi/réception de messages.
  */
-public class SpeakerTcpConnector {
+public class SpeakerTcpConnector implements ConnectionListener {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Map<String, NodeConnection> connections = new ConcurrentHashMap<>();
+    private final Map<String, NodeTCPConnection> connections = new ConcurrentHashMap<>();
     private final CryptoService cryptoService;
-    private final DomainService domainService;
+    private final CommandMenu tcpMenu;
     private final Map<String, Domain> ipToDomains = new ConcurrentHashMap<>();
-    private NodeConnection connection;
-
-    public SpeakerTcpConnector(CryptoService cryptoService, DomainService domainService) {
+    public SpeakerTcpConnector(CryptoService cryptoService, CommandMenu tcpMenu) {
         this.cryptoService = cryptoService;
-        this.domainService = domainService;
+        this.tcpMenu = tcpMenu;
     }
 
     /**
@@ -40,25 +37,25 @@ public class SpeakerTcpConnector {
      * @param port
      */
     public void connectToNode(Domain domain, String ip, int port) {
+        if (containsNode(domain)) {
+            LOGGER.info("{} déjà connecté", domain.getName());
+            return;
+        }
         try {
-            if (containsNode(domain)) { // todo supprimer lorsque le client se deconnecte
-                LOGGER.info("{} is already connected", domain);
-                return;
-            }
-
             Socket socket = new Socket(ip, port);
-            // créer un tcp
-            connection = new NodeConnectionImpl(domain, socket, ip);
-            connection.startReader();
-            connections.put(domain.getName(), connection);
+            NodeTCPConnection conn = create(domain, socket);
+            connections.put(domain.getName(), conn);
             ipToDomains.put(ip, domain);
+            LOGGER.info("Connecté à {} ({}:{})", domain.getName(), ip, port);
         } catch (IOException e) {
-            LOGGER.error("Erreur lors de la création du socket {}", e.getMessage());
+            LOGGER.error("Échec connexion à {}:{} — {}", ip, port, e.getMessage());
         }
     }
 
-    public NodeConnection getNodeConnection() {
-        return connection;
+    private NodeTCPConnection create(Domain domain, Socket socket) throws IOException {
+        NodeTCPConnection conn = new NodeTCPConnection(domain, socket, tcpMenu, cryptoService, this);
+        conn.start();
+        return conn;
     }
 
     /**
@@ -68,7 +65,7 @@ public class SpeakerTcpConnector {
      * @param message
      */
     public void sendToNode(String domainName, String message) {
-        NodeConnection connection = connections.get(domainName);
+        NodeTCPConnection connection = connections.get(domainName);
         if (connection != null && connection.isAlive()) {
             connection.sendMessage(message);
         } else if (connection != null) {
@@ -83,27 +80,9 @@ public class SpeakerTcpConnector {
                 .anyMatch(d -> d.equals(domain.getName()));
     }
 
-    /**
-     * Ferme la connexion TCP avec un Node.
-     */
-    public void closeConnection(String domainName) {
-
-            NodeConnection connection = connections.remove(domainName);
-            if (connection != null) {
-                connection.close();
-
-        }
+    @Override
+    public void onConnectionClosed(String domainName) {
+        connections.remove(domainName);
+        LOGGER.info("[{}] retiré des connexions actives", domainName);
     }
-
-    /**
-     * Retourne le domaine à partir de l'ip donné
-     * @param ip Ip qui permet de retrouver le domaine
-     * @return
-     */
-    public Domain getDomain(String ip) {
-        return ipToDomains.get(ip);
-    }
-
-
-
 }

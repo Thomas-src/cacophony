@@ -31,8 +31,8 @@ public class DomainService {
     }
 
     public Domain findDomain(String domain) throws DomainReaderException {
-        List<Domain> users = getDomains();
-        for (Domain d : users) {
+        List<Domain> domains = getDomains();
+        for (Domain d : domains) {
             if (d.getName().equals(domain)) {
                 return d;
             }

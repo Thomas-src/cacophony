@@ -50,7 +50,7 @@ public class Program {
             EastThread eastThread = new EastThread(config, taskthread, activeSession, cryptoService);
 
 
-            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, config);
+            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, config,cryptoService);
             SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService);
 
             menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
