@@ -12,6 +12,10 @@ import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.domain.Domain;
 import org.helmo.handler.CommandMenu;
 
+/**
+ * Représente une connexion TCP active avec un nœud distant.
+ * Cette classe gère la lecture continue des messages entrants, leur déchiffrement et leur exécution.
+ */
 public class NodeTCPConnection extends Thread  {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -22,6 +26,16 @@ public class NodeTCPConnection extends Thread  {
     private final CryptoService cryptoService;
     private final ConnectionListener listener;
 
+    /**
+     * Initialise une nouvelle connexion TCP avec un domaine spécifique.
+     *
+     * @param domain Le domaine distant associé à cette connexion.
+     * @param socket Le socket réseau ouvert.
+     * @param tcpMenu Le menu de commandes pour traiter les messages reçus.
+     * @param cryptoService Le service utilisé pour le déchiffrement.
+     * @param connectionListener L'écouteur pour notifier la fermeture de la connexion.
+     * @throws IOException Si une erreur survient lors de l'accès aux flux du socket.
+     */
     public NodeTCPConnection(Domain domain, Socket socket, CommandMenu tcpMenu, CryptoService cryptoService, ConnectionListener connectionListener) throws IOException  {
         this.tcpMenu = tcpMenu;
         this.domain = domain;
@@ -32,6 +46,10 @@ public class NodeTCPConnection extends Thread  {
         setName("TCPConnection");
     }
 
+    /**
+     * Boucle principale d'écoute. Lit les messages entrants ligne par ligne,
+     * les déchiffre et les transmet au menu de commandes.
+     */
     @Override
     public void run() {
         try (BufferedReader br = new BufferedReader(
@@ -58,11 +76,18 @@ public class NodeTCPConnection extends Thread  {
     }
 
 
-
+    /**
+     * Envoie un message brut (généralement déjà chiffré) via le socket.
+     *
+     * @param line La chaîne de caractères à envoyer.
+     */
     public void sendMessage(String line) {
         writer.println(line);
     }
 
+    /**
+     * Ferme proprement la connexion en interrompant le thread et en fermant le socket.
+     */
     public void close() {
         interrupt();
         try {
@@ -72,6 +97,11 @@ public class NodeTCPConnection extends Thread  {
         }
     }
 
+    /**
+     * Récupère le nom du domaine associé à cette connexion.
+     *
+     * @return Le nom du domaine.
+     */
     public String getDomain() {
         return domain.getName();
     }

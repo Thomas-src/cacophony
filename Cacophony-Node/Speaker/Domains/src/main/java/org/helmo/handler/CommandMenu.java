@@ -14,17 +14,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class CommandMenu {
+/**
+ * Gère un menu de commandes basées sur des expressions régulières.
+ * Permet d'associer des motifs (Pattern) à des gestionnaires de commandes (CommandHandler).
+ */
+ public class CommandMenu {
     private static final Logger LOGGER = LogManager.getLogger();
     private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>();
 
     public CommandMenu() {
     }
 
+    /**
+     * Ajoute une nouvelle commande au menu.
+     *
+     * @param command Le motif Regex correspondant à la commande.
+     * @param handler Le gestionnaire à exécuter si le motif correspond.
+     */
     public void add(Pattern command, CommandHandler handler) {
         handlers.put(command, handler);
     }
 
+    /**
+     * Tente d'exécuter une commande correspondant au message fourni.
+     *
+     * @param message Le message brut reçu à analyser.
+     * @throws HandlerException Si une erreur survient lors de l'exécution de la commande.
+     */
     public void execute(String message) throws HandlerException {
         if (tryExecute(message)) {
             return;
@@ -32,6 +48,9 @@ public class CommandMenu {
         LOGGER.warn("[UDP] Command {} not found", message);
     }
 
+    /**
+     * Parcourt les gestionnaires enregistrés pour trouver une correspondance.
+     */
     private boolean tryExecute(String message) throws HandlerException {
         for (var entry : handlers.entrySet()) {
             Pattern pattern = entry.getKey();
@@ -46,6 +65,9 @@ public class CommandMenu {
         return false;
     }
 
+    /**
+     * Extrait les arguments des groupes de capture Regex et invoque le gestionnaire.
+     */
     private void executeCommand(CommandHandler handler, Matcher matcher) throws HandlerException {
         List<String> args = new ArrayList<>();
         for (int i = 1; i <= matcher.groupCount(); i++) {
