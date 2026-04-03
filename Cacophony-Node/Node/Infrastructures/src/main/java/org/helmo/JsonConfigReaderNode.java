@@ -65,11 +65,11 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
                 throw new ConfigReaderException("Configuration vide ou invalide");
             }
 
-            // Validate the network interface
+            // Valider l'interface réseau
             if (!isValidNetworkInterface(dto.networkInterface())) {
-                LOGGER.error("L'interface réseau spécifiée '{}' n'est pas valide pour le multicast.", dto.networkInterface());
+                LOGGER.error("L'interface réseau spécifiée '{}' n'est pas valide pour le multicast ou est inexistante.", dto.networkInterface());
 
-                // Attempt to find a suitable network interface
+                // Tenter de trouver une interface réseau appropriée
                 String fallbackInterface = findSuitableNetworkInterface();
                 if (fallbackInterface != null) {
                     LOGGER.info("Utilisation de l'interface réseau de secours : {}", fallbackInterface);

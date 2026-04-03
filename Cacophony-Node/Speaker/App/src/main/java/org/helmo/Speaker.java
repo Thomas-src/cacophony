@@ -94,8 +94,8 @@ public class Speaker extends Thread {
 
         // Si l'interface spécifiée n'existe pas ou n'est pas valide, trouver une interface appropriée
         if (netIf == null || !isValidMulticastInterface(netIf)) {
-            LOGGER.warn("Network interface '{}' not found or not valid for IPv4 multicast.", interfaceName);
-            LOGGER.warn("Attempting to find a suitable network interface automatically...");
+            LOGGER.warn("L'interface réseau '{}' n'a pas été trouvée ou n'est pas valide pour le multicast IPv4.", interfaceName);
+            LOGGER.warn("Tentative de recherche automatique d'une interface réseau appropriée...");
             netIf = findSuitableNetworkInterface();
         }
 
