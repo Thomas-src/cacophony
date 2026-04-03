@@ -265,7 +265,65 @@ public class JsonUserRepository implements IUserRepository {
 
     @Override
     public List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException {
-        return List.of();
+        synchronized (USERS_FILE_LOCK) {
+            try {
+                ensureStorage();
+                List<UserDto> existingUserDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
+                    if (existingDto == null || existingDto.users() == null) {
+                        return List.of();
+                    }
+                    existingUserDtos = new ArrayList<>(existingDto.users());
+                }
+
+                List<String> messagesToReturn = List.of();
+                boolean found = false;
+
+                // 2. Trouver l'utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+                    if (user.login().equals(name)) {
+                        // récupérer messages
+                        List<String> messages = user.messages() != null ? new ArrayList<>(user.messages()) : new ArrayList<>();
+
+                        messagesToReturn = new ArrayList<>(messages);
+
+                        // 3. vider les messages
+                        UserDto updatedUser = new UserDto(
+                                user.login(),
+                                user.bcryptHash(),
+                                user.bcryptRound(),
+                                user.bcryptSalt(),
+                                user.subscribers(),
+                                user.userTags(),
+                                new ArrayList<>()
+                        );
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour récupération messages : {}", name);
+                    return List.of();
+                }
+
+                // 4. Réécrire le fichier (avec messages vidés)
+                UsersDto updatedDto = new UsersDto(existingUserDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+                // 5. Retourner les anciens messages
+                return messagesToReturn;
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de la récupération des messages", ex);
+                throw new UserReaderException("Erreur lors de la récupération des messages");
+            }
+        }
     }
 
     /**

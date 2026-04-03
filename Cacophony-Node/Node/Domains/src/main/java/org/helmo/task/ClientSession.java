@@ -122,6 +122,10 @@ public class ClientSession implements TaskContext {
         this.thread.send(message);
     }
 
+    public void sendPastMessages() {
+        activeSession.sendPastMessages(client.getFullName());
+    }
+
     /**
      * Vérifie la réponse au challenge d'authentification.
      */

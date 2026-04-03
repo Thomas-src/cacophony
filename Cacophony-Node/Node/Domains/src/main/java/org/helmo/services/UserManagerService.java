@@ -118,15 +118,14 @@ public class UserManagerService {
        }
     }
 
-    public List<String> getUserMessagesAndEmpty(String username)
-            throws UserReaderException, UserSaveException {
-
+    public List<String> getUserMessagesAndEmpty(String username) throws UserReaderException, UserSaveException {
+        String name = transformToName(username);
         List<Client> users = getUsers();
 
         for (Client user : users) {
-            if (user.getName().equals(username)) {
+            if (user.getName().equals(name)) {
 
-                return userRepository.getUserMessagesAndEmpty(username)
+                return userRepository.getUserMessagesAndEmpty(name)
                         .stream()
                         .map(encryptedData -> {
                             try {

@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.server.threads.WestThread;
 import org.helmo.services.UserManagerService;
@@ -27,7 +28,6 @@ public class ActiveSession {
         }
         if (fullName != null && !fullName.isBlank()) {
             sessions.put(fullName, wt);
-            // todo ajouter les messages (send)
         }
         return true;
     }
@@ -45,12 +45,22 @@ public class ActiveSession {
                     userManagerService.saveMessageForUser(fullName, message);
                     LOGGER.info("Message crypté enregistré pour {}", fullName);
                 } catch (UserSaveException e) {
-                    throw new RuntimeException(e); // todo
+                    throw new RuntimeException(e);
                 }
             } else {
-                LOGGER.info("Message envoyé à {}", fullName);
+                LOGGER.info("Message envoyé à {}, {}", fullName, message);
                 sessions.get(fullName).send(message);
             }
+        }
+    }
+
+    public void sendPastMessages(String fullName) {
+        try {
+            LOGGER.info("Vérification du user {}", fullName);
+            //  afficher les messages à l'utilisateur qui se connecte (send)
+            userManagerService.getUserMessagesAndEmpty(fullName).forEach(m->send(fullName, m));
+        } catch (UserSaveException | UserReaderException e) {
+            throw new RuntimeException(e);
         }
     }
 }
