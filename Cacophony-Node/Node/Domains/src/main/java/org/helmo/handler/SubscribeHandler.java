@@ -5,6 +5,9 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.*;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
+import org.helmo.crypto.exceptions.EncryptionException;
+import org.helmo.services.IdGeneratorService;
+import org.helmo.services.SpeakerService;
 import org.helmo.task.ClientSession;
 import org.helmo.services.TagManagerService;
 import org.helmo.services.UserManagerService;
@@ -21,15 +24,20 @@ public class SubscribeHandler implements CommandHandler {
 
     private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
+    private final SpeakerService speakerService;
+    private final IdGeneratorService idGeneratorService;
 
     /**
      * Initialise le gestionnaire d'abonnement.
+     *
      * @param userManagerService Service de gestion des utilisateurs.
-     * @param tagManagerService Service de gestion des tags.
+     * @param tagManagerService  Service de gestion des tags.
      */
-    public SubscribeHandler(UserManagerService userManagerService, TagManagerService tagManagerService) {
+    public SubscribeHandler(UserManagerService userManagerService, TagManagerService tagManagerService, SpeakerService speakerService, IdGeneratorService idGeneratorService) {
         this.userManagerService = userManagerService;
         this.tagManagerService = tagManagerService;
+        this.speakerService = speakerService;
+        this.idGeneratorService = idGeneratorService;
     }
 
     @Override
@@ -45,14 +53,16 @@ public class SubscribeHandler implements CommandHandler {
         String sub = isUser ? args.get(0) : args.get(2);
         String domain = isUser ? args.get(1) : args.get(3);
 
+
         if (domain.equalsIgnoreCase(session.getDomain())) {
-            if(isUser) {
+            if (isUser) {
                 response = userSubscribe(sub, session);
             } else {
                 response = tagSubscribe(sub, session);
             }
         } else {
-            // todo speaker ! au double newline du create msg de subscribe
+            // todo envoyer au speaker
+            sendToSpeaker(session, args);
         }
 
         return response;
@@ -60,8 +70,9 @@ public class SubscribeHandler implements CommandHandler {
 
     /**
      * Gère l'abonnement d'un utilisateur à un autre utilisateur.
+     *
      * @param targetName Nom de l'utilisateur cible.
-     * @param session Session du client actuel.
+     * @param session    Session du client actuel.
      * @return Message de réponse (OK ou ERROR).
      */
     private String userSubscribe(String targetName, ClientSession session) {
@@ -88,6 +99,7 @@ public class SubscribeHandler implements CommandHandler {
 
     /**
      * Gère l'abonnement d'un utilisateur à un tag.
+     *
      * @param tagName Nom du tag.
      * @param session Session du client actuel.
      * @return Message de réponse (OK).
@@ -95,7 +107,7 @@ public class SubscribeHandler implements CommandHandler {
      */
     private String tagSubscribe(String tagName, ClientSession session) throws HandlerException {
         List<InternalTag> tags;
-        String fullTagName = tagName+"@"+session.getDomain();
+        String fullTagName = tagName + "@" + session.getDomain();
         try {
             tags = tagManagerService.getTags();
         } catch (TagReaderException e) {
@@ -129,5 +141,22 @@ public class SubscribeHandler implements CommandHandler {
         }
         // Retourner ok
         return MessageBuilder.buildOk();
+    }
+
+    private void sendToSpeaker(ClientSession session, List<String> args) throws HandlerException {
+        String toSubscribe = args.get(0) != null ? args.getFirst() + "@" + args.get(1) : args.get(2) + "@" + args.getLast();
+
+        String subMessage = MessageBuilder.buildSubscribe(toSubscribe);
+        String id = idGeneratorService.getNextCountString();
+        String messageToCrypt = MessageBuilder.buildPost(id + session.getDomain(), session.getUserFullName(), toSubscribe, subMessage);
+        try {
+            speakerService.sendCryptedMessage(messageToCrypt);
+        } catch (EncryptionException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new HandlerException("Impossible de crypter le message", e);
+        } catch (MessageSaveException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new HandlerException("Impossible de sauvegarder le message", e);
+        }
     }
 }

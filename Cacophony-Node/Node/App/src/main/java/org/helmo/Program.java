@@ -45,13 +45,14 @@ public class Program {
             CommandMenu menu = new CommandMenu();
             AdvertThread advertThread = new AdvertThread(config);
 
-
             TaskThread taskthread = new TaskThread(menu);
-            EastThread eastThread = new EastThread(config, taskthread, activeSession, cryptoService);
+            EastThread eastThread = new EastThread(config, taskthread, cryptoService);
             IdGeneratorService idGeneratorService = new IdGeneratorService(0);
             IMessageRepository messageRepository = new JsonNodeMessageRepository();
-            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, cryptoService,messageRepository, idGeneratorService);
-            SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService);
+
+            SpeakerService speakerService = new SpeakerService(cryptoService,eastThread, messageRepository);
+            SendHandler sendHandler = new SendHandler(messageService, activeSession, speakerService, idGeneratorService);
+            SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService, speakerService, idGeneratorService);
 
             menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
             menu.add(Message.P_CMD_USER, new AuthentificateHandler(userManagerService));

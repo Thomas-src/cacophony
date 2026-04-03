@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
+import org.helmo.repository.IMessageRepository;
+import org.helmo.server.threads.EastThread;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.tag.InternalTag;
@@ -23,7 +25,7 @@ public class MessageService {
     private final TagManagerService tagManagerService;
 
     /**
-     * Initialise une nouvelle instance de SubscriberService.
+     * Initialise une nouvelle instance de MessageService.
      *
      * @param userManagerService Le service de gestion des utilisateurs.
      * @param tagManagerService  Le service de gestion des tags.

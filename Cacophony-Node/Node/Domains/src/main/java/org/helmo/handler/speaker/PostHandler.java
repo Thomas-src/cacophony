@@ -102,13 +102,13 @@ public class PostHandler implements CommandHandler {
 
         String toTag = args.get(6);
 
-        // si user entrée === user sortie on arrête
+        // todo si user entrée === user sortie on arrête
 
         if (toUser != null && !toUser.isBlank()) {
             String localResponse = MessageBuilder.buildMsg(fromUser, message);
             activeSession.send(toUser, localResponse);
         } else if (toTag != null && !toTag.isBlank()) {
-            // résoudre les abonnés du tag
+            // todo résoudre les abonnés du tag
 
             // si tag local, vérifier que l'utilisateur est abonné
 
@@ -125,5 +125,6 @@ public class PostHandler implements CommandHandler {
      */
     private void doSub(List<String> args) {
         LOGGER.info("do sub");
+        // todo réception du speaker ! au double newline du create msg de subscribe
     }
 }

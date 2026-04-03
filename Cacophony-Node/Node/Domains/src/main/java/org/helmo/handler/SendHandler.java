@@ -5,10 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.MessageBuilder;
-import org.helmo.crypto.CryptoProvider;
 import org.helmo.crypto.exceptions.EncryptionException;
-import org.helmo.repository.IMessageRepository;
-import org.helmo.server.threads.EastThread;
 import org.helmo.services.*;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
@@ -24,9 +21,7 @@ public class SendHandler implements CommandHandler {
 
     private final MessageService messageService;
     private final ActiveSession activeSession;
-    private final EastThread eastThread;
-    private final CryptoProvider cryptoService;
-    private final IMessageRepository messageRepository;
+    private final SpeakerService speakerService;
     private final IdGeneratorService idGeneratorService;
 
     /**
@@ -34,16 +29,13 @@ public class SendHandler implements CommandHandler {
      *
      * @param messageService Service pour récupérer les abonnés d'un message.
      * @param activeSession  Gestionnaire des sessions actives locales.
-     * @param eastThread     Thread gérant les communications sortantes vers d'autres domaines.
      */
-    public SendHandler(MessageService messageService, ActiveSession activeSession, EastThread eastThread, CryptoProvider cryptoService, IMessageRepository messageRepository, IdGeneratorService idGeneratorService) {
+    public SendHandler(MessageService messageService, ActiveSession activeSession, SpeakerService speakerService,IdGeneratorService idGeneratorService) {
         Objects.requireNonNull(messageService, "userManagerService is null");
         this.messageService = messageService;
         this.activeSession = activeSession;
-        this.eastThread = eastThread;
-        this.cryptoService = cryptoService;
-        this.messageRepository = messageRepository;
         this.idGeneratorService = idGeneratorService;
+        this.speakerService = speakerService;
     }
 
     @Override
@@ -64,7 +56,7 @@ public class SendHandler implements CommandHandler {
             // 2. Pour abonnés locaux appel via WestThread
             sendToLocal(result.localSubscribers(), session, message);
 
-            String id = String.format("%05d", idGeneratorService.getNextCount());
+            String id =  idGeneratorService.getNextCountString();
             // 3. todo Pour abonnés externes envoie msg au EastThread
             sendPostSubscribers(result.remoteSubscribers(), session, message, id);
             // 4. // todo pour les tags externes envoie msg au EastThread
@@ -89,7 +81,6 @@ public class SendHandler implements CommandHandler {
         LOGGER.info("NB d'abonnés locaux : {} - {}", localSubscribers.size(), localSubscribers);
         String localResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
-            LOGGER.info("sendToLocal : {}", localSubscriber);
             activeSession.send(localSubscriber, localResponse);
         }
     }
@@ -103,7 +94,7 @@ public class SendHandler implements CommandHandler {
      * @param message           Contenu du message.
      */
     private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message, String id) throws HandlerException {
-        LOGGER.info("NB d'abonnés ditants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
+        LOGGER.info("NB d'abonnés distants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
 
         String domain = "@" + session.getDomain();
         for (String remoteSubscriber : remoteSubscribers) {
@@ -111,12 +102,7 @@ public class SendHandler implements CommandHandler {
             String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteSubscriber, subMessage);
 
             try {
-                String encryptedMsg = cryptoService.encrypt(messageToCrypt);
-                if (eastThread.isConnected()) {
-                    eastThread.sendMessage(encryptedMsg);
-                } else {
-                    messageRepository.saveMessage(encryptedMsg);   // utilisation de la même clé
-                }
+               speakerService.sendCryptedMessage(messageToCrypt);
             } catch (EncryptionException e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new HandlerException("Impossible de crypter le message", e);

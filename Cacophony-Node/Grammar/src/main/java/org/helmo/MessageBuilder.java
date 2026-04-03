@@ -106,7 +106,7 @@ public class MessageBuilder {
      * @return
      */
     public static String buildMsg(String userAtDomain, String message) {
-        return "MSG" + SP + userAtDomain + SP + message;
+        return "MSG" + SP + userAtDomain + SP + message +NEWLINE;
     }
 
     // ok = "OK" newline (Version sans message)
@@ -157,7 +157,7 @@ public class MessageBuilder {
         if (idAtDomain == null || fromUserAtDomain == null || to == null || msg == null || idAtDomain.isEmpty() || fromUserAtDomain.isEmpty() || to.isEmpty() || msg.isEmpty()) {
             return buildError();
         }
-        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg + NEWLINE;
+        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg;
     }
 
     // leave = "LEAVE" newline

@@ -7,8 +7,12 @@ public class IdGeneratorService {
         this.count = count;
     }
 
-    public int getNextCount() {
+    private int getNextCount() {
         return count++ %99999; // pas une solution optimale mais meilleure approche avec le respect de la grammaire
+    }
+
+    public String getNextCountString() {
+        return String.format("%05d", getNextCount());
     }
 
 }

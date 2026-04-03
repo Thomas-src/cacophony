@@ -30,7 +30,6 @@ public class EastThread extends Thread {
     private boolean isConnected = false;
     private final Config config;
     private final TaskThread taskThread;
-    private final ActiveSession activeSession;
     private PrintWriter writer;
     private Socket speakerSocket;
     private final CryptoProvider cryptoService;
@@ -42,13 +41,11 @@ public class EastThread extends Thread {
      *
      * @param config        La configuration du serveur.
      * @param taskThread    Le thread de gestion des tâches.
-     * @param activeSession La session active actuelle.
      * @param cryptoService Le service utilisé pour le déchiffrement.
      */
-    public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession, CryptoProvider cryptoService) {
+    public EastThread(Config config, TaskThread taskThread, CryptoProvider cryptoService) {
         this.config = config;
         this.taskThread = taskThread;
-        this.activeSession = activeSession;
         this.cryptoService = cryptoService;
         setName("EastThread");
     }
