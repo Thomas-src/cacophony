@@ -8,6 +8,7 @@ import org.helmo.crypto.CryptoService;
 import org.helmo.handler.*;
 import org.helmo.handler.speaker.PostHandler;
 import org.helmo.repository.IConfigReaderRepository;
+import org.helmo.repository.IMessageRepository;
 import org.helmo.repository.ITagRepository;
 import org.helmo.repository.IUserRepository;
 import org.helmo.server.ActiveSession;
@@ -16,10 +17,7 @@ import org.helmo.server.ServerFactory;
 import org.helmo.server.threads.AdvertThread;
 import org.helmo.server.threads.EastThread;
 import org.helmo.server.threads.TaskThread;
-import org.helmo.services.MessageService;
-import org.helmo.services.SubscriberService;
-import org.helmo.services.TagManagerService;
-import org.helmo.services.UserManagerService;
+import org.helmo.services.*;
 
 import java.io.PrintStream;
 
@@ -30,27 +28,29 @@ public class Program {
 
         try (PrintStream cout = new PrintStream(System.out)) {
             // Création des repository & services
-            ActiveSession activeSession = new ActiveSession();
+
             IConfigReaderRepository configReader = new JsonConfigReaderNode();
             Config config = configReader.getConfig();
 
-            IUserRepository userRepository = new JsonUserRepository(config);
-            UserManagerService userManagerService = new UserManagerService(userRepository);
+            CryptoService cryptoService = new CryptoService(config.base64AES());
 
+            IUserRepository userRepository = new JsonUserRepository(config);
+            UserManagerService userManagerService = new UserManagerService(userRepository, cryptoService);
+            ActiveSession activeSession = new ActiveSession(userManagerService);
             ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);
             TagManagerService tagManagerService = new TagManagerService(tagRepository);
             MessageService messageService = new MessageService(userManagerService, tagManagerService);
             SubscriberService subscriberService = new SubscriberService();
-            CryptoService cryptoService = new CryptoService();
+
             CommandMenu menu = new CommandMenu();
             AdvertThread advertThread = new AdvertThread(config);
 
 
             TaskThread taskthread = new TaskThread(menu);
             EastThread eastThread = new EastThread(config, taskthread, activeSession, cryptoService);
-
-
-            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, config,cryptoService);
+            IdGeneratorService idGeneratorService = new IdGeneratorService(0);
+            IMessageRepository messageRepository = new JsonNodeMessageRepository();
+            SendHandler sendHandler = new SendHandler(messageService, activeSession, eastThread, cryptoService,messageRepository, idGeneratorService);
             SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService);
 
             menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));

@@ -1,7 +1,9 @@
 package org.helmo.repository;
+
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.client.Client;
+
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ public interface IUserRepository {
      * @throws UserReaderException Si une erreur survient lors de la lecture des données.
      */
     List<Client> getUsers() throws UserReaderException;
-
+    void saveMessageForUser(String name, String message) throws UserSaveException;
     /**
      * Enregistre ou met à jour un utilisateur dans le dépôt.
      *
@@ -32,6 +34,8 @@ public interface IUserRepository {
      * @throws UserSaveException Si l'opération de mise à jour échoue.
      */
     void addSubscribersFor(Client name, String sub) throws UserSaveException;
+
+    List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException;
 
     /**
      * Ajoute un tag (centre d'intérêt) à un utilisateur.

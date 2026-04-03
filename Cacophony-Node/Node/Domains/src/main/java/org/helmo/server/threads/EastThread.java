@@ -3,6 +3,7 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.crypto.CryptoProvider;
 import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.server.ActiveSession;
@@ -26,13 +27,13 @@ import java.util.UUID;
  */
 public class EastThread extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
-
+    private boolean isConnected = false;
     private final Config config;
     private final TaskThread taskThread;
     private final ActiveSession activeSession;
     private PrintWriter writer;
     private Socket speakerSocket;
-    private final CryptoService cryptoService;
+    private final CryptoProvider cryptoService;
 
     private Thread currentReaderThread;
 
@@ -44,7 +45,7 @@ public class EastThread extends Thread {
      * @param activeSession La session active actuelle.
      * @param cryptoService Le service utilisé pour le déchiffrement.
      */
-    public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession, CryptoService cryptoService) {
+    public EastThread(Config config, TaskThread taskThread, ActiveSession activeSession, CryptoProvider cryptoService) {
         this.config = config;
         this.taskThread = taskThread;
         this.activeSession = activeSession;
@@ -64,7 +65,7 @@ public class EastThread extends Thread {
             while (!Thread.currentThread().isInterrupted()) {
                 Socket speaker = serverSocket.accept();
                 LOGGER.info("Speaker connecté");
-
+                isConnected = true;
                 closeCurrentConnection();
                 this.speakerSocket = speaker;
                 this.writer = new PrintWriter(speaker.getOutputStream(), true);
@@ -77,6 +78,8 @@ public class EastThread extends Thread {
             }
         } catch (IOException e) {
             LOGGER.error("Erreur création socket: {}", e.getMessage());
+        } finally {
+            isConnected = false;
         }
     }
 
@@ -91,6 +94,7 @@ public class EastThread extends Thread {
                 LOGGER.warn("Fermeture ancienne connexion : {}", e.getMessage());
             }
         }
+
     }
 
     /**
@@ -107,8 +111,7 @@ public class EastThread extends Thread {
                     LOGGER.info("Message chiffré reçu: {}", line);
                     LOGGER.info("Longueur message reçu: {}", line.length());
                     try {
-                        LOGGER.info("Msg avec clé: {}", config.base64AES());
-                        String messageDecrypted = cryptoService.decrypt(line, config.base64AES());
+                        String messageDecrypted = cryptoService.decrypt(line);
                         LOGGER.info("Message déchiffré: {}", messageDecrypted);
                         createTask(messageDecrypted);
                     } catch (DecryptionException e) {
@@ -130,6 +133,10 @@ public class EastThread extends Thread {
         String id = UUID.randomUUID().toString();
         LOGGER.info("createTask: {}", line);
         this.taskThread.addTask(new Task(id, TypeTask.POST, new SpeakerTask(config.currentDomain()), line));
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 
     /**

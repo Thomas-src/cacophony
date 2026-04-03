@@ -18,7 +18,7 @@ public class Client {
     private final List<IUserSubscriber> subscribers = new ArrayList<>();
     private final List<ITag> internalTags = new ArrayList<>();
     private final String fullName;
-
+    private final List<String> messages = new ArrayList<>();
     /**
      * Constructeur de l'objet User.
      *
@@ -26,7 +26,7 @@ public class Client {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags) {
+    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags, List<String> messages) {
         this.name = name;
         this.hashPassword = hashPassword;
         this.fullName = name + '@' + domain;
@@ -36,6 +36,14 @@ public class Client {
         if (internalTags != null) {
             this.internalTags.addAll(internalTags);
         }
+        if (messages != null) {
+            this.messages.addAll(messages);
+        }
+
+    }
+
+    public List<String> getMessages() {
+        return messages;
     }
 
     public String getName() {

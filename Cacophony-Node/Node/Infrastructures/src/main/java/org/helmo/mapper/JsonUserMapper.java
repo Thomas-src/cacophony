@@ -73,7 +73,8 @@ public class JsonUserMapper {
                     new HashPassword(dto.bcryptHash(), dto.bcryptRound(), dto.bcryptSalt()),
                     subscribers,
                     currentDomain,
-                    userInternalTags
+                    userInternalTags,
+                    dto.messages()
             );
         }
         return null;
@@ -94,7 +95,8 @@ public class JsonUserMapper {
                 hashPassword.bcryptRound(),
                 hashPassword.bcryptSalt(),
                 client.getSubscribers().stream().map(IUserSubscriber::getFullName).toList(),
-                client.getTags().stream().map(ITag::getFullName).toList()
+                client.getTags().stream().map(ITag::getFullName).toList(),
+                client.getMessages()
         );
     }
 }

@@ -63,7 +63,6 @@ public class MessageService {
     private void addUsers(String username, Set<String> local, Set<String> remote) throws UserReaderException {
         List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(username);
         if (subscribers != null) {
-            LOGGER.info("{} a {} abonnés", username, subscribers.size());
             createUsers(subscribers, local, remote);
         }
     }

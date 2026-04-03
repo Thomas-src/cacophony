@@ -76,6 +76,70 @@ public class JsonUserRepository implements IUserRepository {
         }
     }
 
+    @Override
+    public void saveMessageForUser(String name, String message) throws UserSaveException {
+        synchronized (USERS_FILE_LOCK) {
+            try {
+                ensureStorage();
+                List<UserDto> existingUserDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
+                    if (existingDto == null || existingDto.users() == null) {
+                        existingUserDtos = new ArrayList<>();
+                    } else {
+                        existingUserDtos = new ArrayList<>(existingDto.users());
+                    }
+                }
+
+                boolean found = false;
+
+                // 2. Trouver l'utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+
+                    if (user.login().equals(name)) {
+                        List<String> messages = user.messages() != null ? new ArrayList<>(user.messages()) : new ArrayList<>();
+
+                        // 3. Ajouter le message
+                        messages.add(message);
+
+                        // 4. Recréer le UserDto (record immuable)
+                        UserDto updatedUser = new UserDto(
+                                user.login(),
+                                user.bcryptHash(),
+                                user.bcryptRound(),
+                                user.bcryptSalt(),
+                                user.subscribers(),
+                                user.userTags(),
+                                messages
+                        );
+
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour ajout message : {}", name);
+                    return;
+                }
+
+                // 5. Réécrire le fichier
+                UsersDto updatedDto = new UsersDto(existingUserDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de l'ajout d'un message", ex);
+                throw new UserSaveException("Erreur lors de l'ajout d'un message");
+            }
+        }
+    }
+
+
     /**
      * Sauvegarde ou met à jour un utilisateur dans le fichier JSON.
      *
@@ -172,7 +236,8 @@ public class JsonUserRepository implements IUserRepository {
                                 user.bcryptRound(),
                                 user.bcryptSalt(),
                                 subscribers,
-                                user.userTags()
+                                user.userTags(),
+                                user.messages()
                         );
 
                         existingUserDtos.set(i, updatedUser);
@@ -196,6 +261,11 @@ public class JsonUserRepository implements IUserRepository {
                 throw new UserSaveException("Erreur lors de l'ajout d'un subscriber");
             }
         }
+    }
+
+    @Override
+    public List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException {
+        return List.of();
     }
 
     /**
@@ -247,7 +317,8 @@ public class JsonUserRepository implements IUserRepository {
                                 user.bcryptRound(),
                                 user.bcryptSalt(),
                                 user.subscribers(),
-                                tags
+                                tags,
+                                user.messages()
                         );
 
                         existingUserDtos.set(i, updatedUser);

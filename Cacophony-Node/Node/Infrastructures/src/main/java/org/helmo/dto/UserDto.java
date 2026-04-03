@@ -18,5 +18,6 @@ public record UserDto(
         int bcryptRound,
         String bcryptSalt,
         List<String> subscribers,
-        List<String> userTags
+        List<String> userTags,
+        List<String> messages
 ) {}

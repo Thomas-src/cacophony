@@ -21,6 +21,7 @@ public interface CryptoProvider {
      * @throws EncryptionException      si une erreur se produit lors du chiffrement
      */
     String encrypt(String plainText, String base64Key) throws IllegalArgumentException, EncryptionException;
+    String encrypt(String plainText) throws IllegalArgumentException, EncryptionException;
 
     /**
      * Déchiffre des données chiffrées en utilisant AES-256 GCM.
@@ -32,6 +33,6 @@ public interface CryptoProvider {
      * @throws DecryptionException      si une erreur se produit lors du déchiffrement
      */
     String decrypt(String encryptedData, String base64Key) throws IllegalArgumentException, DecryptionException;
-
+    String decrypt(String encryptedData) throws IllegalArgumentException, DecryptionException;
 
 }

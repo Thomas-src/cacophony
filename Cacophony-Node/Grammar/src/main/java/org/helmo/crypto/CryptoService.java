@@ -18,12 +18,33 @@ import java.util.Base64;
  * des sorties même avec des données en entrée identiques.
  */
 public class CryptoService implements CryptoProvider {
-    private static final String SHA_CRYPT = "SHA-256";
     private static final String AES_ALGORITHM = "AES";
     private static final String AES_ALGORITHM_GCM = "AES/GCM/NoPadding";
 
     private static final Integer IV_LENGTH_ENCRYPT = 12;
     private static final Integer TAG_LENGTH_ENCRYPT = 16;
+
+    private final String base64key;
+    public CryptoService(String base64Key) {
+        this.base64key = base64Key;
+    }
+    public CryptoService() {
+        this.base64key = null;
+    }
+    @Override
+    public String encrypt(String plainText) throws EncryptionException {
+        if(base64key == null || base64key.isBlank()) {
+            throw new EncryptionException("base64key cannot be null or blank");
+        }
+        return encrypt(plainText, base64key);
+    }
+    @Override
+    public String decrypt(String plainText) throws DecryptionException {
+        if(base64key == null || base64key.isBlank()) {
+            throw new DecryptionException("base64key cannot be null or blank");
+        }
+        return decrypt(plainText, base64key);
+    }
 
     /**
      * Code de <a href="https://medium.com/@johnvazna/implementing-local-aes-gcm-encryption-and-decryption-in-java-ac1dacaaa409">johnvazna (Medium.com)</a>
@@ -37,7 +58,7 @@ public class CryptoService implements CryptoProvider {
             if (decodedKey.length != 32) {
                 throw new EncryptionException("Clé AES invalide (doit faire 256 bits)");
             }
-            SecretKeySpec key = new SecretKeySpec(decodedKey, "AES");
+            SecretKeySpec key = new SecretKeySpec(decodedKey, AES_ALGORITHM);
 
             byte[] iv = new byte[IV_LENGTH_ENCRYPT];
             SecureRandom secureRandom = new SecureRandom();
@@ -70,7 +91,7 @@ public class CryptoService implements CryptoProvider {
             if (decodedKey.length != 32) {
                 throw new DecryptionException("Clé AES invalide (doit faire 256 bits)");
             }
-            SecretKeySpec key = new SecretKeySpec(decodedKey, "AES");
+            SecretKeySpec key = new SecretKeySpec(decodedKey, AES_ALGORITHM);
 
             byte[] decodedCipherText = Base64.getDecoder().decode(encryptedData);
             // Extract IV and encrypted text

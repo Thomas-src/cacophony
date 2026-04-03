@@ -10,7 +10,8 @@
       ],
       "userTags": [
         "#monTag1@node1.swilabus.xyz"
-      ]
+      ],
+      "messages": []
     },
     {
       "login": "thomas",
@@ -18,7 +19,19 @@
       "bcryptRound": 14,
       "bcryptSalt": "5u4pcJaHAh3kpiIA8tvo4O",
       "subscribers": [],
-      "userTags": []
+      "userTags": [
+        "#monTag1@node1.swilabus.xyz"
+      ],
+      "messages": [
+        "qfu7AtlgaqrDf+LJf8jwl1iypGf5BtnC2kihpvBS4Ytjw867Upex35vWIPG7MmQ18D3PsmDDf8xmgPyubr2N+w\u003d\u003d",
+        "v7t9QNEsqhlF9ByT8OxiI83eNRjkQR5Nj8ssKQv5jtcQzyvswzXIzuvBSQ1C0n3GM/0AXRuMPet3AE3M+Oplr865UU36S4A\u003d",
+        "fjdP4kMdnOYIjrwQK60PoyJtu5Agl8GQZDZKKVjCV+IpzCEGi3YyXSleRbdKwOh1Qs6ap5DWYLn4U6mvfGpLad9qqQjZ",
+        "1pmqiu4vOwKKyo2h6fpv2ylEkU3KZZGFa+31Razcy7wbQirBF3dXNT+zPgdcWG4X2WL/KYuQs/W7nJtQFg\u003d\u003d",
+        "Y7G6O0b9Xq4ZeV997U+UBBwE+C0VLKUpWnaQAp1cB6iY3br6pWYwx1eyrPyTMzVln9gEJmZA+ilrU9jIQA\u003d\u003d",
+        "AVdawq4QAjKe1yiJ3wJIpIKd7KG2KByplZk98Z5KqcEzZTE6CB1gvzCf6JG4YcW/c+HHpXzFCXm5JKOEkw\u003d\u003d",
+        "5cIl1WtAY3DtRE6edTJ676t/Ak89avCNCXUc2yBT1P3S8LdUu0SP27RmfMm6dVeJ+L3P/YG06QTwnHjIQmGu95dcpdnosS/VRaCilXi/CiJ1p0bZhaDVEAU\u003d",
+        "2YBtIJM40hspYMx92PIp+4YX0HMctsSHYGKh0O7Kn5QRHckGN7WzLKgLhfVTWnEg+gwRQ4WJ8xIV9WiJIjASGNGTjr5Zn7loTgjdpuaxI+qczppctzflouw\u003d"
+      ]
     },
     {
       "login": "tomsy",
@@ -31,7 +44,8 @@
       ],
       "userTags": [
         "#monTag1@node1.swilabus.xyz"
-      ]
+      ],
+      "messages": []
     },
     {
       "login": "rootroot",
@@ -45,7 +59,8 @@
         "#monTag1@node1.swilabus.xyz",
         "#voiture@node1.swilabus.xyz",
         "#maison@node1.swilabus.xyz"
-      ]
+      ],
+      "messages": []
     },
     {
       "login": "TiboRR",

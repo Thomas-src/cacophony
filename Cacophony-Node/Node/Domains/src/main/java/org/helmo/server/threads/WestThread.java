@@ -65,8 +65,7 @@ public class WestThread extends Thread {
             session = new ClientSession(randomChallenge, this, config.currentDomain(), activeSession);
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
-                LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
-
+                LOGGER.info("MESSAGE RECEIPT => {}", line);
                 taskThread.addTask(createTask(line, session));
             }
         } catch (IllegalArgumentException e) {

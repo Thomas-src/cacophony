@@ -60,7 +60,7 @@ public class OnboardingHandler implements CommandHandler {
             if(userManagerService.findUser(name) != null) {
                 return MessageBuilder.buildError();
             }
-            Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), new ArrayList<>(), session.getDomain(), new ArrayList<>());
+            Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), new ArrayList<>(), session.getDomain(), new ArrayList<>(), new ArrayList<>());
             userManagerService.saveUser(client);
             session.setClient(client);
 
