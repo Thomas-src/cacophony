@@ -15,6 +15,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+/**
+ * Gère la commande ADVERT pour établir une connexion avec un nouveau domaine
+ * et lui transmettre les messages en attente.
+ */
 public class AdvertHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -23,6 +27,14 @@ public class AdvertHandler implements CommandHandler {
     private final CryptoService cryptoService;
     private final SpeakerConfig speakerConfig;
 
+    /**
+     * Initialise le gestionnaire d'annonce.
+     *
+     * @param connector      Le connecteur TCP pour gérer les connexions réseaux.
+     * @param domainService  Le service d'accès aux données des domaines.
+     * @param cryptoService  Le service de chiffrement/déchiffrement.
+     * @param speakerConfig  La configuration globale du Speaker.
+     */
     public AdvertHandler(SpeakerTcpConnector connector, DomainService domainService, CryptoService cryptoService, SpeakerConfig speakerConfig) {
         this.connector = connector;
         this.domainService = domainService;
@@ -30,6 +42,12 @@ public class AdvertHandler implements CommandHandler {
         this.speakerConfig = speakerConfig;
     }
 
+    /**
+     * Traite la réception d'une annonce. Connecte le Speaker au domaine spécifié
+     * et synchronise les messages cryptés stockés localement vers ce domaine.
+     *
+     * @param args Liste d'arguments contenant le port (index 0) et le nom du domaine (index 1).
+     */
     @Override
     public void handle(List<String> args) {
         String port = args.get(0);

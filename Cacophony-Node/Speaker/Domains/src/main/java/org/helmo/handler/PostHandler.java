@@ -16,7 +16,10 @@ import org.helmo.repository.IDomainRepository;
 
 import java.util.List;
 
-public class PostHandler implements CommandHandler {
+/**
+ * Gère la commande POST pour relayer des messages entre les domaines.
+ */
+ public class PostHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final SpeakerTcpConnector connector;
@@ -25,6 +28,15 @@ public class PostHandler implements CommandHandler {
     private final IDomainRepository domainRepository;
     private final SpeakerConfig speakerConfig;
 
+    /**
+     * Initialise une nouvelle instance de PostHandler.
+     *
+     * @param connector      Le connecteur TCP pour envoyer des messages aux nœuds.
+     * @param cryptoProvider Le fournisseur de services de cryptographie.
+     * @param domainService  Le service de gestion des domaines.
+     * @param jsonDomainRepository Le dépôt pour sauvegarder les messages en attente.
+     * @param speakerConfig  La configuration locale du Speaker.
+     */
     public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, IDomainRepository jsonDomainRepository, SpeakerConfig speakerConfig) {
         this.connector = connector;
         this.crypto = cryptoProvider;
@@ -33,6 +45,12 @@ public class PostHandler implements CommandHandler {
         this.speakerConfig = speakerConfig;
     }
 
+    /**
+     * Traite la commande POST en rechiffrant le message pour le domaine de destination.
+     *
+     * @param args La liste des arguments contenant les informations du message (id, source, destination, contenu).
+     * @throws HandlerException Si une erreur survient lors du traitement ou de l'envoi du message.
+     */
     @Override
     public void handle(List<String> args) throws HandlerException {
         String idAtDomain = args.get(0);

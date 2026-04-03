@@ -84,6 +84,13 @@ public class PostHandler implements CommandHandler {
     }
 
 
+    /**
+     * Traite la logique d'un message (MSG) extrait d'une commande POST.
+     *
+     * @param args          La liste des arguments extraits du message.
+     * @param actualDomain  Le domaine actuel traitant la requête.
+     * @throws HandlerException Si une erreur survient lors du traitement ou de l'envoi.
+     */
     private void doMsg(List<String> args, String actualDomain) throws HandlerException {
         LOGGER.info("message");
         for (int i = 0; i < args.size(); i++) {
@@ -111,6 +118,11 @@ public class PostHandler implements CommandHandler {
 
     }
 
+    /**
+     * Traite la logique d'un abonnement (SUB) extrait d'une commande POST.
+     *
+     * @param args La liste des arguments extraits du message.
+     */
     private void doSub(List<String> args) {
         LOGGER.info("do sub");
     }
