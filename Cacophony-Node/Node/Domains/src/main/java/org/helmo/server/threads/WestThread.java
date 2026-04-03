@@ -3,7 +3,6 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
-import org.helmo.Exception.HandlerException;
 import org.helmo.MessageBuilder;
 import org.helmo.server.ActiveSession;
 import org.helmo.task.Task;
@@ -65,15 +64,21 @@ public class WestThread extends Thread {
             session = new ClientSession(randomChallenge, this, config.currentDomain(), activeSession);
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
-                LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
-
-                taskThread.addTask(createTask(line, session));
+                try {
+                    LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
+                    taskThread.addTask(createTask(line, session));
+                } catch (IllegalArgumentException e) {
+                    LOGGER.warn("Erreur lors de la création de la tâche : {}", e.getMessage());
+                    toClient.println(MessageBuilder.buildError());
+                } catch (Exception e) {
+                    LOGGER.error("Erreur inattendue lors du traitement du message : {}", e.getMessage(), e);
+                    toClient.println(MessageBuilder.buildError());
+                }
             }
-        } catch (IllegalArgumentException e) {
-            LOGGER.info("Commande inconnue", e);
-            toClient.println(MessageBuilder.buildError());
         } catch (IOException e) {
             LOGGER.info("Client {} disconnected", socket.getInetAddress());
+        } catch (Exception e) {
+            LOGGER.error("Erreur inattendue dans le thread : {}", e.getMessage(), e);
         } finally {
             try {
                 if (socket != null && !socket.isClosed()) {
