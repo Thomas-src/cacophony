@@ -94,16 +94,17 @@ public class Speaker extends Thread {
 
         // Si l'interface spécifiée n'existe pas ou n'est pas valide, trouver une interface appropriée
         if (netIf == null || !isValidMulticastInterface(netIf)) {
-            System.err.println("Warning: Network interface '" + interfaceName + "' not found or not valid for IPv4 multicast.");
-            System.err.println("Attempting to find a suitable network interface automatically...");
+            LOGGER.warn("Network interface '{}' not found or not valid for IPv4 multicast.", interfaceName);
+            LOGGER.warn("Attempting to find a suitable network interface automatically...");
             netIf = findSuitableNetworkInterface();
         }
 
         if (netIf == null) {
-            throw new IOException("No suitable network interface found for multicast. Available interfaces:\n" + listNetworkInterfaces());
+            LOGGER.error("No suitable network interface found for multicast. Available interfaces:\n{}", listNetworkInterfaces());
+            throw new IOException("No suitable network interface found for multicast.");
         }
 
-        System.out.println("Using network interface: " + netIf.getName() + " (" + netIf.getDisplayName() + ")");
+        LOGGER.info("Using network interface: {} ({})", netIf.getName(), netIf.getDisplayName());
         return netIf;
     }
 
