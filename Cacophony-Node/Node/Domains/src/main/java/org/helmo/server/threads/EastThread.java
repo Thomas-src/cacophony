@@ -3,9 +3,11 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.Exception.MessageSaveException;
 import org.helmo.crypto.CryptoProvider;
 import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.DecryptionException;
+import org.helmo.repository.IMessageRepository;
 import org.helmo.server.ActiveSession;
 import org.helmo.task.SpeakerTask;
 import org.helmo.task.Task;
@@ -18,6 +20,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -33,7 +36,7 @@ public class EastThread extends Thread {
     private PrintWriter writer;
     private Socket speakerSocket;
     private final CryptoProvider cryptoService;
-
+    private final IMessageRepository messageRepository;
     private Thread currentReaderThread;
 
     /**
@@ -43,10 +46,11 @@ public class EastThread extends Thread {
      * @param taskThread    Le thread de gestion des tâches.
      * @param cryptoService Le service utilisé pour le déchiffrement.
      */
-    public EastThread(Config config, TaskThread taskThread, CryptoProvider cryptoService) {
+    public EastThread(Config config, TaskThread taskThread, CryptoProvider cryptoService, IMessageRepository messageRepository) {
         this.config = config;
         this.taskThread = taskThread;
         this.cryptoService = cryptoService;
+        this.messageRepository = messageRepository;
         setName("EastThread");
     }
 
@@ -66,7 +70,7 @@ public class EastThread extends Thread {
                 closeCurrentConnection();
                 this.speakerSocket = speaker;
                 this.writer = new PrintWriter(speaker.getOutputStream(), true);
-
+                sendOldMessages();
                 currentReaderThread = new Thread(() -> read(speaker));
                 currentReaderThread.setDaemon(true);
                 currentReaderThread.setName("ET:R");
@@ -139,15 +143,30 @@ public class EastThread extends Thread {
     /**
      * Envoie un message non-chiffré au Speaker connecté.
      *
-     * @param contextstr Le message à envoyer.
+     * @param cryptedMessage Le message à envoyer.
      */
-    public void sendMessage(String contextstr) {
+    public void sendMessage(String cryptedMessage) {
         if (writer != null) {
-            LOGGER.info("Envoi au speaker : {}", contextstr);
-            writer.println(contextstr);
+            LOGGER.info("Envoi au speaker : {}", cryptedMessage);
+            writer.println(cryptedMessage);
         } else {
-            // todo stocker le message dans le speaker
+          try {
+              messageRepository.saveMessage(cryptedMessage);
+          } catch (MessageSaveException e) {
+              throw new RuntimeException(e);
+          }
             LOGGER.warn("Aucune connexion au speaker !");
+        }
+    }
+
+    private void sendOldMessages() {
+        try {
+            List<String> oldMessage = messageRepository.getAllAndDeleteMessages();
+            for (String msg : oldMessage) {
+                sendMessage(msg);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Erreur lors de l'envoi des messages en attente : {}", e.getMessage());
         }
     }
 }

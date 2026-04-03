@@ -157,7 +157,7 @@ public class MessageBuilder {
         if (idAtDomain == null || fromUserAtDomain == null || to == null || msg == null || idAtDomain.isEmpty() || fromUserAtDomain.isEmpty() || to.isEmpty() || msg.isEmpty()) {
             return buildError();
         }
-        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg;
+        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg ;
     }
 
     // leave = "LEAVE" newline

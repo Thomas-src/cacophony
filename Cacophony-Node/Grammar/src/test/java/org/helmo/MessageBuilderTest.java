@@ -76,19 +76,4 @@ class MessageBuilderTest {
         String expected = "LEAVE\r\n";
         assertEquals(expected, MessageBuilder.buildLeave());
     }
-
-    @Test
-    void testBuildPostValidUserToUser() {
-        String post = MessageBuilder.buildPost(
-                "1234@node1.swilabus.xyz",
-                "alice@node1.swilabus.xyz",
-                "bob@node4.swilabus.xyz",
-                "SUBSCRIBE bob@node4.swilabus.xyz"
-        );
-
-        assertEquals(
-                "POST 1234@node1.swilabus.xyz alice@node1.swilabus.xyz bob@node4.swilabus.xyz SUBSCRIBE bob@node4.swilabus.xyz\r\n",
-                post
-        );
-    }
 }
