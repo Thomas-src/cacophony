@@ -61,6 +61,9 @@ public class PostHandler implements CommandHandler {
         if (!(task instanceof SpeakerTask speakerTask)) {
             throw new HandlerException("POST requires a speaker context");
         }
+        for (int i = 0; i < args.size(); i++) {
+            LOGGER.info("Args {}: {}",i, args.get(i));
+        }
         String idAtDomain = args.get(0);
         String fromUserAtDomain = args.get(1);
         String toFullAddress = args.get(4);  // user_at_domain OU tag_at_domain
@@ -72,42 +75,40 @@ public class PostHandler implements CommandHandler {
 
         var matcherMSG = Message.P_CMD_MSG.matcher(innerMessage);
         if (matcherMSG.matches()) {
-            String msgFrom = matcherMSG.group(1); // user_at_domain de l'expéditeur
-            String msgContent = matcherMSG.group(2); // contenu texte
-
+            String msgFrom = matcherMSG.group(1);
+            String msgToSend = matcherMSG.group(0);
             if (toUser != null && !toUser.isBlank()) {
-                doMsg(fromUserAtDomain, toUser, msgContent);
+                doMsg(msgFrom, toFullAddress, msgToSend);
             } else if (toTag != null && !toTag.isBlank()) {
-                doTag(fromUserAtDomain, toFullAddress, msgContent, idAtDomain);
+                doTag(msgFrom, toFullAddress, msgToSend, idAtDomain);
             }
         }
-        // matcher SUB ici si nécessaire
+        // todo matcher SUB ici si
 
         return null;
     }
 
-    private void doMsg(String fromUser, String toUser, String message) throws HandlerException {
+    private void doMsg(String fromUser, String toUser, String msgToSend) throws HandlerException {
         LOGGER.info("Envoi vers utilisateur: {} → {}", fromUser, toUser);
-        String localResponse = MessageBuilder.buildMsg(fromUser, message);
-        activeSession.send(toUser, localResponse);
+        activeSession.send(toUser, msgToSend);
     }
 
-    private void doTag(String fromUser, String toTag, String message, String id) throws HandlerException {
+    private void doTag(String fromUser, String toTag, String msgToSend, String id) throws HandlerException {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
             for (IUserSubscriber subscriber : subs) {
                 LOGGER.info(subscriber.getFullName());
             }
-
-            String subMessage = MessageBuilder.buildMsgInner(fromUser, message);
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) { // 1. vérifier si l'envoyeur est abonné au tag
                 for (IUserSubscriber sub : subs) {
                     if (sub.isLocal()) {
-                        String localResponse = MessageBuilder.buildMsg(fromUser, message);
-                        activeSession.send(sub.getFullName(), localResponse);
+                        LOGGER.info("Response from remote tag (internal user) : {}",msgToSend);
+                        activeSession.send(sub.getFullName(), msgToSend);
                     } else {
-                        String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), subMessage);
+                        LOGGER.info("Resend msg to speaker {}",msgToSend);
+                        String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
+                        LOGGER.info("Resend post to speaker {}",messageToCrypt);
                         try {
                             speakerService.sendCryptedMessage(messageToCrypt); // todo envoyer vers le speaker
                         } catch (MessageSaveException e) {
@@ -120,7 +121,7 @@ public class PostHandler implements CommandHandler {
                     }
                 }
             } else {
-                LOGGER.info("{} n'est pas abonné au tag {}", fromUser,toTag);
+                LOGGER.info("{} n'est pas abonné au tag {}", fromUser, toTag);
             }
         } catch (TagReaderException e) {
             throw new HandlerException("Erreur lecture tag", e);
