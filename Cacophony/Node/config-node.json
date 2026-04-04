@@ -9,5 +9,6 @@
   "base64AES": "448H+AuQmuulKfleNffeTIrHbpEPdBptABd88gSRMi4=",
   "tls": true,
   "certificateName" : "star.swilabus.xyz.p12",
-  "certificatePassword" : "labo2026"
+  "certificatePassword" : "labo2026",
+  "id": 1
 }

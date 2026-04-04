@@ -5,9 +5,10 @@ import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.ConfigReaderException;
+import org.helmo.Exception.ConfigSaveException;
 import org.helmo.dto.ConfigDto;
 import org.helmo.mapper.JsonConfigMapper;
-import org.helmo.repository.IConfigReaderRepository;
+import org.helmo.repository.IConfigRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,13 +23,16 @@ import java.util.Enumeration;
 /**
  * Implémentation de IConfigReaderRepository pour la lecture de fichiers de configuration JSON.
  */
-public class JsonConfigReaderNode implements IConfigReaderRepository {
+public class JsonConfigRepository implements IConfigRepository {
     private static final Gson gson = new Gson();
     private static final Path configPath = findConfigFile();
     private static final Logger LOGGER = LogManager.getLogger();
 
+    // Verrou JVM unique pour serialiser toutes les lectures/ecritures tags.json.
+    private static final Object CONFIG_FILE_LOCK = new Object();
     /**
      * Recherche le fichier de configuration dans les répertoires parents probables.
+     *
      * @return Le chemin vers le fichier de configuration trouvé.
      */
     private static Path findConfigFile() {
@@ -52,12 +56,14 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
 
     /**
      * Lit et convertit le fichier JSON en objet Config.
+     *
      * @return L'objet de configuration.
      * @throws ConfigReaderException Si le fichier est introuvable ou invalide.
      */
     @Override
     public Config getConfig() throws ConfigReaderException {
-        try (BufferedReader reader = Files.newBufferedReader(configPath)){
+        synchronized (CONFIG_FILE_LOCK) {
+        try (BufferedReader reader = Files.newBufferedReader(configPath)) {
             ConfigDto dto = gson.fromJson(reader, ConfigDto.class);
 
             if (dto == null) {
@@ -74,17 +80,18 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
                 if (fallbackInterface != null) {
                     LOGGER.info("Utilisation de l'interface réseau de secours : {}", fallbackInterface);
                     dto = new ConfigDto(
-                        dto.currentDomain(),
-                        dto.saltSizeInBytes(),
-                        dto.multicastAddress(),
-                        dto.multicastPort(),
-                        dto.unicastPort(),
-                        dto.relayPort(),
-                        fallbackInterface,
-                        dto.base64AES(),
-                        dto.tls(),
-                        dto.certificateName(),
-                        dto.certificatePassword()
+                            dto.currentDomain(),
+                            dto.saltSizeInBytes(),
+                            dto.multicastAddress(),
+                            dto.multicastPort(),
+                            dto.unicastPort(),
+                            dto.relayPort(),
+                            fallbackInterface,
+                            dto.base64AES(),
+                            dto.tls(),
+                            dto.certificateName(),
+                            dto.certificatePassword(),
+                            dto.id()
                     );
                 } else {
                     throw new ConfigReaderException("L'interface réseau spécifiée n'est pas valide pour le multicast et aucune interface de secours n'a été trouvée.");
@@ -92,11 +99,43 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
             }
 
             return JsonConfigMapper.ConfigfromDto(dto);
-        }  catch (IOException ex) {
+        } catch (IOException ex) {
             LOGGER.error("Impossible de charger la configuration. Tried path: " + configPath.toAbsolutePath(), ex);
             throw new ConfigReaderException("Impossible de charger la configuration");
         }
     }
+    }
+
+    @Override
+    public void saveId(int currentId) throws ConfigSaveException {
+        synchronized (CONFIG_FILE_LOCK) {
+            try {
+                // Lire le JSON existant
+                ConfigDto dto;
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    dto = gson.fromJson(reader, ConfigDto.class);
+                }
+
+                if (dto == null) {
+                    LOGGER.error("Impossible de sauvegarder l'id : configuration invalide ou vide");
+                    throw new ConfigSaveException("Configuration invalide");
+                }
+
+                ConfigDto updatedDto = JsonConfigMapper.duplicate(dto, currentId);
+
+                // Écriture du fichier JSON (overwrite)
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+                LOGGER.info("ID sauvegardé avec succès : {}", currentId);
+
+            } catch (IOException e) {
+                LOGGER.error("Erreur lors de la sauvegarde de l'id dans le fichier {}", configPath.toAbsolutePath(), e);
+                throw new ConfigSaveException("Erreur lors de la sauvegarde de l'id");
+            }
+        }
+    }
+
 
     /**
      * Valide si l'interface réseau spécifiée est valide pour le multicast.
@@ -136,3 +175,4 @@ public class JsonConfigReaderNode implements IConfigReaderRepository {
         return null;
     }
 }
+

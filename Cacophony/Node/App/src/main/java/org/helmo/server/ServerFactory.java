@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.Exception.ConfigReaderException;
 import org.helmo.Exception.ServerException;
-import org.helmo.repository.IConfigReaderRepository;
+import org.helmo.repository.IConfigRepository;
 import org.helmo.server.threads.TaskThread;
 
 
@@ -32,7 +32,7 @@ public class ServerFactory {
      * @return une instance de IServer (SSLServer ou Server) selon la configuration
      * @throws ServerException si une erreur se produit lors de la lecture de la configuration ou de la création du serveur
      */
-    public static IServer createServer(IConfigReaderRepository configReader, TaskThread taskThread, ActiveSession activeSession) throws ServerException {
+    public static IServer createServer(IConfigRepository configReader, TaskThread taskThread, ActiveSession activeSession) throws ServerException {
         try {
             Config config = configReader.getConfig();
             if (config.tls()) {

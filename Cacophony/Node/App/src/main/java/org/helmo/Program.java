@@ -7,7 +7,7 @@ import org.helmo.Exception.ServerException;
 import org.helmo.crypto.CryptoService;
 import org.helmo.handler.*;
 import org.helmo.handler.speaker.PostHandler;
-import org.helmo.repository.IConfigReaderRepository;
+import org.helmo.repository.IConfigRepository;
 import org.helmo.repository.IMessageRepository;
 import org.helmo.repository.ITagRepository;
 import org.helmo.repository.IUserRepository;
@@ -29,8 +29,8 @@ public class Program {
         try (PrintStream cout = new PrintStream(System.out)) {
             // Création des repository & services
 
-            IConfigReaderRepository configReader = new JsonConfigReaderNode();
-            Config config = configReader.getConfig();
+            IConfigRepository configRepository = new JsonConfigRepository();
+            Config config = configRepository.getConfig();
 
             CryptoService cryptoService = new CryptoService(config.base64AES());
 
@@ -47,7 +47,7 @@ public class Program {
             IMessageRepository messageRepository = new JsonNodeMessageRepository();
             TaskThread taskthread = new TaskThread(menu);
             EastThread eastThread = new EastThread(config, taskthread, cryptoService, messageRepository);
-            IdGeneratorService idGeneratorService = new IdGeneratorService(0);
+            IdGeneratorService idGeneratorService = new IdGeneratorService(config.id(), configRepository);
 
 
             SpeakerService speakerService = new SpeakerService(cryptoService,eastThread);
@@ -65,7 +65,7 @@ public class Program {
             taskthread.start();
             eastThread.start();
             advertThread.start();
-            IServer server = ServerFactory.createServer(configReader, taskthread, activeSession);
+            IServer server = ServerFactory.createServer(configRepository, taskthread, activeSession);
 
             server.run();
 

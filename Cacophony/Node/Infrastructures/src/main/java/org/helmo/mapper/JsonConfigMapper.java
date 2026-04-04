@@ -16,7 +16,7 @@ public class JsonConfigMapper {
      */
     private static void validate(ConfigDto dto) {
         Objects.requireNonNull(dto, "ConfigDto cannot be null");
-        // todo si besoin de vérifier d'autres éléments
+        // si besoin de vérifier d'autres éléments
     }
 
     /**
@@ -39,7 +39,25 @@ public class JsonConfigMapper {
                 dto.base64AES(),
                 dto.tls(),
                 dto.certificateName(),
-                dto.certificatePassword()
+                dto.certificatePassword(),
+                dto.id()
         );
+    }
+    public static ConfigDto duplicate(ConfigDto dto, int currentId) {
+        return new ConfigDto(
+                dto.currentDomain(),
+                dto.saltSizeInBytes(),
+                dto.multicastAddress(),
+                dto.multicastPort(),
+                dto.unicastPort(),
+                dto.relayPort(),
+                dto.networkInterface(),
+                dto.base64AES(),
+                dto.tls(),
+                dto.certificateName(),
+                dto.certificatePassword(),
+                currentId
+        );
+
     }
 }

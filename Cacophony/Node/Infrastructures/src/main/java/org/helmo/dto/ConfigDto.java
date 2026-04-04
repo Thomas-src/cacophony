@@ -25,6 +25,7 @@ public record ConfigDto(String currentDomain,
                         String base64AES,
                         boolean tls,
                         String certificateName,
-                        String certificatePassword
+                        String certificatePassword,
+                        int id
                         ) {
 };
