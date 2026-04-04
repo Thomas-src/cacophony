@@ -79,7 +79,7 @@ public class SendHandler implements CommandHandler {
      */
     private void sendToLocal(Set<String> localSubscribers, ClientSession session, String message) {
         LOGGER.info("NB d'abonnés locaux : {} - {}", localSubscribers.size(), localSubscribers);
-        String localResponse = MessageBuilder.buildMsg(session.getUserFullName(), message);
+        String localResponse = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
             activeSession.send(localSubscriber, localResponse);
         }
@@ -97,7 +97,7 @@ public class SendHandler implements CommandHandler {
         LOGGER.info("NB d'abonnés distants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
 
         String domain = "@" + session.getDomain();
-        String subMessage = MessageBuilder.buildMsg(session.getUserFullName(), message);
+        String subMessage = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
         for (String remoteSubscriber : remoteSubscribers) {
             String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteSubscriber, subMessage);
 
@@ -117,7 +117,7 @@ public class SendHandler implements CommandHandler {
     private void sendToRemoteTags(Set<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
         LOGGER.info("NB de tags ditants : {} - {}", remoteTags.size(), remoteTags);
         String domain = "@" + session.getDomain();
-        String subMessage = MessageBuilder.buildMsg(session.getUserFullName(), message);
+        String subMessage = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
         for (String remoteTag : remoteTags) {
             String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteTag, subMessage);
             try {

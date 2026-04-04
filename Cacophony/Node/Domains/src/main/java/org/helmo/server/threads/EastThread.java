@@ -132,7 +132,6 @@ public class EastThread extends Thread {
      */
     public void createTask(String line) {
         String id = UUID.randomUUID().toString();
-        LOGGER.info("createTask: {}", line);
         this.taskThread.addTask(new Task(id, TypeTask.POST, new SpeakerTask(config.currentDomain()), line));
     }
 

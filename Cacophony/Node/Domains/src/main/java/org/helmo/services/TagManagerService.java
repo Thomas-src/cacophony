@@ -2,6 +2,7 @@ package org.helmo.services;
 
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.TagSaveException;
+import org.helmo.Grammar;
 import org.helmo.client.Client;
 import org.helmo.tag.InternalTag;
 import org.helmo.repository.ITagRepository;
@@ -44,7 +45,7 @@ public class TagManagerService {
      */
     public List<IUserSubscriber> getTagSubscriber(String tagName) throws TagReaderException {
         return getTags().stream()
-                .filter(u -> u.getFullName().equals(tagName)) // todo equalsIgnoreCase ????
+                .filter(t -> t.getFullName().equals(extractTagName(tagName))) // todo equalsIgnoreCase ????
                 .findFirst()
                 .map(InternalTag::getSubscribers)
                 .orElse(Collections.emptyList());
@@ -70,5 +71,13 @@ public class TagManagerService {
      */
     public void addUserToTag(Client client, String tag) throws TagSaveException {
         tagRepository.addUserToTag(client, tag);
+    }
+
+    private static String extractTagName(String tagFullName) {
+        var matcher = Grammar.P_TAG_FULL.matcher(tagFullName);
+        if (matcher.matches()) {
+            return matcher.group(1); // "#monTag2"
+        }
+        return tagFullName; // fallback si pas de domaine
     }
 }

@@ -59,10 +59,6 @@ import java.util.List;
         String domainDest = args.get(6) != null ? args.get(6) : args.get(8);
         String plainText = args.getLast();
 
-        for (int i = 0; i < args.size(); i++) {
-            LOGGER.info(i+"" +args.get(i));
-        }
-
         try {
             // Récupérer la clé du domaine destination
             Domain destDomain = domainService.findDomain(domainDest);

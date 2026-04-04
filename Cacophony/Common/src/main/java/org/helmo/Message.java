@@ -108,7 +108,7 @@ public class Message {
      * Format : "POST" sp id_at_domain sp user_at_domain sp (user_at_domain / tag_at_domain) sp inner_message newline
      * Utilisée pour publier un message avec un identifiant, un auteur, un destinataire et le contenu.
      */
-    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+INNER_MESSAGE+")"+ NEWLINE;
+    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+ INNER_MESSAGE+")";
     // --- COMPILATION DES PATTERNS DES COMMANDES ---
 
     /**

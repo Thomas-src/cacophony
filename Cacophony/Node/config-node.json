@@ -1,14 +1,1 @@
-{
-  "currentDomain": "node2.swilabus.xyz",
-  "saltSizeInBytes": 22,
-  "multicastAddress": "224.224.200.200",
-  "multicastPort": 13001,
-  "unicastPort": 5002,
-  "relayPort": 5003,
-  "networkInterface": "wireless_32768",
-  "base64AES": "dBVpplZPqK9k8KmCv/HodCkK1MnOYJ16QFKXjTGejq8\u003d",
-  "tls": true,
-  "certificateName": "star.swilabus.xyz.p12",
-  "certificatePassword": "labo2026",
-  "id": 7
-}
+{"currentDomain":"node2.swilabus.xyz","saltSizeInBytes":22,"multicastAddress":"224.224.200.200","multicastPort":13001,"unicastPort":5002,"relayPort":5003,"networkInterface":"wireless_32768","base64AES":"dBVpplZPqK9k8KmCv/HodCkK1MnOYJ16QFKXjTGejq8\u003d","tls":true,"certificateName":"star.swilabus.xyz.p12","certificatePassword":"labo2026","id":7}

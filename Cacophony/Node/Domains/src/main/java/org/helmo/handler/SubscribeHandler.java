@@ -146,7 +146,7 @@ public class SubscribeHandler implements CommandHandler {
     private void sendToSpeaker(ClientSession session, List<String> args) throws HandlerException {
         String toSubscribe = args.get(0) != null ? args.getFirst() + "@" + args.get(1) : args.get(2) + "@" + args.getLast();
 
-        String subMessage = MessageBuilder.buildSubscribe(toSubscribe);
+        String subMessage = MessageBuilder.buildInnerSubscribe(toSubscribe);
         String id = idGeneratorService.getNextCountString();
         String messageToCrypt = MessageBuilder.buildPost(id + session.getDomain(), session.getUserFullName(), toSubscribe, subMessage);
         try {

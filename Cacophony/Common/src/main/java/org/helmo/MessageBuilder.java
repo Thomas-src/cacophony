@@ -86,6 +86,9 @@ public class MessageBuilder {
         return "SUBSCRIBE" + SP + target + NEWLINE;
     }
 
+    public static String buildInnerSubscribe(String target) {
+        return "SUBSCRIBE" + SP + target; // pas de NEWLINE
+    }
     // send = "SEND" sp message newline
 
     /**
@@ -108,7 +111,9 @@ public class MessageBuilder {
     public static String buildMsg(String userAtDomain, String message) {
         return "MSG" + SP + userAtDomain + SP + message +NEWLINE;
     }
-
+    public static String buildMsgInner(String userAtDomain, String message) {
+        return "MSG" + SP + userAtDomain + SP + message; // pas de NEWLINE
+    }
     // ok = "OK" newline (Version sans message)
 
     /**
@@ -157,7 +162,7 @@ public class MessageBuilder {
         if (idAtDomain == null || fromUserAtDomain == null || to == null || msg == null || idAtDomain.isEmpty() || fromUserAtDomain.isEmpty() || to.isEmpty() || msg.isEmpty()) {
             return buildError();
         }
-        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg ;
+        return "POST" + SP + idAtDomain + SP + fromUserAtDomain + SP + to + SP + msg + NEWLINE ;
     }
 
     // leave = "LEAVE" newline

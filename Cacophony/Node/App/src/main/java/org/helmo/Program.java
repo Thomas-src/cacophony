@@ -50,7 +50,7 @@ public class Program {
             IdGeneratorService idGeneratorService = new IdGeneratorService(config.id(), configRepository);
 
 
-            SpeakerService speakerService = new SpeakerService(cryptoService,eastThread);
+            SpeakerService speakerService = new SpeakerService(cryptoService, eastThread);
             SendHandler sendHandler = new SendHandler(messageService, activeSession, speakerService, idGeneratorService);
             SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService, speakerService, idGeneratorService);
 
@@ -60,7 +60,7 @@ public class Program {
             menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
             menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
             menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
-            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, messageService, userManagerService, tagManagerService));
+            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, messageService, userManagerService, tagManagerService, speakerService));
 
             taskthread.start();
             eastThread.start();
