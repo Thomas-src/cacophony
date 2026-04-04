@@ -1,0 +1,6 @@
+{
+  "multicastAddress": "224.224.200.200",
+  "multicastPort": 13001,
+  "networkInterface": "iftype53_32771",
+  "aesKey": "dBVpplZPqK9k8KmCv/HodCkK1MnOYJ16QFKXjTGejq8="
+}

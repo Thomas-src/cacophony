@@ -52,7 +52,3 @@ logs
 Docs
 
 ### Configs ###
-node/config-node.json
-node/users.json
-speaker/config-speaker.json
-speaker/domains.json
