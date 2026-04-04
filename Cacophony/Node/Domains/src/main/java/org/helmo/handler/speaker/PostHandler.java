@@ -62,7 +62,7 @@ public class PostHandler implements CommandHandler {
             throw new HandlerException("POST requires a speaker context");
         }
         for (int i = 0; i < args.size(); i++) {
-            LOGGER.info("Args {}: {}",i, args.get(i));
+            LOGGER.info("Args {}: {}", i, args.get(i));
         }
         String idAtDomain = args.get(0);
         String fromUserAtDomain = args.get(1);
@@ -102,21 +102,24 @@ public class PostHandler implements CommandHandler {
             }
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) { // 1. vérifier si l'envoyeur est abonné au tag
                 for (IUserSubscriber sub : subs) {
-                    if (sub.isLocal()) {
-                        LOGGER.info("Response from remote tag (internal user) : {}",msgToSend);
-                        activeSession.send(sub.getFullName(), msgToSend);
-                    } else {
-                        LOGGER.info("Resend msg to speaker {}",msgToSend);
-                        String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
-                        LOGGER.info("Resend post to speaker {}",messageToCrypt);
-                        try {
-                            speakerService.sendCryptedMessage(messageToCrypt); // todo envoyer vers le speaker
-                        } catch (MessageSaveException e) {
-                            LOGGER.error("Error sending Crypted Message", e);
-                            throw new HandlerException("Impossible de sauvegarder le message");
-                        } catch (EncryptionException e) {
-                            LOGGER.error("Error crypting Message", e);
-                            throw new HandlerException("Impossible de crypter le message");
+                    if (!sub.getFullName().equals(fromUser)) { // todo supprimer pour ne pas envoyer à l'expéditeur
+
+                        if (sub.isLocal()) {
+                            LOGGER.info("Response from remote tag (internal user) : {}", msgToSend);
+                            activeSession.send(sub.getFullName(), msgToSend);
+                        } else {
+                            LOGGER.info("Resend msg for {} to speaker {}", sub.getFullName(), msgToSend);
+                            String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
+                            LOGGER.info("Resend post to speaker {}", messageToCrypt);
+                            try {
+                                speakerService.sendCryptedMessage(messageToCrypt); // todo envoyer vers le speaker
+                            } catch (MessageSaveException e) {
+                                LOGGER.error("Error sending Crypted Message", e);
+                                throw new HandlerException("Impossible de sauvegarder le message");
+                            } catch (EncryptionException e) {
+                                LOGGER.error("Error crypting Message", e);
+                                throw new HandlerException("Impossible de crypter le message");
+                            }
                         }
                     }
                 }
