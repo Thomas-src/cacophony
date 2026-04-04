@@ -44,7 +44,6 @@ public class Speaker extends Thread {
                     String message = new String(packet.getData(), 0, packet.getLength(), StandardCharsets.UTF_8);
                     String sourceIp = packet.getAddress().getHostAddress();
 
-
                     LOGGER.info("[UDP] msg de {}: {}", sourceIp, message);
                     commandMenu.execute(message);
 
@@ -52,8 +51,6 @@ public class Speaker extends Thread {
                     LOGGER.error("Le serveur s'est arrêté:", e);
                 }
             }
-
-
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

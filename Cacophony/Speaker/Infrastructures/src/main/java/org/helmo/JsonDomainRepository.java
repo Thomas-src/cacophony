@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.domain.Domain;
+import org.helmo.dto.DomainDto;
 import org.helmo.dto.DomainsDto;
 import org.helmo.exceptions.DomainReaderException;
 import org.helmo.exceptions.DomainSaveException;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,7 @@ public class JsonDomainRepository implements IDomainRepository {
     private static final Gson gson = new Gson();
     private static final Path configPath = findDomainFile();
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Object DOMAIN_FILE_LOCK = new Object();
 
     private static Path findDomainFile() {
         String fileName = "domains.json";
@@ -64,80 +67,101 @@ public class JsonDomainRepository implements IDomainRepository {
      */
     @Override
     public List<Domain> getDomains() throws DomainReaderException {
-        try {
-            ensureStorage();
-            try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-                DomainsDto dto = gson.fromJson(reader, DomainsDto.class);
-                if (dto == null || dto.domains() == null || dto.domains().isEmpty()) {
-                    throw new DomainReaderException("Invalid or empty domains configuration");
-                }
+        synchronized (DOMAIN_FILE_LOCK) {
+            try {
+                ensureStorage();
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    DomainsDto dto = gson.fromJson(reader, DomainsDto.class);
+                    if (dto == null || dto.domains() == null || dto.domains().isEmpty()) {
+                        throw new DomainReaderException("Invalid or empty domains configuration");
+                    }
 
-                return JsonDomainMapper.mapToDomains(dto);
+                    return JsonDomainMapper.mapToDomains(dto);
+                } catch (IOException e) {
+                    throw new DomainReaderException("Failed to read domains file: " + configPath);
+                } catch (JsonSyntaxException e) {
+                    throw new DomainReaderException("Invalid JSON format in domains file");
+                }
             } catch (IOException e) {
-                throw new DomainReaderException("Failed to read domains file: " + configPath);
-            } catch (JsonSyntaxException e) {
-                throw new DomainReaderException("Invalid JSON format in domains file");
+                LOGGER.error("Failed to read domains file: {}", configPath, e);
+                throw new DomainReaderException("Failed to initialize domains storage");
             }
-        } catch (IOException e) {
-            LOGGER.error("Failed to read domains file: {}", configPath, e);
-            throw new DomainReaderException("Failed to initialize domains storage");
         }
+
     }
 
+
     @Override
-    public void saveMessages(String domain, List<String> messages) throws DomainSaveException {
-        try {
-            ensureStorage();
+    public void clearDomainMessages(String domain) throws DomainSaveException {
+        synchronized (DOMAIN_FILE_LOCK) {
+            try {
+                ensureStorage();
 
-            DomainsDto dto;
-            try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-                dto = gson.fromJson(reader, DomainsDto.class);
+                DomainsDto dto;
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    dto = gson.fromJson(reader, DomainsDto.class);
+                }
+
+                if (dto == null || dto.domains() == null) {
+                    throw new DomainSaveException("Fichier domains invalide");
+                }
+
+                Gson exporter = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .create();
+
+                DomainsDto updatedDto = new DomainsDto(
+                        dto.domains().stream()
+                                .map(d -> {
+                                    if (!d.domain().equals(domain)) return d;
+
+                                    return new DomainDto(
+                                            d.domain(),
+                                            d.base64AES(),
+                                            new ArrayList<>()
+                                    );
+                                })
+                                .toList()
+                );
+
+                try (var writer = Files.newBufferedWriter(configPath)) {
+                    exporter.toJson(updatedDto, writer);
+                }
+
+            } catch (IOException e) {
+                throw new DomainSaveException("Impossible de vider les messages du domaine : " + domain);
             }
-
-            if (dto == null || dto.domains() == null) {
-                throw new DomainSaveException("Fichier domains invalide");
-            }
-            Gson exporter = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create();
-
-            DomainsDto updatedDto = JsonDomainMapper.updateMessages(dto, domain, messages);
-
-            try (var writer = Files.newBufferedWriter(configPath)) {
-                exporter.toJson(updatedDto, writer);
-            }
-
-        } catch (IOException e) {
-            throw new DomainSaveException("Impossible de sauvegarder les messages du domaine : " + domain);
         }
     }
 
 
     @Override
     public void saveMessage(String domain, String message) throws DomainSaveException {
-        try {
-            ensureStorage();
+        synchronized (DOMAIN_FILE_LOCK) {
+            try {
+                ensureStorage();
 
-            DomainsDto dto;
-            try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-                dto = gson.fromJson(reader, DomainsDto.class);
+                DomainsDto dto;
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    dto = gson.fromJson(reader, DomainsDto.class);
+                }
+
+                if (dto == null || dto.domains() == null) {
+                    throw new DomainSaveException("Fichier domains invalide");
+                }
+                Gson exporter = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .create();
+
+                DomainsDto updatedDto = JsonDomainMapper.updateMessage(dto, domain, message);
+
+                try (var writer = Files.newBufferedWriter(configPath)) {
+                    exporter.toJson(updatedDto, writer);
+                }
+
+            } catch (IOException e) {
+                throw new DomainSaveException("Impossible de sauvegarder les messages du domaine : " + domain);
             }
-
-            if (dto == null || dto.domains() == null) {
-                throw new DomainSaveException("Fichier domains invalide");
-            }
-            Gson exporter = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create();
-
-            DomainsDto updatedDto = JsonDomainMapper.updateMessage(dto, domain, message);
-
-            try (var writer = Files.newBufferedWriter(configPath)) {
-                exporter.toJson(updatedDto, writer);
-            }
-
-        } catch (IOException e) {
-            throw new DomainSaveException("Impossible de sauvegarder les messages du domaine : " + domain);
         }
     }
 

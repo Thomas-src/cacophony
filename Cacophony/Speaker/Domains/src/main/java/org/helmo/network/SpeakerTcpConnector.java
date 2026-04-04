@@ -23,7 +23,6 @@ public class SpeakerTcpConnector implements ConnectionListener {
     private final Map<String, NodeTCPConnection> connections = new ConcurrentHashMap<>();
     private final CryptoService cryptoService;
     private final CommandMenu tcpMenu;
-    private final Map<String, Domain> ipToDomains = new ConcurrentHashMap<>();
     public SpeakerTcpConnector(CryptoService cryptoService, CommandMenu tcpMenu) {
         this.cryptoService = cryptoService;
         this.tcpMenu = tcpMenu;
@@ -45,7 +44,6 @@ public class SpeakerTcpConnector implements ConnectionListener {
             Socket socket = new Socket(ip, port);
             NodeTCPConnection conn = create(domain, socket);
             connections.put(domain.getName(), conn);
-            ipToDomains.put(ip, domain);
             LOGGER.info("Connecté à {} ({}:{})", domain.getName(), ip, port);
         } catch (IOException e) {
             LOGGER.error("Échec connexion à {}:{} — {}", ip, port, e.getMessage());

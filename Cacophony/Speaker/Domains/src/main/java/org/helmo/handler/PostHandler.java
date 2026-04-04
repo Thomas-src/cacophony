@@ -25,7 +25,6 @@ import java.util.List;
     private final SpeakerTcpConnector connector;
     private final CryptoProvider crypto;
     private final DomainService domainService;
-    private final IDomainRepository domainRepository;
     private final SpeakerConfig speakerConfig;
 
     /**
@@ -34,14 +33,12 @@ import java.util.List;
      * @param connector      Le connecteur TCP pour envoyer des messages aux nœuds.
      * @param cryptoProvider Le fournisseur de services de cryptographie.
      * @param domainService  Le service de gestion des domaines.
-     * @param jsonDomainRepository Le dépôt pour sauvegarder les messages en attente.
      * @param speakerConfig  La configuration locale du Speaker.
      */
-    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, IDomainRepository jsonDomainRepository, SpeakerConfig speakerConfig) {
+    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService,  SpeakerConfig speakerConfig) {
         this.connector = connector;
         this.crypto = cryptoProvider;
         this.domainService = domainService;
-        this.domainRepository = jsonDomainRepository;
         this.speakerConfig = speakerConfig;
     }
 
@@ -76,16 +73,13 @@ import java.util.List;
                 LOGGER.info("Message rechiffré et envoyé à {}", domainDest);
                 connector.sendToNode(domainDest, reEncrypted);
             } else {
-                String localEncrypted = crypto.encrypt(post, speakerConfig.aesKey());
                 LOGGER.info("Node {} absent, enregistrement du message", domainDest);
-                domainRepository.saveMessage(destDomain.getName(), localEncrypted);
+                domainService.saveMessage(destDomain.getName(), post);
             }
         } catch (DomainReaderException e) {
             throw new HandlerException("Impossible de lire les domaines : " + e.getMessage());
         } catch (EncryptionException e) {
             throw new HandlerException("Impssible d'encrypter le message : " + e.getMessage());
-        } catch (DomainSaveException e) {
-            throw new HandlerException("Impossible de sauvegarder le message : " + e.getMessage());
         }
     }
 }

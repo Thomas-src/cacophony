@@ -40,35 +40,24 @@ public class DomainService {
         return null;
     }
 
-    public List<String> getWaitingMessages(String domainName) throws DomainReaderException {
-        Domain domain = findDomain(domainName);
-        if (domain == null) return List.of();
-
-        List<String> decrypted = new ArrayList<>();
-        for (String encrypted : domain.getMessages()) {
-            try {
-                decrypted.add(crypto.decrypt(encrypted, speakerConfig.aesKey()));
-            } catch (DecryptionException e) {
-                LOGGER.warn("Impossible de déchiffrer un message du domaine {}: {}", domainName, e.getMessage());
-            }
+    public void saveMessage(String domainName, String message) {
+        try {
+            String localEncrypted = crypto.encrypt(message, speakerConfig.aesKey());
+            domainRepository.saveMessage(domainName, localEncrypted);
+        } catch (EncryptionException | DomainSaveException e) {
+            LOGGER.warn("Impossible de chiffrer / sauvegarder le message pour le domaine {}: {}", domainName, e.getMessage());
         }
-        return decrypted;
+    };
+
+    public List<String> clearMessages(String domainName) throws DomainReaderException {
+       try {
+           List<String> messages = new ArrayList<>(findDomain(domainName).getMessages());
+           domainRepository.clearDomainMessages(domainName);
+           return messages;
+       } catch (DomainSaveException e) {
+           LOGGER.warn("Impossible de vider tous les messages du domaine {}: {}", domainName, e.getMessage());
+       }
+       return  List.of();
     }
 
-    public void saveWaitingMessages(String domainName, List<String> messages) throws DomainReaderException, DomainSaveException {
-        Domain domain = findDomain(domainName);
-        if (domain == null) {
-            throw new DomainReaderException("Domaine introuvable : " + domainName);
-        }
-
-        List<String> encryptedMessages = new ArrayList<>();
-        for (String msg : messages) {
-            try {
-                encryptedMessages.add(crypto.encrypt(msg, speakerConfig.aesKey()));
-            } catch (EncryptionException e) {
-                LOGGER.warn("Impossible de chiffrer un message pour le domaine {}: {}", domainName, e.getMessage());
-            }
-        }
-        domainRepository.saveMessages(domainName, encryptedMessages);
-    }
 }

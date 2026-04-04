@@ -30,7 +30,7 @@ public class Program {
 
 
             udpMenu.add(Message.P_ADVERT, new AdvertHandler(connector, domainService, crypto, speakerConfig));
-            tcpMenu.add(Message.P_POST, new PostHandler(connector, crypto, domainService, domainRepository, speakerConfig));
+            tcpMenu.add(Message.P_POST, new PostHandler(connector, crypto, domainService, speakerConfig));
 
             LOGGER.info(speakerConfig.toString());
 

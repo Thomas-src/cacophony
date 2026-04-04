@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.MessageBuilder;
 import org.helmo.SpeakerConfig;
 import org.helmo.crypto.CryptoService;
+import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.domain.Domain;
 import org.helmo.domain.DomainService;
@@ -30,10 +31,10 @@ public class AdvertHandler implements CommandHandler {
     /**
      * Initialise le gestionnaire d'annonce.
      *
-     * @param connector      Le connecteur TCP pour gérer les connexions réseaux.
-     * @param domainService  Le service d'accès aux données des domaines.
-     * @param cryptoService  Le service de chiffrement/déchiffrement.
-     * @param speakerConfig  La configuration globale du Speaker.
+     * @param connector     Le connecteur TCP pour gérer les connexions réseaux.
+     * @param domainService Le service d'accès aux données des domaines.
+     * @param cryptoService Le service de chiffrement/déchiffrement.
+     * @param speakerConfig La configuration globale du Speaker.
      */
     public AdvertHandler(SpeakerTcpConnector connector, DomainService domainService, CryptoService cryptoService, SpeakerConfig speakerConfig) {
         this.connector = connector;
@@ -65,28 +66,7 @@ public class AdvertHandler implements CommandHandler {
             // résoudre l'ip depuis le domaine du message -> sinon ajouter arg socket.getInetAddress().getHostAddress();
             String ip = InetAddress.getByName(domain).getHostAddress();
             connector.connectToNode(d, ip, Integer.parseInt(port));
-
-            for (String cryptedMessage : d.getMessages()) {
-                try {
-                    // todo supprimer ligne hardcode et décommenter la variable decryptedMessage
-                    String decryptedMessage = MessageBuilder.buildPost("1000@node1.swilabus.xyz", "thomas@node1.swilabus.xyz","tomsy@node1.swilabus.xyz", "MSG tomsy@node1.swilabus.xyz SALUT #monTag1" );
-                    String ms = cryptoService.encrypt(decryptedMessage, speakerConfig.aesKey()); // todo delete
-                    LOGGER.info("Msg (pas) enregistré : \n{}", ms); // todo delete
-
-
-                    // 1. décrypter le msg avec la clé serveur
-                    // LOGGER.info("Msg chiffré enregistré : {}", cryptedMessage);
-                    // String decryptedMessage = cryptoService.decrypt(cryptedMessage, speakerConfig.aesKey());
-                    LOGGER.info("Msg clair : {}", decryptedMessage);
-                    //2. crypter avec la clé du node approprié
-                    LOGGER.info("Longueur message envoyé: {}", decryptedMessage.length());
-                    String cryptedNodeMsg = cryptoService.encrypt(decryptedMessage, d.getAesKey());
-                    LOGGER.info("Msg crypté à envoyer avec la clé {}\n{}", d.getAesKey(), cryptedNodeMsg);
-                    connector.sendToNode(d.getName(), cryptedNodeMsg);
-                } catch (EncryptionException e) {
-                    LOGGER.error("Erreur de decryption du message : {}. Résultat :{}", cryptedMessage, e);
-                }
-            }
+            sendOldMessages(d);
 
         } catch (UnknownHostException e) {
             LOGGER.info("Erreur domaine inconnu : {}", e.getMessage());
@@ -94,4 +74,30 @@ public class AdvertHandler implements CommandHandler {
             LOGGER.info("Erreur lors de l'obtention des domaines : {}", e.getMessage());
         }
     }
+
+
+    private void sendOldMessages(Domain domain) {
+        try {
+            for (String cryptedMessage : domainService.clearMessages(domain.getName())) {
+
+                // 1. décrypter le msg avec la clé serveur
+                LOGGER.info("Msg chiffré enregistré : {}", cryptedMessage);
+                String decryptedMessage = cryptoService.decrypt(cryptedMessage, speakerConfig.aesKey());
+                LOGGER.info("Msg clair : {}", decryptedMessage);
+                //2. crypter avec la clé du node approprié
+                LOGGER.info("Longueur message envoyé: {}", decryptedMessage.length());
+                String cryptedNodeMsg = cryptoService.encrypt(decryptedMessage, domain.getAesKey());
+                LOGGER.info("Msg crypté à envoyer avec la clé {}\n{}", domain.getAesKey(), cryptedNodeMsg);
+                connector.sendToNode(domain.getName(), cryptedNodeMsg);
+            }
+        } catch (DecryptionException e) {
+            LOGGER.error("Erreur de decryption du message. Résultat :{}", e);
+        } catch (EncryptionException e) {
+            LOGGER.error("Erreur de cryptage du message. Résultat :{}", e);
+        } catch (DomainReaderException e) {
+            LOGGER.error("Erreur de lecture du domain:{}", e);
+        }
+    }
+
 }
+
