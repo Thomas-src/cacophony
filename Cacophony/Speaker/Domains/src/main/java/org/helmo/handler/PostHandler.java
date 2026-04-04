@@ -56,8 +56,12 @@ import java.util.List;
         String idAtDomain = args.get(0);
         String userSrc = args.get(1);
         String dest = args.get(4);
-        String domainDest = args.get(6);
+        String domainDest = args.get(6) != null ? args.get(6) : args.get(8);
         String plainText = args.getLast();
+
+        for (int i = 0; i < args.size(); i++) {
+            LOGGER.info(i+"" +args.get(i));
+        }
 
         try {
             // Récupérer la clé du domaine destination
@@ -77,7 +81,7 @@ import java.util.List;
                 connector.sendToNode(domainDest, reEncrypted);
             } else {
                 String localEncrypted = crypto.encrypt(post, speakerConfig.aesKey());
-                LOGGER.info("Node absent, enregistrement du message {}", domainDest);
+                LOGGER.info("Node {} absent, enregistrement du message", domainDest);
                 domainRepository.saveMessage(destDomain.getName(), localEncrypted);
             }
         } catch (DomainReaderException e) {

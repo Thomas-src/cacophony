@@ -97,7 +97,7 @@ public class AdvertThread extends Thread {
 
                 };
 
-                scheduler.scheduleAtFixedRate(task, 0, 30, TimeUnit.SECONDS);
+                scheduler.scheduleAtFixedRate(task, 15, 30, TimeUnit.SECONDS);
 
                 CountDownLatch latch = new CountDownLatch(1);
                 try {

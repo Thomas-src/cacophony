@@ -97,8 +97,8 @@ public class SendHandler implements CommandHandler {
         LOGGER.info("NB d'abonnés distants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
 
         String domain = "@" + session.getDomain();
+        String subMessage = MessageBuilder.buildMsg(session.getUserFullName(), message);
         for (String remoteSubscriber : remoteSubscribers) {
-            String subMessage = MessageBuilder.buildMsg(session.getUserFullName(), message);
             String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteSubscriber, subMessage);
 
             try {
@@ -114,9 +114,22 @@ public class SendHandler implements CommandHandler {
 
     }
 
-    private void sendToRemoteTags(Set<String> remoteTags, ClientSession session, String message, String id) {
+    private void sendToRemoteTags(Set<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
         LOGGER.info("NB de tags ditants : {} - {}", remoteTags.size(), remoteTags);
-
+        String domain = "@" + session.getDomain();
+        String subMessage = MessageBuilder.buildMsg(session.getUserFullName(), message);
+        for (String remoteTag : remoteTags) {
+            String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteTag, subMessage);
+            try {
+                speakerService.sendCryptedMessage(messageToCrypt);
+            } catch (EncryptionException e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new HandlerException("Impossible de crypter le message", e);
+            } catch (MessageSaveException e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new HandlerException("Impossible de sauvegarder le message", e);
+            }
+        }
         // todo méthode sendPostExternalTag
     }
 }

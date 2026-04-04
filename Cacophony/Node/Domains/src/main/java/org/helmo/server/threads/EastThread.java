@@ -151,11 +151,12 @@ public class EastThread extends Thread {
             writer.println(cryptedMessage);
         } else {
           try {
+
+              LOGGER.warn("Sepaker absent, sauvegarde du msg");
               messageRepository.saveMessage(cryptedMessage);
           } catch (MessageSaveException e) {
-              throw new RuntimeException(e);
+              throw new RuntimeException(e); // todo
           }
-            LOGGER.warn("Aucune connexion au speaker !");
         }
     }
 

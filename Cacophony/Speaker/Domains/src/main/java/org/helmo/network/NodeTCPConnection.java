@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.domain.Domain;
+import org.helmo.exceptions.HandlerException;
 import org.helmo.handler.CommandMenu;
 
 /**
@@ -64,6 +65,8 @@ public class NodeTCPConnection extends Thread  {
                         tcpMenu.execute(decrypted);
                     } catch (DecryptionException e) {
                         LOGGER.info("Erreur décryption du message reçu: {}, {}",line, e.getMessage());
+                    } catch (HandlerException e) {
+                        LOGGER.info("Erreur exécution de la commande: {}, {}",line, e.getMessage());
                     }
                 }
             }
