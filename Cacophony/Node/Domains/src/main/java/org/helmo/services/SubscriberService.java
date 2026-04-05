@@ -41,23 +41,24 @@ public class SubscriberService {
     }
 
     /**
-     * Gère l'abonnement d'un utilisateur à un autre utilisateur.
      *
-     * @param targetName Nom de l'utilisateur cible.
-     * @return Message de réponse (OK ou ERROR).
+     * @param targetfullName Nom d'utilisateur de l'abonnement
+     * @param domain Domaine courant
+     * @param fullusername Nom d'utilisateur de l'abonné
+     * @return
      */
-    public String userSubscribe(String targetName, String domain, String fullusername) {
-        LOGGER.info("SUBSCRIBE USER");
+    public String userSubscribe(String targetfullName, String domain, String fullusername) {
+        LOGGER.info("SUBSCRIBE USER target : {}, to {}", targetfullName, fullusername);
         List<Client> clients;
+        String targetName = extractUsername(targetfullName);
         if (targetName.equals(fullusername)) {
             return MessageBuilder.buildError();
         }
         try {
             clients = userManagerService.getUsers();
             for (Client client : clients) {
-                LOGGER.info("Checking {}", client.getName());
                 if (targetName.equals(client.getName())) {
-                    LOGGER.info("========{}========", fullusername);
+                    LOGGER.info("========{} est désormais abonné========", fullusername);
                     userManagerService.addSubscribersFor(client, fullusername);
                 }
             }
@@ -129,7 +130,7 @@ public class SubscriberService {
         }
     }
     private static String extractUsername(String fullusername) {
-        var matcher = Grammar.P_TAG_FULL.matcher(fullusername);
+        var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullusername);
         if (matcher.matches()) {
             return matcher.group(1); // "#monTag2"
         }

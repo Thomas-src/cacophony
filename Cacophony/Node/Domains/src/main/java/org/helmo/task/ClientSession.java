@@ -92,7 +92,7 @@ public class ClientSession implements TaskContext {
      * @return Le nom complet.
      */
     public String getUserFullName() {
-        return client.getFullName();
+        return client.getFullName() != null ? client.getFullName() : "";
     }
 
     /**

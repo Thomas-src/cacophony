@@ -59,7 +59,7 @@ public class TagManagerService {
      * @throws TagSaveException Si une erreur survient lors de la sauvegarde.
      */
     public void createTag(String fullusername, String tag) throws TagSaveException {
-        tagRepository.createTag(fullusername, tag);
+        tagRepository.createTag(fullusername, extractTagName(tag));
     }
 
     /**
@@ -70,14 +70,14 @@ public class TagManagerService {
      * @throws TagSaveException Si une erreur survient lors de la mise à jour.
      */
     public void addUserToTag(String userFullName, String tag) throws TagSaveException {
-        tagRepository.addUserToTag(userFullName, tag);
+        tagRepository.addUserToTag(userFullName, extractTagName(tag));
     }
 
     private static String extractTagName(String tagFullName) {
         var matcher = Grammar.P_TAG_FULL.matcher(tagFullName);
         if (matcher.matches()) {
-            return matcher.group(1); // "#monTag2"
+            return matcher.group(1);
         }
-        return tagFullName; // fallback si pas de domaine
+        return tagFullName;
     }
 }
