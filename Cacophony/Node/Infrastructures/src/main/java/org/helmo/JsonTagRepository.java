@@ -89,50 +89,6 @@ public class JsonTagRepository implements ITagRepository {
     }
 
     /**
-     * Sauvegarde ou met à jour un tag existant dans le fichier JSON.
-     *
-     * @param internalTag Le tag à sauvegarder.
-     * @throws TagSaveException Si une erreur survient lors de l'écriture.
-     */
-    @Override
-    public void saveTag(InternalTag internalTag) throws TagSaveException {
-        synchronized (TAGS_FILE_LOCK) {
-            try {
-                ensureStorage();
-
-                TagsDto existingDto;
-                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
-                    existingDto = gson.fromJson(reader, TagsDto.class);
-                }
-
-                List<TagDto> tagsDtos;
-                if (existingDto == null || existingDto.tags() == null) {
-                    tagsDtos = new ArrayList<>();
-                } else {
-                    tagsDtos = new ArrayList<>(existingDto.tags());
-                }
-
-                TagDto newTagDto = JsonTagMapper.toTagDto(internalTag);
-                int existingIndex = tagsDtos.indexOf(newTagDto);
-                if (existingIndex >= 0) {
-                    tagsDtos.set(existingIndex, newTagDto);
-                } else {
-                    tagsDtos.add(newTagDto);
-                }
-                TagsDto dtoToSave = new TagsDto(tagsDtos);
-                String json = gson.toJson(dtoToSave);
-                Files.writeString(configPath, json);
-            } catch (IOException ex) {
-                LOGGER.error("Impossible de sauvegarder le fichier tag", ex);
-                throw new TagSaveException("Impossible de sauvegarder le fichier tag");
-            } catch (JsonParseException ex) {
-                LOGGER.error("Format JSON invalide pour le fichier tag lors de la sauvegarde", ex);
-                throw new TagSaveException("Format JSON invalide pour le fichier tag");
-            }
-        }
-    }
-
-    /**
      * Crée un nouveau tag et y abonne automatiquement son créateur.
      *
      * @param tag    Le nom du tag à créer.

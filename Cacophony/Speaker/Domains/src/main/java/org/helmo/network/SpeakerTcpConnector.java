@@ -11,9 +11,6 @@ import org.helmo.domain.Domain;
 import org.helmo.crypto.CryptoService;
 import org.helmo.handler.CommandMenu;
 
-// todo Utile ? je pense que le traffic est seulement en udp
-
-
 /**
  * Gestion des connexions TCP unicast entre le Speaker et les Nodes.
  * À implémenter : ouverture/fermeture de connexions, envoi/réception de messages.

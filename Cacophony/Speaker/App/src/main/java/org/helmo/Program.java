@@ -13,8 +13,6 @@ public class Program {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static void main(String[] args) {
-
-        // todo ajouter post msg
         try {
             JsonDomainRepository domainRepository = new JsonDomainRepository();
             JsonConfigReaderSpeaker configReader = new JsonConfigReaderSpeaker();

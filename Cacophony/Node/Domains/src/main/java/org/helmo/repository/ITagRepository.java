@@ -20,14 +20,6 @@ public interface ITagRepository {
     List<InternalTag> getTags() throws TagReaderException;
 
     /**
-     * Sauvegarde un objet tag complet.
-     *
-     * @param internalTag Le tag à sauvegarder.
-     * @throws TagSaveException Si une erreur survient lors de la sauvegarde.
-     */
-    void saveTag(InternalTag internalTag) throws TagSaveException;
-
-    /**
      * Crée un nouveau tag associé à un client.
      *
      * @param tag Le nom du tag à créer.

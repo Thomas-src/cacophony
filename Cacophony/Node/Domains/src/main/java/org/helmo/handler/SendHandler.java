@@ -58,9 +58,9 @@ public class SendHandler implements CommandHandler {
             sendToLocal(result.localSubscribers(), session, message);
 
             String id =  idGeneratorService.getNextCountString();
-            // 3. todo Pour abonnés externes envoie msg au EastThread
+            // 3. Pour abonnés externes envoie msg au EastThread
             sendPostSubscribers(result.remoteSubscribers(), session, message, id);
-            // 4. // todo pour les tags externes envoie msg au EastThread
+            // 4. Pour les tags externes envoie msg au EastThread
             sendToRemoteTags(result.remoteTags(), session, message, id);
 
             // Message de retour (optionnel)

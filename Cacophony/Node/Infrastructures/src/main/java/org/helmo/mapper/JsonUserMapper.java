@@ -15,6 +15,7 @@ import org.helmo.subscriber.RemoteUser;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+
 import org.helmo.Grammar;
 import org.helmo.tag.TagReference;
 
@@ -23,7 +24,7 @@ import org.helmo.tag.TagReference;
  */
 public class JsonUserMapper {
     private static final List<String> EMPTY_TAGS = List.of();
-
+    private static final Logger LOGGER = LogManager.getLogger();
     /**
      * Mappe une liste d'utilisateurs DTO vers une liste d'objets Client.
      *
@@ -33,7 +34,7 @@ public class JsonUserMapper {
      */
     public static List<Client> mapUsers(UsersDto dto, String currentDomain) {
         List<UserDto> userDtos = dto.users() == null ? List.of() : dto.users();
-        return userDtos.stream().map(u -> JsonUserMapper.createUser(u,currentDomain)).toList();
+        return userDtos.stream().map(u -> JsonUserMapper.createUser(u, currentDomain)).toList();
     }
 
     /**
@@ -51,12 +52,12 @@ public class JsonUserMapper {
                 if (subscriberName != null && !subscriberName.isBlank()) {
                     Matcher matcher = Grammar.P_USER_AT_DOMAIN.matcher(subscriberName);
                     if (matcher.matches()) {
-                        // todo modifier
-                        String domain = subscriberName.substring(subscriberName.indexOf("@") + 1);
+                        String domain = matcher.group(2);
+                        LOGGER.info(domain);
                         if (domain.equals(currentDomain)) {
-                              subscribers.add(new NativeUser(subscriberName));
+                            subscribers.add(new NativeUser(subscriberName));
                         } else {
-                             subscribers.add(new RemoteUser(subscriberName));
+                            subscribers.add(new RemoteUser(subscriberName));
                         }
                     } else {
                         // si pas de domaine => utilisateur interne

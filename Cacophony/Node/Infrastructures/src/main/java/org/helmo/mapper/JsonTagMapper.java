@@ -63,7 +63,7 @@ public class JsonTagMapper {
     public static TagDto toTagDto(InternalTag internalTag) {
         return new TagDto(
                 internalTag.getFullName(),
-                internalTag.getSubscribers().stream().map(IUserSubscriber::getFullName).toList() // todo à vérifier ???
+                internalTag.getSubscribers().stream().map(IUserSubscriber::getFullName).toList()
         );
 
     }
