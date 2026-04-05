@@ -55,10 +55,15 @@ public class PostHandler implements CommandHandler {
         }
         String idAtDomain = args.get(0);
         String fromUserAtDomain = args.get(1);
-        String toFullAddress = args.get(4);  // user_at_domain OU tag_at_domain
+
+        String userAddress = args.get(4) + "@" + args.get(5);
+
+        String tagAddress = args.get(6) + "@" + args.get(7);
+        String toFullAddress = args.get(4) != null ? userAddress : tagAddress;
+
         String toUser = args.get(5);  // null si tag
         String toTag = args.get(7);  // null si user
-        String innerMessage = args.get(9);  // "MSG ..."
+        String innerMessage = args.get(8);  // "MSG ..."
 
         LOGGER.info("POST reçu: {} → {}", fromUserAtDomain, toFullAddress);
 
@@ -78,17 +83,16 @@ public class PostHandler implements CommandHandler {
             for (int i = 0; i < matcherSUB.groupCount(); i++) {
                 LOGGER.info("Subcribe {}: {}", i, matcherSUB.group(i));
             }
-/*
+            String tagName = matcherSUB.group(3) + "@" + task.getDomain();
+            String userName = matcherSUB.group(1) + "@" + task.getDomain();
+            boolean isUser = matcherSUB.group(1) != null;
             if (isUser) {
-                subscriberService.userSubscribe(toSubscribe, toSubscribe);
+                subscriberService.userSubscribe(userName, task.getDomain(), fromUserAtDomain);
             } else {
-                subscriberService.tagSubscribe(toSubscribe, toSubscribe);
+                subscriberService.tagSubscribe(tagName, task.getDomain(), fromUserAtDomain);
             }
 
- */
         }
-
-
 
 
         return null;
@@ -105,7 +109,7 @@ public class PostHandler implements CommandHandler {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) { // 1. vérifier si l'envoyeur est abonné au tag
                 for (IUserSubscriber sub : subs) {
-                    if (!sub.getFullName().equals(fromUser)) { // todo supprimer pour ne pas envoyer à l'expéditeur
+                    if (!sub.getFullName().equals(fromUser)) { // supprimer pour ne pas envoyer à l'expéditeur
 
                         if (sub.isLocal()) {
                             LOGGER.info("Response from remote tag (internal user) : {}", msgToSend);
@@ -124,6 +128,8 @@ public class PostHandler implements CommandHandler {
                                 throw new HandlerException("Impossible de crypter le message");
                             }
                         }
+                    } else {
+                        LOGGER.info("ne pas envoyer le msg à l'expéditeur");
                     }
                 }
             } else {
