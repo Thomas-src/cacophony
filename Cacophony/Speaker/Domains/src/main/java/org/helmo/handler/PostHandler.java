@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Gère la commande POST pour relayer des messages entre les domaines.
  */
- public class PostHandler implements CommandHandler {
+public class PostHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final SpeakerTcpConnector connector;
@@ -35,7 +35,7 @@ import java.util.List;
      * @param domainService  Le service de gestion des domaines.
      * @param speakerConfig  La configuration locale du Speaker.
      */
-    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService,  SpeakerConfig speakerConfig) {
+    public PostHandler(SpeakerTcpConnector connector, CryptoProvider cryptoProvider, DomainService domainService, SpeakerConfig speakerConfig) {
         this.connector = connector;
         this.crypto = cryptoProvider;
         this.domainService = domainService;
@@ -50,11 +50,14 @@ import java.util.List;
      */
     @Override
     public void handle(List<String> args) throws HandlerException {
-        String idAtDomain = args.get(0);
-        String userSrc = args.get(1);
-        String dest = args.get(4);
-        String domainDest = args.get(6) != null ? args.get(6) : args.get(8);
-        String plainText = args.getLast();
+        String idAtDomain = args.get(0); // 00000@node1.swilabus.xyz
+        String userSrc = args.get(1); // envoey@node.x.swilabus.xyz
+        String userDestination = args.get(4) + "@" + args.get(5); // user@
+        String tagDestination = args.get(6) + "@" + args.get(7); // #tag@
+
+        String dest = args.get(4) != null ? userDestination : tagDestination;
+        String domainDest = args.get(5) != null ? args.get(5) : args.get(7); // node.x.swilabus.xyz
+        String plainText = args.getLast(); // SEND /SUBSCRIBE
 
         try {
             // Récupérer la clé du domaine destination

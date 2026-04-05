@@ -45,7 +45,7 @@ public class TagManagerService {
      */
     public List<IUserSubscriber> getTagSubscriber(String tagName) throws TagReaderException {
         return getTags().stream()
-                .filter(t -> t.getFullName().equals(extractTagName(tagName))) // todo equalsIgnoreCase ????
+                .filter(t -> t.getFullName().equals(extractTagName(tagName)))
                 .findFirst()
                 .map(InternalTag::getSubscribers)
                 .orElse(Collections.emptyList());
@@ -54,23 +54,23 @@ public class TagManagerService {
     /**
      * Crée un nouveau tag pour un client donné.
      *
-     * @param client Le client créateur.
+     * @param fullusername Le client créateur.
      * @param tag    Le nom du tag à créer.
      * @throws TagSaveException Si une erreur survient lors de la sauvegarde.
      */
-    public void createTag(Client client, String tag) throws TagSaveException {
-        tagRepository.createTag(client, tag);
+    public void createTag(String fullusername, String tag) throws TagSaveException {
+        tagRepository.createTag(fullusername, tag);
     }
 
     /**
      * Ajoute un utilisateur (client) à la liste des abonnés d'un tag.
      *
-     * @param client Le client à ajouter.
+     * @param userFullName Le client à ajouter.
      * @param tag    Le nom du tag.
      * @throws TagSaveException Si une erreur survient lors de la mise à jour.
      */
-    public void addUserToTag(Client client, String tag) throws TagSaveException {
-        tagRepository.addUserToTag(client, tag);
+    public void addUserToTag(String userFullName, String tag) throws TagSaveException {
+        tagRepository.addUserToTag(userFullName, tag);
     }
 
     private static String extractTagName(String tagFullName) {

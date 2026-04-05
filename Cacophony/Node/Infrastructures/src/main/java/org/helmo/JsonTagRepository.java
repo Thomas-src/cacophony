@@ -135,12 +135,11 @@ public class JsonTagRepository implements ITagRepository {
     /**
      * Crée un nouveau tag et y abonne automatiquement son créateur.
      *
-     * @param client Le client créateur du tag.
      * @param tag    Le nom du tag à créer.
      * @throws TagSaveException Si le tag ne peut pas être sauvegardé.
      */
     @Override
-    public void createTag(Client client, String tag) throws TagSaveException {
+    public void createTag(String fullusername, String tag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -167,7 +166,7 @@ public class JsonTagRepository implements ITagRepository {
 
                 // 3. Créer la liste de subscribers (le créateur est auto-abonné)
                 List<String> subscribers = new ArrayList<>();
-                subscribers.add(client.getFullName());
+                subscribers.add(fullusername);
 
                 // 4. Créer le TagDto (record immuable)
                 TagDto newTag = new TagDto(tag, subscribers);
@@ -190,12 +189,12 @@ public class JsonTagRepository implements ITagRepository {
     /**
      * Ajoute un utilisateur à la liste des abonnés d'un tag spécifique.
      *
-     * @param client Le client à ajouter.
+     * @param userFullName Le client à ajouter.
      * @param tag    Le nom du tag.
      * @throws TagSaveException Si une erreur survient lors de la mise à jour du fichier.
      */
     @Override
-    public void addUserToTag(Client client, String tag) throws TagSaveException {
+    public void addUserToTag(String userFullName, String tag) throws TagSaveException {
         synchronized (TAGS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -223,8 +222,6 @@ public class JsonTagRepository implements ITagRepository {
                         List<String> subscribers = tagDto.subscribers() != null
                                 ? new ArrayList<>(tagDto.subscribers())
                                 : new ArrayList<>();
-
-                        String userFullName = client.getFullName();
 
                         // 3. Ajouter l'utilisateur s'il n'est pas déjà abonné
                         if (!subscribers.contains(userFullName)) {

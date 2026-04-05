@@ -4,14 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.*;
 import org.helmo.MessageBuilder;
-import org.helmo.client.Client;
-import org.helmo.crypto.exceptions.EncryptionException;
-import org.helmo.services.IdGeneratorService;
-import org.helmo.services.SpeakerService;
+import org.helmo.handler.utils.CommandHandler;
+import org.helmo.services.*;
 import org.helmo.task.ClientSession;
-import org.helmo.services.TagManagerService;
-import org.helmo.services.UserManagerService;
-import org.helmo.tag.InternalTag;
 import org.helmo.task.TaskContext;
 
 import java.util.List;
@@ -22,22 +17,13 @@ import java.util.List;
 public class SubscribeHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final UserManagerService userManagerService;
-    private final TagManagerService tagManagerService;
-    private final SpeakerService speakerService;
-    private final IdGeneratorService idGeneratorService;
+    private final SubscriberService subscriberService;
 
     /**
      * Initialise le gestionnaire d'abonnement.
-     *
-     * @param userManagerService Service de gestion des utilisateurs.
-     * @param tagManagerService  Service de gestion des tags.
      */
-    public SubscribeHandler(UserManagerService userManagerService, TagManagerService tagManagerService, SpeakerService speakerService, IdGeneratorService idGeneratorService) {
-        this.userManagerService = userManagerService;
-        this.tagManagerService = tagManagerService;
-        this.speakerService = speakerService;
-        this.idGeneratorService = idGeneratorService;
+    public SubscribeHandler(SubscriberService subscriberService) {
+        this.subscriberService = subscriberService;
     }
 
     @Override
@@ -56,107 +42,16 @@ public class SubscribeHandler implements CommandHandler {
 
         if (domain.equalsIgnoreCase(session.getDomain())) {
             if (isUser) {
-                response = userSubscribe(sub, session);
+                response = subscriberService.userSubscribe(sub, session.getDomain(), session.getUserFullName());
             } else {
-                response = tagSubscribe(sub, session);
+                response = subscriberService.tagSubscribe(sub, session.getDomain(), session.getUserFullName());
             }
         } else {
-            // todo envoyer au speaker
-            sendToSpeaker(session, args);
+            subscriberService.sendToSpeaker(session, args);
         }
 
         return response;
     }
 
-    /**
-     * Gère l'abonnement d'un utilisateur à un autre utilisateur.
-     *
-     * @param targetName Nom de l'utilisateur cible.
-     * @param session    Session du client actuel.
-     * @return Message de réponse (OK ou ERROR).
-     */
-    private String userSubscribe(String targetName, ClientSession session) {
-        LOGGER.info("SUBSCRIBE USER");
-        List<Client> clients;
-        if (targetName.equals(session.getUsername())) {
-            return MessageBuilder.buildError();
-        }
-        try {
-            clients = userManagerService.getUsers();
-            for (Client client : clients) {
-                LOGGER.info("Checking {}", client.getName());
-                if (targetName.equals(client.getName())) {
-                    LOGGER.info("========{}========", session.getUsername());
-                    String sub = session.getUserFullName();
-                    userManagerService.addSubscribersFor(client, sub);
-                }
-            }
-        } catch (UserReaderException | UserSaveException e) {
-            return MessageBuilder.buildError();
-        }
-        return MessageBuilder.buildOk();
-    }
 
-    /**
-     * Gère l'abonnement d'un utilisateur à un tag.
-     *
-     * @param tagName Nom du tag.
-     * @param session Session du client actuel.
-     * @return Message de réponse (OK).
-     * @throws HandlerException Si une erreur survient lors de la lecture ou sauvegarde.
-     */
-    private String tagSubscribe(String tagName, ClientSession session) throws HandlerException {
-        List<InternalTag> tags;
-        String fullTagName = tagName + "@" + session.getDomain();
-        try {
-            tags = tagManagerService.getTags();
-        } catch (TagReaderException e) {
-            throw new HandlerException("Impossible de lire les tags");
-        }
-
-        for (InternalTag tag : tags) {
-            LOGGER.info("Comparing {} with {}", tag.getFullName(), tagName);
-            if (tag.getFullName().equals(tagName)) {
-                // Si le tag existe deja
-                // Ajouter le tags pour le client dans la session
-                try {
-                    tagManagerService.addUserToTag(session.getClient(), tagName);
-                    userManagerService.addTagFor(session.getClient(), fullTagName);
-                    LOGGER.info(session.getUsername() + " s'est abonné à : " + fullTagName);
-                } catch (UserSaveException | TagSaveException e) {
-                    throw new HandlerException("Impossible d'ajouter le tags :'" + fullTagName + "'  pour l'utilisateur : " + session.getUsername());
-                }
-                // Retourner ok
-                return MessageBuilder.buildOk();
-            }
-        }
-
-        // Creer le tag
-        try {
-            tagManagerService.createTag(session.getClient(), tagName);
-            userManagerService.addTagFor(session.getClient(), fullTagName);
-            LOGGER.info(session.getUsername() + " a créé le tag : " + fullTagName);
-        } catch (TagSaveException | UserSaveException e) {
-            throw new HandlerException("Impossible de creer le tag :" + fullTagName);
-        }
-        // Retourner ok
-        return MessageBuilder.buildOk();
-    }
-
-    private void sendToSpeaker(ClientSession session, List<String> args) throws HandlerException {
-        String toSubscribe = args.get(0) != null ? args.getFirst() + "@" + args.get(1) : args.get(2) + "@" + args.getLast();
-
-        String subMessage = MessageBuilder.buildInnerSubscribe(toSubscribe);
-        String id = idGeneratorService.getNextCountString();
-        String messageToCrypt = MessageBuilder.buildPost(id + session.getDomain(), session.getUserFullName(), toSubscribe, subMessage);
-        try {
-            speakerService.sendCryptedMessage(messageToCrypt);
-        } catch (EncryptionException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new HandlerException("Impossible de crypter le message", e);
-        } catch (MessageSaveException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new HandlerException("Impossible de sauvegarder le message", e);
-        }
-    }
 }

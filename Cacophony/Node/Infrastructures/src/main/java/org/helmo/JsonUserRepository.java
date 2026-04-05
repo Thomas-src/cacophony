@@ -329,12 +329,11 @@ public class JsonUserRepository implements IUserRepository {
     /**
      * Ajoute un tag à la liste des tags d'un utilisateur spécifique.
      *
-     * @param client L'utilisateur concerné.
      * @param tag    Le tag à ajouter.
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
     @Override
-    public void addTagFor(Client client, String tag) throws UserSaveException {
+    public void addTagFor(String username, String tag) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -357,7 +356,7 @@ public class JsonUserRepository implements IUserRepository {
                 for (int i = 0; i < existingUserDtos.size(); i++) {
                     UserDto user = existingUserDtos.get(i);
 
-                    if (user.login().equals(client.getName())) {
+                    if (user.login().equals(username)) {
 
                         List<String> tags = user.userTags() != null
                                 ? new ArrayList<>(user.userTags())
@@ -386,7 +385,7 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout tag : {}", client.getName());
+                    LOGGER.error("Utilisateur non trouvé pour ajout tag : {}", username);
                     return;
                 }
 

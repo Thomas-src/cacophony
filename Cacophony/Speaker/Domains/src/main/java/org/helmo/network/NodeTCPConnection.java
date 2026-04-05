@@ -66,7 +66,7 @@ public class NodeTCPConnection extends Thread  {
                     } catch (DecryptionException e) {
                         LOGGER.info("Erreur décryption du message reçu: {}, {}",line, e.getMessage());
                     } catch (HandlerException e) {
-                        LOGGER.info("Erreur exécution de la commande: {}, {}",line, e.getMessage());
+                        LOGGER.info("Erreur exécution de la commande: {}",e.getMessage());
                     }
                 }
             }

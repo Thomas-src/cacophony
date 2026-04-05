@@ -7,6 +7,7 @@ import org.helmo.Exception.ServerException;
 import org.helmo.crypto.CryptoService;
 import org.helmo.handler.*;
 import org.helmo.handler.speaker.PostHandler;
+import org.helmo.handler.utils.CommandMenu;
 import org.helmo.repository.IConfigRepository;
 import org.helmo.repository.IMessageRepository;
 import org.helmo.repository.ITagRepository;
@@ -40,7 +41,7 @@ public class Program {
             ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);
             TagManagerService tagManagerService = new TagManagerService(tagRepository);
             MessageService messageService = new MessageService(userManagerService, tagManagerService);
-            SubscriberService subscriberService = new SubscriberService();
+
 
             CommandMenu menu = new CommandMenu();
             AdvertThread advertThread = new AdvertThread(config);
@@ -52,15 +53,17 @@ public class Program {
 
             SpeakerService speakerService = new SpeakerService(cryptoService, eastThread);
             SendHandler sendHandler = new SendHandler(messageService, activeSession, speakerService, idGeneratorService);
-            SubscribeHandler subscribeHandler = new SubscribeHandler(userManagerService, tagManagerService, speakerService, idGeneratorService);
 
+
+            SubscriberService subscriberService = new SubscriberService(userManagerService,tagManagerService,speakerService,idGeneratorService);
+            SubscribeHandler subscribeHandler = new SubscribeHandler(subscriberService);
             menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
             menu.add(Message.P_CMD_USER, new AuthentificateHandler(userManagerService));
             menu.add(Message.P_CMD_SEND, sendHandler);
             menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
             menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
             menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
-            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, messageService, userManagerService, tagManagerService, speakerService));
+            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, tagManagerService, speakerService));
 
             taskthread.start();
             eastThread.start();

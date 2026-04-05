@@ -8,20 +8,21 @@ import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.server.threads.WestThread;
 import org.helmo.services.UserManagerService;
+import org.helmo.task.IMessageSender;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Objects;
 
 public class ActiveSession {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Map<String, WestThread> sessions = new ConcurrentHashMap<>();
+    private final Map<String, IMessageSender> sessions = new ConcurrentHashMap<>();
     private final UserManagerService userManagerService;
 
     public ActiveSession(UserManagerService userManagerService) {
         this.userManagerService = userManagerService;
     }
 
-    public boolean add(String fullName, WestThread wt) {
+    public boolean add(String fullName, IMessageSender wt) {
         Objects.requireNonNull(wt, "WestThread is null");
         if (sessions.containsKey(fullName)) {
             return false;

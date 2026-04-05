@@ -5,24 +5,19 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.Exception.TagReaderException;
-import org.helmo.Exception.UserReaderException;
 import org.helmo.Message;
 import org.helmo.MessageBuilder;
 import org.helmo.crypto.exceptions.EncryptionException;
-import org.helmo.handler.CommandHandler;
+import org.helmo.handler.utils.CommandHandler;
 import org.helmo.handler.SendHandler;
-import org.helmo.handler.SubscribeHandler;
 import org.helmo.server.ActiveSession;
 import org.helmo.services.*;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.task.SpeakerTask;
 import org.helmo.task.TaskContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Gère la commande POST reçue d'un Speaker.
@@ -33,9 +28,6 @@ public class PostHandler implements CommandHandler {
     private final ActiveSession activeSession;
 
     private final SubscriberService subscriberService;
-    private final MessageService messageService;
-    private SendHandler sendHandler;
-    private final UserManagerService userManagerService;
     private final TagManagerService tagManagerService;
     private final SpeakerService speakerService;
 
@@ -44,13 +36,10 @@ public class PostHandler implements CommandHandler {
      *
      * @param activeSession     La session active actuelle.
      * @param subscriberService Le service d'envoi de messages.
-     * @param messageService    Le service d'abonnements.
      */
-    public PostHandler(ActiveSession activeSession, SubscriberService subscriberService, MessageService messageService, UserManagerService userManagerService, TagManagerService tagManagerService, SpeakerService speakerService) {
+    public PostHandler(ActiveSession activeSession, SubscriberService subscriberService, TagManagerService tagManagerService, SpeakerService speakerService) {
         this.activeSession = Objects.requireNonNull(activeSession, "activeSession is null");
         this.subscriberService = subscriberService;
-        this.messageService = messageService;
-        this.userManagerService = userManagerService;
         this.tagManagerService = tagManagerService;
         this.speakerService = speakerService;
 
@@ -83,12 +72,29 @@ public class PostHandler implements CommandHandler {
                 doTag(msgFrom, toFullAddress, msgToSend, idAtDomain);
             }
         }
-        // todo matcher SUB ici si
+        // todo matcher SUB ici si (vérifier nom domaine ok sinon renvoyer vers speaker
+        var matcherSUB = Message.P_CMD_SUBSCRIBE.matcher(innerMessage);
+        if (matcherSUB.matches()) {
+            for (int i = 0; i < matcherSUB.groupCount(); i++) {
+                LOGGER.info("Subcribe {}: {}", i, matcherSUB.group(i));
+            }
+/*
+            if (isUser) {
+                subscriberService.userSubscribe(toSubscribe, toSubscribe);
+            } else {
+                subscriberService.tagSubscribe(toSubscribe, toSubscribe);
+            }
+
+ */
+        }
+
+
+
 
         return null;
     }
 
-    private void doMsg(String fromUser, String toUser, String msgToSend) throws HandlerException {
+    private void doMsg(String fromUser, String toUser, String msgToSend) {
         LOGGER.info("Envoi vers utilisateur: {} → {}", fromUser, toUser);
         activeSession.send(toUser, msgToSend);
     }
@@ -97,9 +103,6 @@ public class PostHandler implements CommandHandler {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
-            for (IUserSubscriber subscriber : subs) {
-                LOGGER.info(subscriber.getFullName());
-            }
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) { // 1. vérifier si l'envoyeur est abonné au tag
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) { // todo supprimer pour ne pas envoyer à l'expéditeur

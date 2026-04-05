@@ -40,9 +40,9 @@ public interface IUserRepository {
     /**
      * Ajoute un tag (centre d'intérêt) à un utilisateur.
      *
-     * @param client L'utilisateur concerné.
+     * @param username L'utilisateur concerné.
      * @param tag    Le tag à ajouter.
      * @throws UserSaveException Si l'opération de mise à jour échoue.
      */
-    void addTagFor(Client client, String tag)throws UserSaveException;
+    void addTagFor(String username, String tag)throws UserSaveException;
 }

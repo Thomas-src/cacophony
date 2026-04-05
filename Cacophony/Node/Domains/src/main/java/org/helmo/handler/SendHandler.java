@@ -6,6 +6,7 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.MessageBuilder;
 import org.helmo.crypto.exceptions.EncryptionException;
+import org.helmo.handler.utils.CommandHandler;
 import org.helmo.services.*;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;

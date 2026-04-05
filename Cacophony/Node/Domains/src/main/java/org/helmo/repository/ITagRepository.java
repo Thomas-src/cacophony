@@ -30,18 +30,17 @@ public interface ITagRepository {
     /**
      * Crée un nouveau tag associé à un client.
      *
-     * @param client Le client créateur du tag.
      * @param tag Le nom du tag à créer.
      * @throws TagSaveException Si la création échoue.
      */
-    void createTag(Client client, String tag)throws TagSaveException;
+    void createTag(String username, String tag)throws TagSaveException;
 
     /**
      * Ajoute un utilisateur à un tag existant.
      *
-     * @param client Le client à ajouter.
+     * @param username Le client à ajouter.
      * @param tag Le nom du tag.
      * @throws TagSaveException Si l'ajout échoue.
      */
-    void addUserToTag(Client client, String tag) throws TagSaveException;
+    void addUserToTag(String username, String tag) throws TagSaveException;
 }

@@ -3,7 +3,7 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.HandlerException;
-import org.helmo.handler.CommandMenu;
+import org.helmo.handler.utils.CommandMenu;
 import org.helmo.task.Task;
 
 import java.util.concurrent.BlockingQueue;

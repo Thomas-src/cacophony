@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
 import org.helmo.MessageBuilder;
 import org.helmo.server.ActiveSession;
+import org.helmo.task.IMessageSender;
 import org.helmo.task.Task;
 import org.helmo.task.TypeTask;
 import org.helmo.task.ClientSession;
@@ -21,7 +22,7 @@ import java.util.regex.Matcher;
  * Gère les échanges réseau avec un client spécifique (Interface Ouest).
  * Cette classe lit les commandes entrantes, les transforme en tâches et envoie les réponses.
  */
-public class WestThread extends Thread {
+public class WestThread extends Thread implements IMessageSender {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Socket socket;

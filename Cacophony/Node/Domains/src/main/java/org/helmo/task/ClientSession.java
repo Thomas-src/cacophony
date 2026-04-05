@@ -11,7 +11,7 @@ public class ClientSession implements TaskContext {
 
     private final String randomString;
     private Client client;
-    private WestThread thread;
+    private IMessageSender thread;
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
     private String domain;
@@ -43,7 +43,7 @@ public class ClientSession implements TaskContext {
      * @param domain        Le domaine de la session.
      * @param activeSession Le gestionnaire des sessions actives.
      */
-    public ClientSession(String randomString, WestThread thread, String domain,ActiveSession activeSession) {
+    public ClientSession(String randomString, IMessageSender thread, String domain,ActiveSession activeSession) {
         this.randomString = randomString;
         this.thread = thread;
         this.domain = domain;

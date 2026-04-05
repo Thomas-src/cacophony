@@ -73,12 +73,11 @@ public class UserManagerService {
     /**
      * Ajoute un tag pour un client spécifique.
      *
-     * @param client Le client concerné.
      * @param tag    Le tag à ajouter.
      * @throws UserSaveException Si une erreur survient lors de l'enregistrement.
      */
-    public void addTagFor(Client client, String tag) throws UserSaveException {
-        userRepository.addTagFor(client, tag);
+    public void addTagFor(String username, String tag) throws UserSaveException {
+        userRepository.addTagFor(username, tag);
     }
 
     /**

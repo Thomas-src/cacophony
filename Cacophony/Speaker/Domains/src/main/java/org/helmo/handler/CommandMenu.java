@@ -22,8 +22,6 @@ import java.util.regex.Pattern;
     private static final Logger LOGGER = LogManager.getLogger();
     private final LinkedHashMap<Pattern, CommandHandler> handlers = new LinkedHashMap<>();
 
-    public CommandMenu() {
-    }
 
     /**
      * Ajoute une nouvelle commande au menu.
@@ -42,10 +40,12 @@ import java.util.regex.Pattern;
      * @throws HandlerException Si une erreur survient lors de l'exécution de la commande.
      */
     public void execute(String message) throws HandlerException {
+        LOGGER.info("Command received: [{}]", message.replace("\n", "\\n").replace("\r", "\\r"));
+
         if (tryExecute(message)) {
             return;
         }
-        LOGGER.warn("[UDP] Command {} not found", message);
+        LOGGER.warn("Command {} not found", message);
     }
 
     /**

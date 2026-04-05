@@ -6,6 +6,7 @@ import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
+import org.helmo.handler.utils.CommandHandler;
 import org.helmo.task.ClientSession;
 import org.helmo.client.HashPassword;
 import org.helmo.Exception.UserReaderException;
