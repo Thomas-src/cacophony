@@ -1,10 +1,12 @@
-package org.helmo.services;
+package org.helmo.services.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
+import org.helmo.services.TagManagerService;
+import org.helmo.services.UserManagerService;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.tag.InternalTag;

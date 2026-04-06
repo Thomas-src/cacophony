@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.*;
 import org.helmo.MessageBuilder;
 import org.helmo.handler.utils.CommandHandler;
-import org.helmo.services.*;
+import org.helmo.services.handler.SubscriberService;
 import org.helmo.task.ClientSession;
 import org.helmo.task.TaskContext;
 
@@ -38,16 +38,17 @@ public class SubscribeHandler implements CommandHandler {
         boolean isUser = args.get(0) != null;
         String sub = isUser ? args.get(0) : args.get(2);
         String domain = isUser ? args.get(1) : args.get(3);
-
+        String toSubscribe = args.get(0) != null ? args.getFirst() + "@" + args.get(1) : args.get(2) + "@" + args.getLast();
 
         if (domain.equalsIgnoreCase(session.getDomain())) {
             if (isUser) {
                 response = subscriberService.userSubscribe(sub, session.getDomain(), session.getUserFullName());
             } else {
-                response = subscriberService.tagSubscribe(sub, session.getDomain(), session.getUserFullName());
+                response = subscriberService.tagSubscribe(toSubscribe, session.getDomain(), session.getUserFullName());
             }
         } else {
-            subscriberService.sendToSpeaker(session, args);
+           subscriberService.sendToSpeaker(session, toSubscribe, isUser);
+
         }
 
         return response;

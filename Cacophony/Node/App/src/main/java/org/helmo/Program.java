@@ -19,6 +19,8 @@ import org.helmo.server.threads.AdvertThread;
 import org.helmo.server.threads.EastThread;
 import org.helmo.server.threads.TaskThread;
 import org.helmo.services.*;
+import org.helmo.services.handler.MessageService;
+import org.helmo.services.handler.SubscriberService;
 
 import java.io.PrintStream;
 

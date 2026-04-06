@@ -8,10 +8,13 @@ import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Message;
 import org.helmo.MessageBuilder;
+import org.helmo.client.Client;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.handler.utils.CommandHandler;
 import org.helmo.server.ActiveSession;
 import org.helmo.services.*;
+import org.helmo.services.handler.MessageService;
+import org.helmo.services.handler.SubscriberService;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.task.SpeakerTask;
@@ -136,8 +139,12 @@ public class PostHandler implements CommandHandler {
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) { // supprimer pour ne pas envoyer à l'expéditeur
                         List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain);
-                        if (relevant.isEmpty() || !relevant.getFirst().equals(toTag)) {
-                            LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe", sub.getFullName(), toTag);
+                        if (relevant.isEmpty() ) {
+                            LOGGER.info("Livraison ignorée pour {} : vide: {}", sub.getFullName(), toTag);
+                            continue;
+                        }
+                        if (!relevant.getFirst().equals(toTag)) {
+                            LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst().toString());
                             continue;
                         }
 
@@ -177,7 +184,9 @@ public class PostHandler implements CommandHandler {
     private List<String> getRelevantSubscriptions(String recipient, String fromUser, List<ITag> msgTags, String currentdomain) {
 
         try {
-            List<String> subscriptions = userManagerService.findUser(recipient).getSubscribtions(); // retourne des String
+            Client user = userManagerService.findUser(recipient);
+            List<String> subscriptions = user.getSubscribtions(); // retourne des String
+            subscriptions.add(user.getTags().stream().toString());
             List<String> relevant = new ArrayList<>();
 
             // 1. Est-il abonné à l'expéditeur ?

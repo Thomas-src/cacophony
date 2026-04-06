@@ -8,6 +8,8 @@ import org.helmo.MessageBuilder;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.handler.utils.CommandHandler;
 import org.helmo.services.*;
+import org.helmo.services.handler.MessageService;
+import org.helmo.services.handler.SubscriberResultData;
 import org.helmo.task.ClientSession;
 import org.helmo.server.ActiveSession;
 import org.helmo.task.TaskContext;

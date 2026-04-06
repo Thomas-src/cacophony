@@ -1,7 +1,5 @@
 package org.helmo.mapper;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.helmo.client.Client;
 import org.helmo.client.HashPassword;
 import org.helmo.tag.ITag;
@@ -122,6 +120,19 @@ public class JsonUserMapper {
                 user.userTags(),
                 user.messages(),
                 newSubscriptions
+        );
+    }
+
+    public static UserDto copyWithTags(UserDto user, List<String> tags) {
+        return new UserDto(
+                user.login(),
+                user.bcryptHash(),
+                user.bcryptRound(),
+                user.bcryptSalt(),
+                user.subscribers(),
+                tags,
+                user.messages(),
+                user.subscriptionUsers()
         );
     }
 }
