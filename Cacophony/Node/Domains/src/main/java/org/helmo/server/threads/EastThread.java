@@ -83,6 +83,9 @@ public class EastThread extends Thread {
         }
     }
 
+    /**
+     * Ferme la connexion actuelle avec le Speaker et interrompt le thread de lecture associé.
+     */
     private void closeCurrentConnection() {
         if (currentReaderThread != null && currentReaderThread.isAlive()) {
             currentReaderThread.interrupt();

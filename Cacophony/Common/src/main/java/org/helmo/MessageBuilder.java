@@ -86,6 +86,11 @@ public class MessageBuilder {
         return "SUBSCRIBE" + SP + target + NEWLINE;
     }
 
+    /**
+     * Cette méthode construit un message d'abonnement interne sans le caractère de nouvelle ligne.
+     * @param target
+     * @return
+     */
     public static String buildInnerSubscribe(String target) {
         return "SUBSCRIBE" + SP + target; // pas de NEWLINE
     }
@@ -158,6 +163,14 @@ public class MessageBuilder {
         return "ERROR" + SP + message + NEWLINE;
     }
 
+    /**
+     * Cette méthode construit un message de type "POST" formaté selon les règles de la grammaire.
+     * @param idAtDomain l'identifiant unique du message
+     * @param fromUserAtDomain l'expéditeur du message
+     * @param to le destinataire (utilisateur ou tag)
+     * @param msg le contenu du message
+     * @return le message POST formaté ou un message ERROR si un paramètre est invalide
+     */
     public static String buildPost(String idAtDomain, String fromUserAtDomain, String to, String msg) {
         if (idAtDomain == null || fromUserAtDomain == null || to == null || msg == null || idAtDomain.isEmpty() || fromUserAtDomain.isEmpty() || to.isEmpty() || msg.isEmpty()) {
             return buildError();
