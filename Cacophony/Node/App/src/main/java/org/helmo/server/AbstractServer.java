@@ -6,6 +6,7 @@ import org.helmo.Config;
 import org.helmo.Exception.ServerException;
 import org.helmo.server.threads.TaskThread;
 import org.helmo.server.threads.WestThread;
+import org.helmo.services.RandomService;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -69,7 +70,7 @@ public abstract class AbstractServer implements IServer {
             while (!stop) {
                 Socket client = listener.accept();
                 LOGGER.info("Accepted connection from {}", client.getInetAddress().getHostName());
-                WestThread thread = new WestThread(client, config, taskThread,activeSession);
+                WestThread thread = new WestThread(client, config, taskThread,activeSession, new RandomService());
                 thread.start();
                 this.westThreads.add(thread);
             }

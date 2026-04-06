@@ -36,16 +36,17 @@ public class JsonUserRepository implements IUserRepository {
     private static final Gson gson = new Gson();
     private static final Path configPath = Paths.get(FILE_NAME);
     private static final Logger LOGGER = LogManager.getLogger();
-
+    private final JsonUserMapper mapper;
     /**
      * Initialise une nouvelle instance du dépôt JSON.
      *
      * @param config La configuration du nœud pour la gestion des domaines.
      * @throws NullPointerException si la configuration est nulle.
      */
-    public JsonUserRepository(Config config) {
+    public JsonUserRepository(Config config, JsonUserMapper mapper) {
         Objects.requireNonNull(config);
         this.config = config;
+        this.mapper = mapper;
     }
 
     /**
@@ -64,7 +65,7 @@ public class JsonUserRepository implements IUserRepository {
                     if (dto == null) {
                         return List.of();
                     }
-                    return JsonUserMapper.mapUsers(dto, config.currentDomain());
+                    return mapper.mapUsers(dto, config.currentDomain());
                 }
             } catch (IOException ex) {
                 LOGGER.error("Impossible de charger le fichier users", ex);
@@ -161,7 +162,7 @@ public class JsonUserRepository implements IUserRepository {
                         existingUserDtos = new ArrayList<>(existingDto.users());
                     }
                 }
-                UserDto newUserDto = JsonUserMapper.toUserDto(client);
+                UserDto newUserDto = mapper.toUserDto(client);
                 boolean updated = false;
                 for (int i = 0; i < existingUserDtos.size(); i++) {
                     UserDto existingUserDto = existingUserDtos.get(i);
@@ -232,7 +233,7 @@ public class JsonUserRepository implements IUserRepository {
                         }
 
                         // 4. Recréer le UserDto (record = immuable)
-                        UserDto updatedUser = JsonUserMapper.copyWithSubscribers(user, subscribers);
+                        UserDto updatedUser = mapper.copyWithSubscribers(user, subscribers);
 
                         existingUserDtos.set(i, updatedUser);
                         found = true;
@@ -246,7 +247,7 @@ public class JsonUserRepository implements IUserRepository {
                         }
                         foundSub = true;
                         // 4. Recréer le UserDto (record = immuable)
-                        UserDto updatedUser =JsonUserMapper.copyWithSubscriptions(user, subscriptions);
+                        UserDto updatedUser =mapper.copyWithSubscriptions(user, subscriptions);
 
                         existingUserDtos.set(i, updatedUser);
                     }
@@ -312,7 +313,7 @@ public class JsonUserRepository implements IUserRepository {
                         }
 
                         // 4. Recréer le UserDto (record = immuable)
-                        UserDto updatedUser = JsonUserMapper.copyWithSubscriptions(user, subscriptions);
+                        UserDto updatedUser = mapper.copyWithSubscriptions(user, subscriptions);
 
                         existingUserDtos.set(i, updatedUser);
                         found = true;
@@ -447,7 +448,7 @@ public class JsonUserRepository implements IUserRepository {
                         }
 
                         // 4. Recréer le UserDto (record immuable)
-                        UserDto updatedUser = JsonUserMapper.copyWithTags(user, tags);
+                        UserDto updatedUser = mapper.copyWithTags(user, tags);
 
                         existingUserDtos.set(i, updatedUser);
                         found = true;

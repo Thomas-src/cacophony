@@ -28,9 +28,9 @@ public class JsonUserMapper {
      * @param currentDomain Le domaine actuel du serveur.
      * @return Une liste d'objets Client.
      */
-    public static List<Client> mapUsers(UsersDto dto, String currentDomain) {
+    public List<Client> mapUsers(UsersDto dto, String currentDomain) {
         List<UserDto> userDtos = dto.users() == null ? List.of() : dto.users();
-        return userDtos.stream().map(u -> JsonUserMapper.createUser(u, currentDomain)).toList();
+        return userDtos.stream().map(u -> createUser(u, currentDomain)).toList();
     }
 
     /**
@@ -40,7 +40,7 @@ public class JsonUserMapper {
      * @param currentDomain Le domaine actuel du serveur.
      * @return Un objet Client initialisé, ou null si les données sont incomplètes.
      */
-    private static Client createUser(UserDto dto, String currentDomain) {
+    private Client createUser(UserDto dto, String currentDomain) {
         List<IUserSubscriber> subscribers = new ArrayList<>();
         List<ITag> userInternalTags = new ArrayList<>();
         if (dto.subscribers() != null && dto.userTags() != null) {
@@ -84,7 +84,7 @@ public class JsonUserMapper {
      * @param client L'objet client à convertir.
      * @return Un UserDto contenant les informations du client.
      */
-    public static UserDto toUserDto(Client client) {
+    public UserDto toUserDto(Client client) {
         HashPassword hashPassword = client.getHashPassword();
         return new UserDto(
                 client.getName(),
@@ -98,7 +98,7 @@ public class JsonUserMapper {
         );
     }
 
-    public static UserDto copyWithSubscribers(UserDto user, List<String> newSubscribers) {
+    public UserDto copyWithSubscribers(UserDto user, List<String> newSubscribers) {
         return new UserDto(
                 user.login(),
                 user.bcryptHash(),
@@ -110,7 +110,7 @@ public class JsonUserMapper {
                 user.subscriptionUsers()
         );
     }
-    public static UserDto copyWithSubscriptions(UserDto user, List<String> newSubscriptions) {
+    public UserDto copyWithSubscriptions(UserDto user, List<String> newSubscriptions) {
         return new UserDto(
                 user.login(),
                 user.bcryptHash(),
@@ -123,7 +123,7 @@ public class JsonUserMapper {
         );
     }
 
-    public static UserDto copyWithTags(UserDto user, List<String> tags) {
+    public UserDto copyWithTags(UserDto user, List<String> tags) {
         return new UserDto(
                 user.login(),
                 user.bcryptHash(),

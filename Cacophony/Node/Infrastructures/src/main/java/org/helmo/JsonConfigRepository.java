@@ -27,6 +27,12 @@ public class JsonConfigRepository implements IConfigRepository {
     private static final Gson gson = new Gson();
     private static final Path configPath = findConfigFile();
     private static final Logger LOGGER = LogManager.getLogger();
+    private final JsonConfigMapper  mapper;
+
+    public JsonConfigRepository(JsonConfigMapper mapper) {
+        this.mapper = mapper;
+    }
+
 
     // Verrou JVM unique pour serialiser toutes les lectures/ecritures tags.json.
     private static final Object CONFIG_FILE_LOCK = new Object();
@@ -98,7 +104,7 @@ public class JsonConfigRepository implements IConfigRepository {
                 }
             }
 
-            return JsonConfigMapper.ConfigfromDto(dto);
+            return mapper.ConfigfromDto(dto);
         } catch (IOException ex) {
             LOGGER.error("Impossible de charger la configuration. Tried path: " + configPath.toAbsolutePath(), ex);
             throw new ConfigReaderException("Impossible de charger la configuration");
@@ -121,7 +127,7 @@ public class JsonConfigRepository implements IConfigRepository {
                     throw new ConfigSaveException("Configuration invalide");
                 }
 
-                ConfigDto updatedDto = JsonConfigMapper.duplicate(dto, currentId);
+                ConfigDto updatedDto = mapper.duplicate(dto, currentId);
 
                 // Écriture du fichier JSON (overwrite)
                 String json = gson.toJson(updatedDto);

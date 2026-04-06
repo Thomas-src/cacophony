@@ -6,6 +6,7 @@ import org.helmo.domain.DomainService;
 import org.helmo.handler.AdvertHandler;
 import org.helmo.handler.CommandMenu;
 import org.helmo.handler.PostHandler;
+import org.helmo.mapper.JsonDomainMapper;
 import org.helmo.network.SpeakerTcpConnector;
 import org.helmo.crypto.CryptoService;
 
@@ -14,7 +15,7 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            JsonDomainRepository domainRepository = new JsonDomainRepository();
+            JsonDomainRepository domainRepository = new JsonDomainRepository(new JsonDomainMapper());
             JsonConfigReaderSpeaker configReader = new JsonConfigReaderSpeaker();
             SpeakerConfig speakerConfig = configReader.getConfig();
 

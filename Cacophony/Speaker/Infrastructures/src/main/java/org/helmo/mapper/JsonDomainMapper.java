@@ -19,7 +19,7 @@ public class JsonDomainMapper {
      * @param dto L'objet DomainDto à convertir
      * @return Un nouvel objet Domain créé à partir des données du DTO
      */
-    public static Domain DomainFromDto(DomainDto dto) {
+    private static  Domain DomainFromDto(DomainDto dto) {
         return new Domain(
                 dto.domain(),
                 dto.base64AES(),
@@ -33,30 +33,12 @@ public class JsonDomainMapper {
      * @param dtos La liste d'objets DomainDto à convertir
      * @return Une liste contenant un seul objet Domain créé à partir du DTO
      */
-    public static List<Domain> mapToDomains(DomainsDto dtos) {
+    public List<Domain> mapToDomains(DomainsDto dtos) {
         List<DomainDto> domainsDtos = dtos == null ? List.of() : dtos.domains();
         return domainsDtos.stream().map(JsonDomainMapper::DomainFromDto).toList();
     }
 
-    public static DomainsDto updateMessages(DomainsDto dto, String domain, List<String> messages) {
-        Objects.requireNonNull(dto);
-
-        List<DomainDto> updated = dto.domains().stream()
-                .map(d -> {
-                    if (!d.domain().equals(domain)) return d;
-
-                    List<String> merged = new ArrayList<>();
-                    if (d.messages() != null) merged.addAll(d.messages());
-                    merged.addAll(messages);
-
-                    return new DomainDto(d.domain(), d.base64AES(), merged);
-                })
-                .toList();
-
-        return new DomainsDto(updated);
-    }
-
-    public static DomainsDto updateMessage(DomainsDto dto, String domain, String message) {
+    public DomainsDto updateMessage(DomainsDto dto, String domain, String message) {
         Objects.requireNonNull(dto);
 
         List<DomainDto> updated = dto.domains().stream()
@@ -73,6 +55,4 @@ public class JsonDomainMapper {
 
         return new DomainsDto(updated);
     }
-
-
 }

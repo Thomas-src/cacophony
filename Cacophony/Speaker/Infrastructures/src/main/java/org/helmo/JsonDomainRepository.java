@@ -34,6 +34,11 @@ public class JsonDomainRepository implements IDomainRepository {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Object DOMAIN_FILE_LOCK = new Object();
 
+    private final JsonDomainMapper mapper;
+    public JsonDomainRepository(JsonDomainMapper mapper) {
+        this.mapper = mapper;
+    }
+
     private static Path findDomainFile() {
         String fileName = "domains.json";
 
@@ -76,7 +81,7 @@ public class JsonDomainRepository implements IDomainRepository {
                         throw new DomainReaderException("Invalid or empty domains configuration");
                     }
 
-                    return JsonDomainMapper.mapToDomains(dto);
+                    return mapper.mapToDomains(dto);
                 } catch (IOException e) {
                     throw new DomainReaderException("Failed to read domains file: " + configPath);
                 } catch (JsonSyntaxException e) {
@@ -153,7 +158,7 @@ public class JsonDomainRepository implements IDomainRepository {
                         .setPrettyPrinting()
                         .create();
 
-                DomainsDto updatedDto = JsonDomainMapper.updateMessage(dto, domain, message);
+                DomainsDto updatedDto = mapper.updateMessage(dto, domain, message);
 
                 try (var writer = Files.newBufferedWriter(configPath)) {
                     exporter.toJson(updatedDto, writer);

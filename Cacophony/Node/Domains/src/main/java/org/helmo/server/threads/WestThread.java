@@ -29,7 +29,7 @@ public class WestThread extends Thread implements IMessageSender {
     private final Config config;
     private final TaskThread taskThread;
     private final ActiveSession activeSession;
-
+    private final RandomService randomservice;
     private PrintWriter toClient;
 
     /**
@@ -40,11 +40,12 @@ public class WestThread extends Thread implements IMessageSender {
      * @param taskThread    Le thread de traitement des tâches.
      * @param activeSession Le gestionnaire des sessions actives.
      */
-    public WestThread(Socket socket, Config config, TaskThread taskThread, ActiveSession activeSession) {
+    public WestThread(Socket socket, Config config, TaskThread taskThread, ActiveSession activeSession, RandomService randomservice) {
         this.socket = socket;
         this.config = config;
         this.taskThread = taskThread;
         this.activeSession = activeSession;
+        this.randomservice = randomservice;
         setName("WestThread");
     }
 
@@ -59,7 +60,7 @@ public class WestThread extends Thread implements IMessageSender {
             toClient = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
             LOGGER.info("Client connecté : {}", socket.getInetAddress().getHostAddress());
 
-            String randomChallenge = RandomService.generateRandomString(config.saltSizeInBytes());
+            String randomChallenge = randomservice.generateRandomString(config.saltSizeInBytes());
             toClient.println(MessageBuilder.buildWelcome(config.currentDomain(), randomChallenge));
 
             session = new ClientSession(randomChallenge, this, config.currentDomain(), activeSession);

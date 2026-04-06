@@ -8,6 +8,8 @@ import org.helmo.crypto.CryptoService;
 import org.helmo.handler.*;
 import org.helmo.handler.speaker.PostHandler;
 import org.helmo.handler.utils.CommandMenu;
+import org.helmo.mapper.JsonConfigMapper;
+import org.helmo.mapper.JsonUserMapper;
 import org.helmo.repository.IConfigRepository;
 import org.helmo.repository.IMessageRepository;
 import org.helmo.repository.ITagRepository;
@@ -32,12 +34,12 @@ public class Program {
         try (PrintStream cout = new PrintStream(System.out)) {
             // Création des repository & services
 
-            IConfigRepository configRepository = new JsonConfigRepository();
+            IConfigRepository configRepository = new JsonConfigRepository(new JsonConfigMapper());
             Config config = configRepository.getConfig();
 
             CryptoService cryptoService = new CryptoService(config.base64AES());
 
-            IUserRepository userRepository = new JsonUserRepository(config);
+            IUserRepository userRepository = new JsonUserRepository(config, new JsonUserMapper());
             UserManagerService userManagerService = new UserManagerService(userRepository, cryptoService, config);
             ActiveSession activeSession = new ActiveSession(userManagerService);
             ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);

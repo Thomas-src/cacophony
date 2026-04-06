@@ -17,7 +17,7 @@ public class RandomService {
      * @param size La taille de la chaîne à générer.
      * @return Une chaîne de caractères composée de lettres et de chiffres.
      */
-    public static String generateRandomString(int size) {
+    public String generateRandomString(int size) {
         SecureRandom random = new SecureRandom();
         StringBuilder result = new StringBuilder();
 

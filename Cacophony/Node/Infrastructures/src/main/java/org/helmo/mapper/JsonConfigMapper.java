@@ -2,6 +2,7 @@ package org.helmo.mapper;
 
 import org.helmo.Config;
 import org.helmo.dto.*;
+
 import java.util.Objects;
 
 /**
@@ -25,7 +26,7 @@ public class JsonConfigMapper {
      * @param dto Le DTO source.
      * @return Une nouvelle instance de Config.
      */
-    public static Config ConfigfromDto(ConfigDto dto) {
+    public Config ConfigfromDto(ConfigDto dto) {
         validate(dto);
 
         return new Config(
@@ -43,7 +44,8 @@ public class JsonConfigMapper {
                 dto.id()
         );
     }
-    public static ConfigDto duplicate(ConfigDto dto, int currentId) {
+
+    public ConfigDto duplicate(ConfigDto dto, int currentId) {
         return new ConfigDto(
                 dto.currentDomain(),
                 dto.saltSizeInBytes(),
