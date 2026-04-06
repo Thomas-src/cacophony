@@ -111,6 +111,13 @@ public class UserManagerService {
         userRepository.saveUsers(user);
     }
 
+    /**
+     * Enregistre un message chiffré pour un utilisateur spécifique.
+     *
+     * @param username Le nom complet de l'utilisateur.
+     * @param message  Le message en clair à chiffrer et sauvegarder.
+     * @throws UserSaveException Si le chiffrement ou la sauvegarde échoue.
+     */
     public void saveMessageForUser(String username, String message) throws UserSaveException {
         try {
             String cryptedMessage = cryptoService.encrypt(message);
@@ -121,10 +128,24 @@ public class UserManagerService {
         }
     }
 
+    /**
+     * Ajoute un abonnement pour un utilisateur.
+     *
+     * @param fullusername Le nom complet de l'utilisateur qui s'abonne.
+     * @param username     Le nom de la cible de l'abonnement.
+     * @throws UserSaveException Si une erreur survient lors de l'enregistrement.
+     */
     public void addSubscribtionFor(String fullusername, String username) throws UserSaveException {
         userRepository.addUserSubscriptionFor(fullusername, username);
     }
 
+    /**
+     * Récupère les messages d'un utilisateur, les déchiffre et vide sa boîte de réception.
+     *
+     * @param username Le nom complet de l'utilisateur.
+     * @return Une liste de messages déchiffrés.
+     * @throws UserReaderException, UserSaveException Si une erreur survient lors de la lecture ou de la suppression.
+     */
     public List<String> getUserMessagesAndEmpty(String username) throws UserReaderException, UserSaveException {
         String name = transformToName(username);
         List<Client> users = getUsers();
@@ -148,6 +169,12 @@ public class UserManagerService {
         return List.of();
     }
 
+    /**
+     * Extrait le nom d'utilisateur d'un identifiant complet (user@domain).
+     *
+     * @param fullUsername L'identifiant complet de l'utilisateur.
+     * @return Le nom d'utilisateur extrait ou l'identifiant original s'il ne correspond pas au format.
+     */
     private String transformToName(String fullUsername) {
         String name = fullUsername;
 
@@ -158,6 +185,12 @@ public class UserManagerService {
         return name;
     }
 
+    /**
+     * Extrait le domaine d'un identifiant complet (user@domain).
+     *
+     * @param fullUsername L'identifiant complet de l'utilisateur.
+     * @return Le domaine extrait ou l'identifiant original s'il ne correspond pas au format.
+     */
     private String transformToDomain(String fullUsername) {
         String name = fullUsername;
 

@@ -76,6 +76,11 @@ public class AdvertHandler implements CommandHandler {
     }
 
 
+    /**
+     * Envoie les messages stockés localement qui étaient en attente pour un domaine spécifique.
+     *
+     * @param domain Le domaine vers lequel envoyer les messages.
+     */
     private void sendOldMessages(Domain domain) {
         try {
             for (String cryptedMessage : domainService.clearMessages(domain.getName())) {
@@ -100,4 +105,3 @@ public class AdvertHandler implements CommandHandler {
     }
 
 }
-

@@ -73,6 +73,12 @@ public class TagManagerService {
         tagRepository.addUserToTag(userFullName, extractTagName(tag));
     }
 
+    /**
+     * Extrait le nom du tag à partir d'un nom complet en utilisant la grammaire définie.
+     *
+     * @param tagFullName Le nom complet du tag.
+     * @return Le nom du tag extrait ou le nom original s'il ne correspond pas au motif.
+     */
     private static String extractTagName(String tagFullName) {
         var matcher = Grammar.P_TAG_FULL.matcher(tagFullName);
         if (matcher.matches()) {
