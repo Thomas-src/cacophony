@@ -1,5 +1,6 @@
 package org.helmo.mapper;
 
+import org.helmo.Grammar;
 import org.helmo.client.Client;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.subscriber.NativeUser;
@@ -41,8 +42,7 @@ public class JsonTagMapper {
     private static InternalTag createTag(TagDto dto, String currentDomain) {
         List<IUserSubscriber> subscribers = new ArrayList<>();
         for (String subscriberName : dto.subscribers()) {
-            // todo à modifier (si possible exeternaliser)
-            String domain = subscriberName.substring(subscriberName.indexOf("@") + 1);
+            String domain =  transformToDomain(subscriberName);
             if (domain.equals(currentDomain)) {
                 subscribers.add(new NativeUser(subscriberName));
             } else {
@@ -67,5 +67,13 @@ public class JsonTagMapper {
         );
 
     }
+    private static String transformToDomain(String fullUsername) {
+        String domain = fullUsername;
 
+        var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullUsername);
+        if (matcher.matches()) {
+            domain = matcher.group(2);
+        }
+        return domain;
+    }
 }

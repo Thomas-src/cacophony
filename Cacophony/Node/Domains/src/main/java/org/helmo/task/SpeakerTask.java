@@ -32,6 +32,6 @@ public class SpeakerTask implements TaskContext {
      */
     @Override
     public void send(String message) {
-        // todo
+        throw new UnsupportedOperationException("Pas supporté actuellement.");
     }
 }

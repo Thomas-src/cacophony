@@ -40,14 +40,6 @@ class HashPasswordTest {
         }
         return hexString.toString();
     }
-/* todo
-    @Test
-    void testCheckChallengeWithCorrectResponse() throws NoSuchAlgorithmException {
-        String expectedResponse = calculateExpectedResponse(challenge, storedBcryptHash);
-        assertTrue(hashPassword.checkChallenge(expectedResponse, challenge));
-    }
-
- */
 
     @Test
     void testCheckChallengeWithIncorrectResponse() {

@@ -131,7 +131,6 @@ public class SendHandler implements CommandHandler {
                 throw new HandlerException("Impossible de sauvegarder le message", e);
             }
         }
-        // todo méthode sendPostExternalTag
     }
 }
 

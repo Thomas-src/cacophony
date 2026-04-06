@@ -96,7 +96,6 @@ public class PostHandler implements CommandHandler {
         } else {
             LOGGER.info("ne matche pas msg");
         }
-        // todo matcher SUB ici si (vérifier nom domaine ok sinon renvoyer vers speaker
         var matcherSUB = Message.P_CMD_INNER_SUBSCRIBE.matcher(innerMessage);
         if (matcherSUB.matches()) {
             for (int i = 0; i < matcherSUB.groupCount(); i++) {
@@ -150,7 +149,7 @@ public class PostHandler implements CommandHandler {
                             String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
                             LOGGER.info("Resend post to speaker {}", messageToCrypt);
                             try {
-                                speakerService.sendCryptedMessage(messageToCrypt); // todo envoyer vers le speaker
+                                speakerService.sendCryptedMessage(messageToCrypt); // envoyer vers le speaker
                             } catch (MessageSaveException e) {
                                 LOGGER.error("Error sending Crypted Message", e);
                                 throw new HandlerException("Impossible de sauvegarder le message");

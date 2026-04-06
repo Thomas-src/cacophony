@@ -7,8 +7,11 @@ import java.security.SecureRandom;
  * Service fournissant des fonctionnalités de génération de données aléatoires sécurisées.
  */
 public class RandomService {
-    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-// todo 22 caractères aléatoires. => pas que des lettres
+    private static final String CHARACTERS =
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
+                    "!\"#$%&'()*+,-./" +  // %d33-47
+                    ":;<=>?@" +           // %d58-64
+                    "[]^_`";              // %d91-96
     /**
      * Génère une chaîne de caractères aléatoire de manière sécurisée.
      *
