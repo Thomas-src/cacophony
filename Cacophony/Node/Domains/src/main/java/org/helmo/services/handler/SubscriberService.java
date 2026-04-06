@@ -49,7 +49,6 @@ public class SubscriberService {
      * @return Message de réponse (OK ou ERROR).
      */
     public String userSubscribe(String targetfullName, String domain, String fullusername) {
-        LOGGER.info("SUBSCRIBE USER target : {}, to {}", targetfullName, fullusername);
         List<Client> clients;
         String targetName = extractUsername(targetfullName);
         if (targetName.equals(fullusername)) {
@@ -72,8 +71,8 @@ public class SubscriberService {
     /**
      * Gère l'abonnement d'un utilisateur à un tag.
      *
-     * @param fullTagName Nom du tag.
-     * @param domain      Domaine courant.
+     * @param fullTagName  Nom du tag.
+     * @param domain       Domaine courant.
      * @param fullUsername Nom complet de l'utilisateur.
      * @return Message de réponse (OK).
      * @throws HandlerException Si une erreur survient lors de la lecture ou sauvegarde.
@@ -93,7 +92,7 @@ public class SubscriberService {
                 try {
                     tagManagerService.addUserToTag(fullUsername, fullTagName);
                     userManagerService.addTagFor(fullUsername, fullTagName);
-                    LOGGER.info(username + " s'est abonné à : " + fullTagName);
+                    LOGGER.info(username + " s'est abonné");
                 } catch (UserSaveException | TagSaveException e) {
                     throw new HandlerException("Impossible d'ajouter le tags :'" + fullTagName + "'  pour l'utilisateur : " + username);
                 }
@@ -108,7 +107,7 @@ public class SubscriberService {
             tagManagerService.createTag(fullUsername, fullTagName);
             userManagerService.addTagFor(fullUsername, fullTagName);
             tagManagerService.addUserToTag(fullUsername, fullTagName);
-            LOGGER.info(fullUsername + " a créé le tag : " + fullTagName);
+            LOGGER.info(fullUsername + " a créé un tag : ");
         } catch (TagSaveException | UserSaveException e) {
             throw new HandlerException("Impossible de creer le tag :" + fullTagName);
         }
@@ -127,14 +126,14 @@ public class SubscriberService {
     public void sendToSpeaker(ClientSession session, String sub, boolean isUser) throws HandlerException {
         if (!isUser) {
             try {
-                LOGGER.info("subscribe vers le speaker enregistré :" + sub);
+                LOGGER.info("subscribe tag vers le speaker enregistré :");
                 userManagerService.addTagFor(session.getUserFullName(), sub);
             } catch (UserSaveException e) {
                 LOGGER.error("Erreur lors de la lecture du tag " + e.getMessage());
             }
         } else {
             try {
-                LOGGER.info("subscribe vers le speaker enregistré :" + sub);
+                LOGGER.info("subscribe user vers le speaker enregistré :");
                 userManagerService.addSubscribtionFor(session.getUserFullName(), sub);
             } catch (UserSaveException e) {
                 LOGGER.error("Erreur lors de l'enregistrement du tag " + e.getMessage());

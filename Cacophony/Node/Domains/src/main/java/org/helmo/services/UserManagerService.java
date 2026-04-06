@@ -20,7 +20,6 @@ import java.util.Objects;
  * Service gérant les opérations liées aux utilisateurs.
  */
 public class UserManagerService {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final IUserRepository userRepository;
     private final CryptoProvider cryptoService;

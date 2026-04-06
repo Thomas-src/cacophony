@@ -36,8 +36,7 @@ public class AuthentificateHandler implements CommandHandler {
             throw new HandlerException("Task auth nécessite une session client");
         }
         if (session.isAuthenticated()) {
-            LOGGER.error("Utilisateur déjà authentifié");
-            LOGGER.error("Fin d'authentification (Echec)");
+            LOGGER.error("Fin - Utilisateur déjà authentifié");
             return MessageBuilder.buildError();
         }
         String username = args.getFirst().trim();
@@ -52,11 +51,10 @@ public class AuthentificateHandler implements CommandHandler {
 
             session.setClient(user);
             String challange = MessageBuilder.buildChallenge(String.valueOf(user.getHashPassword().bcryptRound()), user.getHashPassword().bcryptSalt());
-            LOGGER.error("Envoie du challenge → {}", challange);
+            LOGGER.info("Envoie du challenge");
             return challange;
         } catch (UserReaderException e) {
-            LOGGER.error("Erreur lors de la lecture des utilisateur : " + e.getMessage());
-            LOGGER.error("Fin d'authentification (Echec)");
+            LOGGER.error("Fin - Erreur lors de la lecture des utilisateur : " + e.getMessage());
             throw new HandlerException(e.getMessage());
         }
 

@@ -86,13 +86,10 @@ public class AdvertHandler implements CommandHandler {
             for (String cryptedMessage : domainService.clearMessages(domain.getName())) {
 
                 // 1. décrypter le msg avec la clé serveur
-                LOGGER.info("Msg chiffré enregistré : {}", cryptedMessage);
                 String decryptedMessage = cryptoService.decrypt(cryptedMessage, speakerConfig.aesKey());
-                LOGGER.info("Msg clair : {}", decryptedMessage);
                 //2. crypter avec la clé du node approprié
                 LOGGER.info("Longueur message envoyé: {}", decryptedMessage.length());
                 String cryptedNodeMsg = cryptoService.encrypt(decryptedMessage, domain.getAesKey());
-                LOGGER.info("Msg crypté à envoyer avec la clé {}\n{}", domain.getAesKey(), cryptedNodeMsg);
                 connector.sendToNode(domain.getName(), cryptedNodeMsg);
             }
         } catch (DecryptionException e) {

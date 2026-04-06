@@ -67,7 +67,6 @@ public class WestThread extends Thread implements IMessageSender {
             String line;
             while (session.isShouldKeepOpen() && (line = fromClient.readLine()) != null) {
                 try {
-                    LOGGER.info("MESSAGE FROM {} => {}", socket.getInetAddress(), line);
                     taskThread.addTask(createTask(line, session));
                 } catch (IllegalArgumentException e) {
                     LOGGER.warn("Erreur lors de la création de la tâche : {}", e.getMessage());

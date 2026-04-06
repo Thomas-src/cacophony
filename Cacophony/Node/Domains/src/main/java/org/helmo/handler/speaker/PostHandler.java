@@ -69,22 +69,15 @@ public class PostHandler implements CommandHandler {
         String toTag = args.get(7);  // null si user
         String innerMessage = args.get(8);  // "MSG ..."
 
-        LOGGER.info("POST reçu: {} → {}", fromUserAtDomain, toFullAddress);
-
         var matcherMSG = Message.P_INNER_CMD_MSG.matcher(innerMessage);
         if (matcherMSG.matches()) {
             String msgFrom = matcherMSG.group(1);
             String msgToSend = matcherMSG.group(0);
 
             String msgContent = matcherMSG.group(matcherMSG.groupCount());
-            for (int i = 0; i < matcherMSG.groupCount(); i++) {
-                LOGGER.info("{} - {} ", i, msgContent);
-            }
             try {
                 List<ITag> msgTags = messageService.extractTags(msgContent, task.getDomain());
-                for (ITag tag : msgTags) {
-                    LOGGER.info(tag.toString());
-                }
+
                 if (toUser != null && !toUser.isBlank()) {
                     doMsg(msgFrom, toFullAddress, msgToSend);
                 } else if (toTag != null && !toTag.isBlank()) {
@@ -100,9 +93,6 @@ public class PostHandler implements CommandHandler {
         }
         var matcherSUB = Message.P_CMD_INNER_SUBSCRIBE.matcher(innerMessage);
         if (matcherSUB.matches()) {
-            for (int i = 0; i < matcherSUB.groupCount(); i++) {
-                LOGGER.info("Subcribe {}: {}", i, matcherSUB.group(i));
-            }
             if (ids.contains(idAtDomain)) {
                 LOGGER.info("Msg subscribe déjà exécuté {}", idAtDomain);
                 return null;
@@ -144,8 +134,6 @@ public class PostHandler implements CommandHandler {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
-            LOGGER.info("Subscribers du tag {}: {}", toTag, subs.stream().map(s -> s.getFullName() + "(local=" + s.isLocal() + ")").toList());
-
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) {
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) {
@@ -161,12 +149,10 @@ public class PostHandler implements CommandHandler {
                                 LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst());
                                 continue;
                             }
-                            LOGGER.info("Response from remote tag (internal user) : {}", msgToSend);
                             activeSession.send(sub.getFullName(), msgToSend);
                         } else {
-                            LOGGER.info("Resend msg for {} to speaker {}", sub.getFullName(), msgToSend);
+                            LOGGER.info("Resend msg for {} to speaker", sub.getFullName());
                             String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
-                            LOGGER.info("Resend post to speaker {}", messageToCrypt);
                             try {
                                 speakerService.sendCryptedMessage(messageToCrypt);
                             } catch (MessageSaveException e) {
@@ -202,7 +188,6 @@ public class PostHandler implements CommandHandler {
      */
     private List<String> getRelevantSubscriptions(String recipient, String fromUser, List<ITag> msgTags, String currentDomain, String toTag) {
         try {
-            LOGGER.info("Looking up recipient: '{}'", recipient);
             Client user = userManagerService.findUser(recipient);
             if (user == null) {
                 LOGGER.warn("User not found: {}", recipient);
@@ -211,8 +196,6 @@ public class PostHandler implements CommandHandler {
 
             List<String> subscriptions = new ArrayList<>(user.getSubscribtions());
             user.getTags().stream().map(ITag::getFullName).forEach(subscriptions::add);
-
-            LOGGER.info("Subscriptions for {}: {}", recipient, subscriptions);
             LOGGER.info("Looking for sender '{}' and tags {}", fromUser, msgTags.stream().map(ITag::getFullName).toList());
 
             // Règle 1 : abonné à l'expéditeur → jamais livrer car réalisé dans une autre méthode
@@ -232,13 +215,11 @@ public class PostHandler implements CommandHandler {
 
             if (!matchedTags.isEmpty()) {
                 // Livrer seulement si toTag est le premier tag matché
-                LOGGER.info("Tags matchés pour {}: {}", recipient, matchedTags);
                 return List.of(matchedTags.getFirst());
             }
 
             // Fallback : abonné au tag destination directement
             if (subscriptions.contains(toTag)) {
-                LOGGER.info("Relevant (destination tag) for {}: {}", recipient, toTag);
                 return List.of(toTag);
             }
 

@@ -1,7 +1,5 @@
 package org.helmo.client;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -12,8 +10,6 @@ import java.security.NoSuchAlgorithmException;
  * Elle prend en entrée un hash bcrypt stocké (représentant le mot de passe de l'utilisateur) et fournit une méthode pour vérifier la réponse du client au challenge.
  */
 public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcryptSalt) {
-    private static final Logger LOGGER = LogManager.getLogger();
-
 
     /**
      * Vérifie si la réponse du client au challenge est correcte en suivant les étapes suivantes :

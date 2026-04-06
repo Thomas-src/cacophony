@@ -15,7 +15,6 @@ import java.util.List;
  * Gère les commandes d'abonnement (SUBSCRIBE) pour les utilisateurs et les tags.
  */
 public class SubscribeHandler implements CommandHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private final SubscriberService subscriberService;
 

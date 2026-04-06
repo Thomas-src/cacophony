@@ -50,7 +50,6 @@ public class OnboardingHandler implements CommandHandler {
         }
 
         if (session.isAuthenticated()) {
-            LOGGER.error("Utilisateur déjà authentifié");
             LOGGER.error("Inscription terminée (Echec)");
             return MessageBuilder.buildError();
         }
@@ -83,7 +82,6 @@ public class OnboardingHandler implements CommandHandler {
                 session.send(MessageBuilder.buildOk());
                 session.sendPastMessages();
                 LOGGER.info("L'utilisateur {} a bien été inscrit", session.getUserFullName());
-                LOGGER.info("Inscirption terminée (Réussite)");
                 return null;
             } else {
                 LOGGER.error("Inscription terminée (Echec)");
@@ -91,7 +89,6 @@ public class OnboardingHandler implements CommandHandler {
             }
         } catch (UserReaderException | UserSaveException e) {
             LOGGER.error("Erreur lors de la lecture ou ecriture des/de l'utilisateur(s), ", e);
-            LOGGER.error("Inscription terminée (Echec)");
             throw new HandlerException("Impossible d'inscrire l'utilisateur " + name + "\nException enfant => " + e);
         }
 

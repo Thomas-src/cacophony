@@ -74,7 +74,7 @@ public class DomainService {
             String localEncrypted = crypto.encrypt(message, speakerConfig.aesKey());
             domainRepository.saveMessage(domainName, localEncrypted);
         } catch (EncryptionException | DomainSaveException e) {
-            LOGGER.warn("Impossible de chiffrer / sauvegarder le message pour le domaine {}: {}", domainName, e.getMessage());
+            LOGGER.error("Impossible de chiffrer / sauvegarder le message pour le domaine {}: {}", domainName, e.getMessage());
         }
     };
 
@@ -91,7 +91,7 @@ public class DomainService {
            domainRepository.clearDomainMessages(domainName);
            return messages;
        } catch (DomainSaveException e) {
-           LOGGER.warn("Impossible de vider tous les messages du domaine {}: {}", domainName, e.getMessage());
+           LOGGER.error("Impossible de vider tous les messages du domaine {}: {}", domainName, e.getMessage());
        }
        return  List.of();
     }

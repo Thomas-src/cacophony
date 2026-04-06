@@ -1,11 +1,8 @@
 package org.helmo.services;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.TagSaveException;
 import org.helmo.Grammar;
-import org.helmo.client.Client;
 import org.helmo.tag.InternalTag;
 import org.helmo.repository.ITagRepository;
 import org.helmo.subscriber.IUserSubscriber;
@@ -18,7 +15,6 @@ import java.util.List;
  */
 public class TagManagerService {
     private final ITagRepository tagRepository;
-    private static final Logger LOGGER = LogManager.getLogger();
     /**
      * Initialise le service avec le dépôt de tags spécifié.
      *
@@ -48,7 +44,6 @@ public class TagManagerService {
     public List<IUserSubscriber> getTagSubscriber(String tagName) throws TagReaderException {
         return getTags().stream()
                 .filter(t -> t.getFullName().equals(extractTagName(tagName)))
-                .peek(t -> LOGGER.info("Found tag fullName: {}", t.getFullName())) // log here
                 .findFirst()
                 .map(InternalTag::getSubscribers)
                 .orElse(Collections.emptyList());

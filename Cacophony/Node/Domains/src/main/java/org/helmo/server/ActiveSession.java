@@ -71,7 +71,7 @@ public class ActiveSession {
             sessions.keySet().forEach(user -> LOGGER.info("{} est connecté", user));
             if (!sessions.containsKey(fullName)) {
                 try {
-                    LOGGER.info(fullName + ": n'est pas dispo");
+                    LOGGER.info(fullName + ": n'est pas connecté");
 
                     userManagerService.saveMessageForUser(fullName, message);
                     LOGGER.info("Message crypté enregistré pour {}", fullName);

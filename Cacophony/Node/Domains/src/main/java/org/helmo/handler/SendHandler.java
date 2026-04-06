@@ -64,8 +64,6 @@ public class SendHandler implements CommandHandler {
         String message = args.getFirst();
         String username = session.getUserFullName();
 
-        LOGGER.info("Message reçu de {} : {}", username, message);
-
         try {
             SubscriberResultData result = messageService.getSubscribers(username, message, session.getDomain());
             // 2. Pour abonnés locaux appel via WestThread
@@ -93,7 +91,7 @@ public class SendHandler implements CommandHandler {
      * @param message          Contenu du message.
      */
     private void sendToLocal(Set<String> localSubscribers, ClientSession session, String message) {
-        LOGGER.info("NB d'abonnés locaux : {} - {}", localSubscribers.size(), localSubscribers);
+        LOGGER.info("NB d'abonnés locaux : {}", localSubscribers.size());
         String localResponse = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
         for (String localSubscriber : localSubscribers) {
             activeSession.send(localSubscriber, localResponse);
@@ -141,7 +139,7 @@ public class SendHandler implements CommandHandler {
      * @throws HandlerException Si le cryptage ou la sauvegarde du message échoue.
      */
     private void sendToRemoteTags(LinkedHashSet<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
-        LOGGER.info("NB de tags distants : {} - {}", remoteTags.size(), remoteTags);
+        LOGGER.info("NB de tags distants : {}", remoteTags.size());
 
         if (remoteTags.isEmpty()) return;
 

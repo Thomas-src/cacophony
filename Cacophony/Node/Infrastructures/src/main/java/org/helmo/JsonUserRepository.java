@@ -127,7 +127,7 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout message : {}", name);
+                    LOGGER.info("Utilisateur non trouvé pour ajout message : {}", name);
                     return;
                 }
 
@@ -259,10 +259,10 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", fullusername);
+                    LOGGER.info("Utilisateur non trouvé pour ajout subscriber : {}", fullusername);
                 }
                 if (!foundSub) {
-                    LOGGER.error("Utilisateur sub non trouvé pour ajout subscription : {}", sub);
+                    LOGGER.info("Utilisateur sub non trouvé pour ajout subscription : {}", sub);
                 }
 
                 // 5. Réécrire le fichier
@@ -324,7 +324,7 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout subscription : {}", fullusername);
+                    LOGGER.info("Utilisateur non trouvé pour ajout subscription : {}", fullusername);
                 }
 
                 // 5. Réécrire le fichier
@@ -459,7 +459,7 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout tag : {}", username);
+                    LOGGER.info("Utilisateur non trouvé pour ajout tag : {}", username);
                     return;
                 }
 

@@ -31,11 +31,9 @@ public class ResponseChallengeHandler implements CommandHandler {
         }
 
         if(session.isAuthenticated()) {
-            LOGGER.error("Utilisateur déjà authentifié");
-            LOGGER.error("Fin d'authentification (Echec)");
+            LOGGER.info("Utilisateur déjà authentifié");
             return MessageBuilder.buildError();
         }
-        LOGGER.info("Réponse challenge reçue : {}", args.getFirst());
         String clientResponse = args.getFirst();
         String challenge = session.getRandomString();
 
@@ -44,16 +42,13 @@ public class ResponseChallengeHandler implements CommandHandler {
             if(session.setAuthenticate()) {
                 session.send( MessageBuilder.buildOk());
                 session.sendPastMessages();
-                LOGGER.info("Fin authentification (Réussite)");
                 return null;
             }
-            LOGGER.error("Erreur lors de l'authentification");
-            LOGGER.error("Fin d'authentification (Echec)");
+            LOGGER.info("Erreur lors de l'authentification");
             return  MessageBuilder.buildError();
         }
 
-        LOGGER.warn("Erreur lors de l'authentification pour → {}", session.getUsername());
-        LOGGER.error("Fin d'authentification (Echec)");
+        LOGGER.info("Erreur lors de l'authentification pour → {}", session.getUsername());
         return MessageBuilder.buildError();
     }
 }

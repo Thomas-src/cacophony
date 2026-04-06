@@ -111,11 +111,9 @@ public class EastThread extends Thread {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (!line.isBlank()) {
-                    LOGGER.info("Message chiffré reçu: {}", line);
                     LOGGER.info("Longueur message reçu: {}", line.length());
                     try {
                         String messageDecrypted = cryptoService.decrypt(line);
-                        LOGGER.info("Message déchiffré: {}", messageDecrypted);
                         createTask(messageDecrypted);
                     } catch (DecryptionException e) {
                         LOGGER.error("Échec du déchiffrement: {}", e.getMessage());
@@ -148,16 +146,16 @@ public class EastThread extends Thread {
      */
     public void sendMessage(String cryptedMessage) {
         if (writer != null) {
-            LOGGER.info("Envoi au speaker : {}", cryptedMessage);
+            LOGGER.info("Envoi au speaker msg");
             writer.println(cryptedMessage);
         } else {
-          try {
+            try {
 
-              LOGGER.warn("Sepaker absent, sauvegarde du msg");
-              messageRepository.saveMessage(cryptedMessage);
-          } catch (MessageSaveException e) {
-              LOGGER.error("Impossible de sauvegarde les msg: {}", e.getMessage());
-          }
+                LOGGER.warn("Sepaker absent, sauvegarde du msg");
+                messageRepository.saveMessage(cryptedMessage);
+            } catch (MessageSaveException e) {
+                LOGGER.error("Impossible de sauvegarde les msg: {}", e.getMessage());
+            }
         }
     }
 

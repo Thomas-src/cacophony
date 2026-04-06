@@ -16,7 +16,7 @@ import org.helmo.handler.CommandMenu;
  * Représente une connexion TCP active avec un nœud distant.
  * Cette classe gère la lecture continue des messages entrants, leur déchiffrement et leur exécution.
  */
-public class NodeTcpConnection extends Thread  {
+public class NodeTcpConnection extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Domain domain;
@@ -29,14 +29,14 @@ public class NodeTcpConnection extends Thread  {
     /**
      * Initialise une nouvelle connexion TCP avec un domaine spécifique.
      *
-     * @param domain Le domaine distant associé à cette connexion.
-     * @param socket Le socket réseau ouvert.
-     * @param tcpMenu Le menu de commandes pour traiter les messages reçus.
-     * @param cryptoService Le service utilisé pour le déchiffrement.
+     * @param domain             Le domaine distant associé à cette connexion.
+     * @param socket             Le socket réseau ouvert.
+     * @param tcpMenu            Le menu de commandes pour traiter les messages reçus.
+     * @param cryptoService      Le service utilisé pour le déchiffrement.
      * @param connectionListener L'écouteur pour notifier la fermeture de la connexion.
      * @throws IOException Si une erreur survient lors de l'accès aux flux du socket.
      */
-    public NodeTcpConnection(Domain domain, Socket socket, CommandMenu tcpMenu, CryptoService cryptoService, ConnectionListener connectionListener) throws IOException  {
+    public NodeTcpConnection(Domain domain, Socket socket, CommandMenu tcpMenu, CryptoService cryptoService, ConnectionListener connectionListener) throws IOException {
         this.tcpMenu = tcpMenu;
         this.domain = domain;
         this.socket = socket;
@@ -58,21 +58,19 @@ public class NodeTcpConnection extends Thread  {
             while ((line = br.readLine()) != null) {
                 if (!line.isBlank()) {
                     try {
-                        LOGGER.info("[TCP:{}] reçu (chiffré) : {}", domain.getName(), line);
                         String decrypted = cryptoService.decrypt(line, domain.getAesKey());
-                        LOGGER.info("[TCP:{}] reçu (déchiffré) : {}", domain.getName(), decrypted);
                         tcpMenu.execute(decrypted);
                     } catch (DecryptionException e) {
-                        LOGGER.info("Erreur décryption du message reçu: {}, {}",line, e.getMessage());
+                        LOGGER.info("Erreur décryption du message reçu: {}", e.getMessage());
                     } catch (HandlerException e) {
-                        LOGGER.info("Erreur exécution de la commande: {}",e.getMessage());
+                        LOGGER.info("Erreur exécution de la commande: {}", e.getMessage());
                     }
                 }
             }
         } catch (IOException e) {
-            LOGGER.error(e);
-            LOGGER.info("[TCP:{}] connexion fermée", domain.getName());
+            LOGGER.error("Erreur fermeture socket",e);
         } finally {
+            LOGGER.info("[TCP:{}] connexion fermée", domain.getName());
             listener.onConnectionClosed(domain.getName());
         }
     }
