@@ -35,10 +35,10 @@ Projet académique
 
 Contributeurs principaux (historique Git) :
 
-- Thomas Derdeyn (GitLab : `t.derdeyn`)
-- Clement Franchimont (GitLab : `cl.franchimont`)
-- Tibo Maes (GitLab : `ti.maes`)
-- Antoine Toussaint (GitLab : `an.toussaint`)
+- Thomas Derdeyn (GitLab : `t.derdeyn` @q240206 )
+- Clement Franchimont (GitLab : `cl.franchimont`@q240146)
+- Tibo Maes (GitLab : `ti.maes` @q240075)
+- Antoine Toussaint (GitLab : `an.toussaint` @B220013 )
 
 ### Prérequis
 
