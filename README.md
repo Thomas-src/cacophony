@@ -88,19 +88,6 @@ cd Cacophony
 .\gradlew build
 ```
 
-
-## Captures d'écran
-
-![Capture 1](Cacophony/ressources/image.png)
-![Capture 2](Cacophony/ressources/image2.png)
-![Capture 3](Cacophony/ressources/image3.png)
-![Capture 4](Cacophony/ressources/image4.png)
-![Capture 5](Cacophony/ressources/image5.png)
-![Capture 6](Cacophony/ressources/image6.png)
-
-
-
-
 ## Structure du dépôt
 
 - `Cacophony/` : code Java (Node, Speaker, Common)
