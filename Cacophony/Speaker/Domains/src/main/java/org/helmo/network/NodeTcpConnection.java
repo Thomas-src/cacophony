@@ -2,7 +2,6 @@ package org.helmo.network;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +16,7 @@ import org.helmo.handler.CommandMenu;
  * Représente une connexion TCP active avec un nœud distant.
  * Cette classe gère la lecture continue des messages entrants, leur déchiffrement et leur exécution.
  */
-public class NodeTCPConnection extends Thread  {
+public class NodeTcpConnection extends Thread  {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final Domain domain;
@@ -37,7 +36,7 @@ public class NodeTCPConnection extends Thread  {
      * @param connectionListener L'écouteur pour notifier la fermeture de la connexion.
      * @throws IOException Si une erreur survient lors de l'accès aux flux du socket.
      */
-    public NodeTCPConnection(Domain domain, Socket socket, CommandMenu tcpMenu, CryptoService cryptoService, ConnectionListener connectionListener) throws IOException  {
+    public NodeTcpConnection(Domain domain, Socket socket, CommandMenu tcpMenu, CryptoService cryptoService, ConnectionListener connectionListener) throws IOException  {
         this.tcpMenu = tcpMenu;
         this.domain = domain;
         this.socket = socket;

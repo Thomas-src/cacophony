@@ -2,7 +2,6 @@ import org.gradle.kotlin.dsl.implementation
 
 plugins {
     id("java")
-    id("application")
 }
 
 group = "org.helmo"
@@ -22,8 +21,11 @@ dependencies {
     implementation(project(":Common"))
 }
 
-application {
-    mainClass.set("org.helmo.Program")
+// `Node` est un module agrégateur; l'application exécutable est dans `Node:App`.
+tasks.register("run") {
+    group = "application"
+    description = "Alias vers :Node:App:run"
+    dependsOn(":Node:App:run")
 }
 
 

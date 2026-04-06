@@ -17,7 +17,7 @@ import org.helmo.handler.CommandMenu;
  */
 public class SpeakerTcpConnector implements ConnectionListener {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Map<String, NodeTCPConnection> connections = new ConcurrentHashMap<>();
+    private final Map<String, NodeTcpConnection> connections = new ConcurrentHashMap<>();
     private final CryptoService cryptoService;
     private final CommandMenu tcpMenu;
 
@@ -46,7 +46,7 @@ public class SpeakerTcpConnector implements ConnectionListener {
         }
         try {
             Socket socket = new Socket(ip, port);
-            NodeTCPConnection conn = create(domain, socket);
+            NodeTcpConnection conn = create(domain, socket);
             connections.put(domain.getName(), conn);
             LOGGER.info("Connecté à {} ({}:{})", domain.getName(), ip, port);
         } catch (IOException e) {
@@ -62,8 +62,8 @@ public class SpeakerTcpConnector implements ConnectionListener {
      * @return la connexion NodeTCPConnection créée
      * @throws IOException si une erreur d'entrée/sortie survient lors de la création
      */
-    private NodeTCPConnection create(Domain domain, Socket socket) throws IOException {
-        NodeTCPConnection conn = new NodeTCPConnection(domain, socket, tcpMenu, cryptoService, this);
+    private NodeTcpConnection create(Domain domain, Socket socket) throws IOException {
+        NodeTcpConnection conn = new NodeTcpConnection(domain, socket, tcpMenu, cryptoService, this);
         conn.start();
         return conn;
     }
@@ -75,7 +75,7 @@ public class SpeakerTcpConnector implements ConnectionListener {
      * @param message le contenu du message à envoyer
      */
     public void sendToNode(String domainName, String message) {
-        NodeTCPConnection connection = connections.get(domainName);
+        NodeTcpConnection connection = connections.get(domainName);
         if (connection != null && connection.isAlive()) {
             connection.sendMessage(message);
         } else if (connection != null) {

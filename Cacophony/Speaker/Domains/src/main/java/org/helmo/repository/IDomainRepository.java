@@ -7,17 +7,31 @@ import org.helmo.exceptions.DomainSaveException;
 import java.util.List;
 
 /**
- * Interface for managing domain data persistence.
+ * Interface pour la gestion de la persistance des données de domaine.
  */
 public interface IDomainRepository {
     /**
-     * Retrieves the list of all available domains.
+     * Récupère la liste de tous les domaines disponibles.
      *
-     * @return A list of {@link Domain} objects.
-     * @throws DomainReaderException if an error occurs while reading the domains.
+     * @return Une liste d'objets {@link Domain}.
+     * @throws DomainReaderException si une erreur survient lors de la lecture des domaines.
      */
     List<Domain> getDomains() throws DomainReaderException;
 
+    /**
+     * Enregistre un message dans un domaine spécifique.
+     *
+     * @param domain  Le nom du domaine.
+     * @param message Le contenu du message à enregistrer.
+     * @throws DomainSaveException si une erreur survient lors de l'enregistrement.
+     */
     void saveMessage(String domain, String message) throws DomainSaveException;
+
+    /**
+     * Supprime tous les messages d'un domaine spécifique.
+     *
+     * @param domain Le nom du domaine à vider.
+     * @throws DomainSaveException si une erreur survient lors de la suppression des messages.
+     */
     void clearDomainMessages(String domain) throws DomainSaveException;
 }

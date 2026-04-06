@@ -26,7 +26,7 @@ public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcr
      * @param clientResponse Le hexadécimal que le client a envoyé en réponse au challenge.
      * @param challenge      Le challenge de 22 caractères envoyé au client.
      * @return vrai si la réponse du client est correcte, faux sinon.
-     *
+     *<br>
      * généré par ia
      */
     public boolean checkChallenge(String clientResponse, String challenge) {
