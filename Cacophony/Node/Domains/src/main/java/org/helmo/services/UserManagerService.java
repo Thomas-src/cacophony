@@ -66,8 +66,8 @@ public class UserManagerService {
      * @param username Le nom de l'utilisateur auquel s'abonner.
      * @throws UserSaveException Si une erreur survient lors de l'enregistrement.
      */
-    public void addSubscribersFor(Client client, String username) throws UserSaveException {
-        userRepository.addSubscribersFor(client, username);
+    public void addSubscribersFor(Client client, String username, String domain) throws UserSaveException {
+        userRepository.addSubscribersFor(client, username, domain);
     }
 
     /**

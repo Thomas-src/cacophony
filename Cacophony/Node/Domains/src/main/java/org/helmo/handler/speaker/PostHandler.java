@@ -70,7 +70,7 @@ public class PostHandler implements CommandHandler {
 
         LOGGER.info("POST reçu: {} → {}", fromUserAtDomain, toFullAddress);
 
-        var matcherMSG = Message.P_CMD_MSG.matcher(innerMessage);
+        var matcherMSG = Message.P_INNER_CMD_MSG.matcher(innerMessage);
         if (matcherMSG.matches()) {
             String msgFrom = matcherMSG.group(1);
             String msgToSend = matcherMSG.group(0);
@@ -93,9 +93,11 @@ public class PostHandler implements CommandHandler {
                 LOGGER.error("Impossible de lire les tags du message", e);
                 throw new HandlerException(e.getMessage());
             }
+        } else {
+            LOGGER.info("ne matche pas msg");
         }
         // todo matcher SUB ici si (vérifier nom domaine ok sinon renvoyer vers speaker
-        var matcherSUB = Message.P_CMD_SUBSCRIBE.matcher(innerMessage);
+        var matcherSUB = Message.P_CMD_INNER_SUBSCRIBE.matcher(innerMessage);
         if (matcherSUB.matches()) {
             for (int i = 0; i < matcherSUB.groupCount(); i++) {
                 LOGGER.info("Subcribe {}: {}", i, matcherSUB.group(i));
@@ -115,7 +117,10 @@ public class PostHandler implements CommandHandler {
                 subscriberService.tagSubscribe(tagName, task.getDomain(), fromUserAtDomain);
             }
 
+        }else {
+            LOGGER.info("ne matche pas subscribe");
         }
+
         return null;
     }
 

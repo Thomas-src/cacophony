@@ -23,7 +23,6 @@ import org.helmo.tag.TagReference;
  * Mapper responsable de la conversion entre les objets DTO JSON et les entités Client.
  */
 public class JsonUserMapper {
-    private static final Logger LOGGER = LogManager.getLogger();
     /**
      * Mappe une liste d'utilisateurs DTO vers une liste d'objets Client.
      *
@@ -52,7 +51,6 @@ public class JsonUserMapper {
                     Matcher matcher = Grammar.P_USER_AT_DOMAIN.matcher(subscriberName);
                     if (matcher.matches()) {
                         String domain = matcher.group(2);
-                        LOGGER.info(domain);
                         if (domain.equals(currentDomain)) {
                             subscribers.add(new NativeUser(subscriberName));
                         } else {
@@ -99,6 +97,31 @@ public class JsonUserMapper {
                 client.getTags().stream().map(ITag::getFullName).toList(),
                 client.getMessages(),
                 client.getSubscribtions()
+        );
+    }
+
+    public static UserDto copyWithSubscribers(UserDto user, List<String> newSubscribers) {
+        return new UserDto(
+                user.login(),
+                user.bcryptHash(),
+                user.bcryptRound(),
+                user.bcryptSalt(),
+                newSubscribers,
+                user.userTags(),
+                user.messages(),
+                user.subscriptionUsers()
+        );
+    }
+    public static UserDto copyWithSubscriptions(UserDto user, List<String> newSubscriptions) {
+        return new UserDto(
+                user.login(),
+                user.bcryptHash(),
+                user.bcryptRound(),
+                user.bcryptSalt(),
+                user.subscribers(),
+                user.userTags(),
+                user.messages(),
+                newSubscriptions
         );
     }
 }

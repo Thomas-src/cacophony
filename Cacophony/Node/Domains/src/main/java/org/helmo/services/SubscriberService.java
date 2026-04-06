@@ -59,7 +59,7 @@ public class SubscriberService {
             for (Client client : clients) {
                 if (targetName.equals(client.getName())) {
                     LOGGER.info("========{} est désormais abonné========", fullusername);
-                    userManagerService.addSubscribersFor(client, fullusername);
+                    userManagerService.addSubscribersFor(client, fullusername, domain);
                 }
             }
         } catch (UserReaderException | UserSaveException e) {

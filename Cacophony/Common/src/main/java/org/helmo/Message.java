@@ -2,6 +2,7 @@ package org.helmo;
 
 
 import static org.helmo.Grammar.*;
+
 import java.util.regex.Pattern;
 
 
@@ -30,7 +31,7 @@ public class Message {
      * Note : le deuxième 'user' fait référence à la constante USER (5 à 20 digit_letter).
      * Utilisée pour identifier l'utilisateur lors de la connexion.
      */
-    public static final String CMD_USER = "USER" + SP + "("+USER+")";
+    public static final String CMD_USER = "USER" + SP + "(" + USER + ")";
 
     /**
      * Commande CHALLENGE du protocole.
@@ -44,14 +45,14 @@ public class Message {
      * Format : "RESPONSE" sp sha3_hexstring newline
      * Utilisée pour répondre au défi d'authentification avec un hash SHA3.
      */
-    public static final String CMD_RESPONSE = "RESPONSE" + SP +"(" +SHA3_HEXSTRING+")";
+    public static final String CMD_RESPONSE = "RESPONSE" + SP + "(" + SHA3_HEXSTRING + ")";
 
     /**
      * Commande ONBOARDING du protocole.
      * Format : "ONBOARDING" sp user sp salt_length sp bcrypt newline
      * Utilisée pour enregistrer un nouvel utilisateur avec ses informations d'authentification.
      */
-    public static final String CMD_ONBOARDING = "ONBOARDING" + SP + "(" + USER+ ")" + SP + "("+ SALT_LENGTH +")" + SP + "(" + BCRYPT+ ")";
+    public static final String CMD_ONBOARDING = "ONBOARDING" + SP + "(" + USER + ")" + SP + "(" + SALT_LENGTH + ")" + SP + "(" + BCRYPT + ")";
 
     /**
      * Commande SUBSCRIBE du protocole.
@@ -59,8 +60,8 @@ public class Message {
      * Utilisation d'un groupe non capturant (?: ... | ... ) pour le OU logique.
      * Utilisée pour s'abonner à un utilisateur ou un tag.
      */
-    public static final String CMD_SUBSCRIBE = "SUBSCRIBE" + SP + "(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
-
+    public static final String CMD_INNERSUBSCRIBE = "SUBSCRIBE" + SP + "(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")";
+    public static final String CMD_SUBSCRIBE = CMD_INNERSUBSCRIBE;
     /**
      * Commande SEND du protocole.
      * Format : "SEND" sp message newline
@@ -72,7 +73,8 @@ public class Message {
      * Format : "MSG" sp (user_at_domain / tag_at_domain) sp message newline
      * Utilisée pour envoyer un message à un utilisateur ou un tag spécifique.
      */
-    public static final String CMD_MSG = "MSG" + SP + "(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+MESSAGE+")";
+    public static final String CMD_INNER_MSG = "MSG" + SP + "(" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "(" + MESSAGE + ")";
+    public static final String CMD_MSG = CMD_INNER_MSG + NEWLINE;
 
     /**
      * Commande OK du protocole.
@@ -101,14 +103,14 @@ public class Message {
      * Format : "ADVERT" sp port sp domain newline
      * Utilisée pour annoncer un serveur avec son port et son domaine.
      */
-    public static final String ADVERT = "ADVERT" + SP + "("+ PORT + ")" + SP + "("+ DOMAIN+ ")" + NEWLINE;
+    public static final String ADVERT = "ADVERT" + SP + "(" + PORT + ")" + SP + "(" + DOMAIN + ")" + NEWLINE;
 
     /**
      * Commande POST du protocole.
      * Format : "POST" sp id_at_domain sp user_at_domain sp (user_at_domain / tag_at_domain) sp inner_message newline
      * Utilisée pour publier un message avec un identifiant, un auteur, un destinataire et le contenu.
      */
-    public  static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN  + ")" + SP + "(" + USER_AT_DOMAIN  + ")"+ SP +"(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "("+ INNER_MESSAGE+")" + NEWLINE;
+    public static final String CMD_POST = "POST" + SP + "(" + ID_AT_DOMAIN + ")" + SP + "(" + USER_AT_DOMAIN + ")" + SP + "(?:" + USER_AT_DOMAIN + "|" + TAG_AT_DOMAIN + ")" + SP + "(" + INNER_MESSAGE + ")" + NEWLINE;
     // --- COMPILATION DES PATTERNS DES COMMANDES ---
 
     /**
@@ -136,6 +138,7 @@ public class Message {
      * Pattern compilé pour la validation de la commande SUBSCRIBE.
      */
     public static final Pattern P_CMD_SUBSCRIBE = Pattern.compile("^" + CMD_SUBSCRIBE + "$");
+    public static final Pattern P_CMD_INNER_SUBSCRIBE = Pattern.compile("^" + CMD_INNERSUBSCRIBE + "$");
     /**
      * Pattern compilé pour la validation de la commande SEND.
      */
@@ -143,6 +146,7 @@ public class Message {
     /**
      * Pattern compilé pour la validation de la commande MSG.
      */
+    public static final Pattern P_INNER_CMD_MSG = Pattern.compile("^" + CMD_INNER_MSG + "$");
     public static final Pattern P_CMD_MSG = Pattern.compile("^" + CMD_MSG + "$");
     /**
      * Pattern compilé pour la validation de la commande OK.

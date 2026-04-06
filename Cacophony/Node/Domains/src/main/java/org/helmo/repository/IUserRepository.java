@@ -33,7 +33,7 @@ public interface IUserRepository {
      * @param sub  Le nom de l'abonné à ajouter.
      * @throws UserSaveException Si l'opération de mise à jour échoue.
      */
-    void addSubscribersFor(Client name, String sub) throws UserSaveException;
+    void addSubscribersFor(Client name, String sub, String domain) throws UserSaveException;
 
     List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException;
 

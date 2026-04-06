@@ -43,7 +43,7 @@ public class JsonUserRepository implements IUserRepository {
      * @param config La configuration du nœud pour la gestion des domaines.
      * @throws NullPointerException si la configuration est nulle.
      */
-    public JsonUserRepository(Config config){
+    public JsonUserRepository(Config config) {
         Objects.requireNonNull(config);
         this.config = config;
     }
@@ -195,7 +195,7 @@ public class JsonUserRepository implements IUserRepository {
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
     @Override
-    public void addSubscribersFor(Client client, String sub) throws UserSaveException {
+    public void addSubscribersFor(Client client, String sub, String domain) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -205,70 +205,64 @@ public class JsonUserRepository implements IUserRepository {
                 // 1. Lire le fichier
                 try (BufferedReader reader = Files.newBufferedReader(configPath)) {
                     UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
-                    existingUserDtos = (existingDto != null && existingDto.users() != null) ? new ArrayList<>(existingDto.users()) : new ArrayList<>();
+                    if (existingDto == null || existingDto.users() == null) {
+                        existingUserDtos = new ArrayList<>();
+                    } else {
+                        existingUserDtos = new ArrayList<>(existingDto.users());
+                    }
                 }
 
-                UserDto subscriberUser = null;
-                UserDto subscribedToUser = null;
+                String subName = transformToName(sub);
+                String subDomain = transformToDomain(sub);
+                boolean found = false;
+                boolean foundSub = false;
 
-                // 2. Trouver les deux utilisateurs
-                for (UserDto user : existingUserDtos) {
-                    LOGGER.info("Checking {} for: {}", user.login(), client.getName());
+                // 2. Trouver le bon utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+
+                    // On compare avec le login (attention: client.getName() sans domaine)
                     if (user.login().equals(client.getName())) {
-                        subscriberUser = user;
+                        List<String> subscribers = user.subscribers() != null ? new ArrayList<>(user.subscribers()) : new ArrayList<>();
+
+                        // 3. Ajouter le subscriber s'il n'existe pas déjà
+                        if (!subscribers.contains(sub)) {
+                            subscribers.add(sub);
+                        }
+
+                        // 4. Recréer le UserDto (record = immuable)
+                        UserDto updatedUser = JsonUserMapper.copyWithSubscribers(user, subscribers);
+
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
                     }
-                    if (user.login().equals(sub)) {
-                        subscribedToUser = user;
+                    else if (user.login().equals(subName) && subDomain.equals(domain)) {
+                        List<String> subscriptions = user.subscriptionUsers() != null ? new ArrayList<>(user.subscriptionUsers()) : new ArrayList<>();
+
+                        // 3. Ajouter le subscriber s'il n'existe pas déjà
+                        if (!subscriptions.contains(sub)) {
+                            subscriptions.add(client.getFullName());
+                        }
+                        foundSub = true;
+                        // 4. Recréer le UserDto (record = immuable)
+                        UserDto updatedUser =JsonUserMapper.copyWithSubscriptions(user, subscriptions);
+
+                        existingUserDtos.set(i, updatedUser);
+                    }
+                    if(foundSub && found) {
+                        break;
                     }
                 }
 
-                if (subscriberUser == null) {
-                    LOGGER.error("Utilisateur abonné non trouvé : {}", client.getName());
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", client.getName());
                     return;
                 }
 
-
-                // 3. Mettre à jour la liste des subscriptions de Thomas
-                List<String> subscriptions = subscriberUser.subscriptionUsers() != null ? new ArrayList<>(subscriberUser.subscriptionUsers()) : new ArrayList<>();
-                if (!subscriptions.contains(sub)) {
-                    subscriptions.add(sub);
-                }
-
-                UserDto updatedSubscriber = new UserDto(
-                        subscriberUser.login(),
-                        subscriberUser.bcryptHash(),
-                        subscriberUser.bcryptRound(),
-                        subscriberUser.bcryptSalt(),
-                        subscriberUser.subscribers(),
-                        subscriberUser.userTags(),
-                        subscriberUser.messages(),
-                        subscriptions
-                );
-
-                existingUserDtos.set(existingUserDtos.indexOf(subscriberUser), updatedSubscriber);
-                if (subscribedToUser != null) {
-                    // 4. Mettre à jour la liste des subscribers de Tom
-                    List<String> subscribers = subscribedToUser.subscribers() != null ? new ArrayList<>(subscribedToUser.subscribers()) : new ArrayList<>();
-                    if (!subscribers.contains(client.getName())) {
-                        subscribers.add(client.getName());
-                    }
-
-                    UserDto updatedSubscribedTo = new UserDto(
-                            subscribedToUser.login(),
-                            subscribedToUser.bcryptHash(),
-                            subscribedToUser.bcryptRound(),
-                            subscribedToUser.bcryptSalt(),
-                            subscribers,
-                            subscribedToUser.userTags(),
-                            subscribedToUser.messages(),
-                            subscribedToUser.subscriptionUsers()
-                    );
-
-                    existingUserDtos.set(existingUserDtos.indexOf(subscribedToUser), updatedSubscribedTo);
-                }
                 // 5. Réécrire le fichier
                 UsersDto updatedDto = new UsersDto(existingUserDtos);
-                Files.writeString(configPath, gson.toJson(updatedDto));
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
 
             } catch (IOException | JsonParseException ex) {
                 LOGGER.error("Erreur lors de l'ajout d'un subscriber", ex);
@@ -276,6 +270,7 @@ public class JsonUserRepository implements IUserRepository {
             }
         }
     }
+
 
     @Override
     public List<String> getUserMessagesAndEmpty(String name) throws UserReaderException {
@@ -344,7 +339,7 @@ public class JsonUserRepository implements IUserRepository {
     /**
      * Ajoute un tag à la liste des tags d'un utilisateur spécifique.
      *
-     * @param tag    Le tag à ajouter.
+     * @param tag Le tag à ajouter.
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
     @Override
@@ -430,5 +425,24 @@ public class JsonUserRepository implements IUserRepository {
             }
             Files.writeString(configPath, gson.toJson(new UsersDto(List.of())));
         }
+    }
+
+    private String transformToName(String fullUsername) {
+        String name = fullUsername;
+
+        var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullUsername);
+        if (matcher.matches()) {
+            name = matcher.group(1);
+        }
+        return name;
+    }
+    private String transformToDomain(String fullUsername) {
+        String domain = fullUsername;
+
+        var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullUsername);
+        if (matcher.matches()) {
+            domain = matcher.group(2);
+        }
+        return domain;
     }
 }
