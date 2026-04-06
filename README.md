@@ -1,11 +1,11 @@
 # Cacophony
 
 
-![Statut](https://img.shields.io/badge/Statut-Fini-28A745)   ![Java](https://img.shields.io/badge/Java-21%2F25-007396?logo=openjdk&logoColor=white) ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white) ![Gradle](https://img.shields.io/badge/Gradle-Wrapper-02303A?logo=gradle&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows-0078D4?logo=windows&logoColor=white)
+![Statut](https://img.shields.io/badge/Statut-Fini-28A745)   ![Java](https://img.shields.io/badge/Java-21%2F25-007396?logo=openjdk&logoColor=white) ![Gradle](https://img.shields.io/badge/Gradle-Wrapper-02303A?logo=gradle&logoColor=white) ![OS](https://img.shields.io/badge/OS-Windows-0078D4?logo=windows&logoColor=white)
 
 ## Badges
 
-> Messagerie distribuée académique composée d'un Node Java, d'un Speaker Java et d'un client desktop Python.
+> Messagerie distribuée académique composée d'un Node Java et d'un Speaker Java.
 
 
 ## Points forts
@@ -18,11 +18,10 @@
 
 ## Présentation
 
-Cacophony est un projet de messagerie distribuée organisé autour de trois composants :
+Cacophony est un projet de messagerie distribuée organisé autour de deux composants :
 
 - `Node` : coeur serveur en Java (multi-modules Gradle).
 - `Speaker` : composant Java de diffusion/traitement.
-- `cacophony-client` : client GUI Python pour se connecter au Node.
 
 Le dépôt a été pensé pour un usage pédagogique, avec une structure lisible et des points d'entrée explicites pour lancer chaque composant.
 
@@ -43,7 +42,6 @@ Contributeurs principaux (historique Git) :
 ### Prérequis
 
 - OpenJDK installé (pour les modules Java).
-- Python 3.x et `pip` (pour le client).
 - Windows PowerShell (commandes ci-dessous données pour Windows).
 
 
@@ -51,6 +49,15 @@ Contributeurs principaux (historique Git) :
 
 Ouvrez deux terminaux depuis la racine du projet.
 
+### 0) Compiler le projet
+```powershell
+# Compiler tous les projets
+./gradlew build
+
+# Alternative pour compiler les modules séparément
+./gradlew :Node:App:assemble
+./gradlew :Speaker:App:assemble
+```
 
 ### 1) Lancer le Node
 
@@ -227,7 +234,7 @@ La configuration est gérée via des fichiers JSON :
 - [Log4j](https://logging.apache.org/log4j/2.x/) **v2.23.1** : logging (utilisé dans certains modules)
 - [JUnit Jupiter](https://junit.org/junit5/) **v5.10.0** : tests unitaires
 - [JUnit Platform Launcher](https://junit.org/junit5/docs/current/user-guide/#launcher-api) **v1.10.0** : exécution des tests
-- [Gradle](https://gradle.org/) **v8.x** : build multi-modules
+- [Gradle](https://gradle.org/) **v8.14** : build multi-modules
 
 > Les dépendances Java sont gérées dans les fichiers `build.gradle.kts` de chaque module.
 
