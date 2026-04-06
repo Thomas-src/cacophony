@@ -3,6 +3,7 @@ package org.helmo.server.threads;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.helmo.Config;
+import org.helmo.Exception.MessageReaderException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.crypto.CryptoProvider;
 import org.helmo.crypto.exceptions.DecryptionException;
@@ -152,7 +153,7 @@ public class EastThread extends Thread {
               LOGGER.warn("Sepaker absent, sauvegarde du msg");
               messageRepository.saveMessage(cryptedMessage);
           } catch (MessageSaveException e) {
-              throw new RuntimeException(e); // todo
+              LOGGER.error("Impossible de sauvegarde les msg: {}", e.getMessage());
           }
         }
     }
@@ -163,7 +164,7 @@ public class EastThread extends Thread {
             for (String msg : oldMessage) {
                 sendMessage(msg);
             }
-        } catch (Exception e) {
+        } catch (MessageReaderException e) {
             LOGGER.error("Erreur lors de l'envoi des messages en attente : {}", e.getMessage());
         }
     }
