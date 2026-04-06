@@ -1,18 +1,17 @@
 package org.helmo.services;
 
 import java.security.SecureRandom;
+import java.util.Base64;
 
 
 /**
  * Service fournissant des fonctionnalités de génération de données aléatoires sécurisées.
  */
 public class RandomService {
-    private static final String CHARACTERS =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
-                    "!\"#$%&'()*+,-./" +  // %d33-47
-                    ":;<=>?@" +           // %d58-64
-                    "[]^_`";              // %d91-96
-    /**
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" +
+            "!\"#%&'()*+,-.:;<=>?[]^_`";
+
+             /**
      * Génère une chaîne de caractères aléatoire de manière sécurisée.
      *
      * @param size La taille de la chaîne à générer.
@@ -27,6 +26,6 @@ public class RandomService {
             result.append(CHARACTERS.charAt(index));
         }
 
-        return result.toString();
+        return result.toString(); // pour garantir la longueur exacte
     }
 }

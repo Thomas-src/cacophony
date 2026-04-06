@@ -64,7 +64,7 @@ public class ClientSession implements TaskContext {
      * @return Le nom d'utilisateur.
      */
     public String getUsername() {
-        return client.getName();
+        return client != null ? client.getName() : "";
     }
 
     /**

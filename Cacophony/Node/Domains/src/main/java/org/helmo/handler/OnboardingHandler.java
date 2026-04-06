@@ -2,8 +2,10 @@ package org.helmo.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Config;
 import org.helmo.Exception.HandlerException;
 import org.helmo.Exception.OnboardingException;
+import org.helmo.Grammar;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.handler.utils.CommandHandler;
@@ -13,6 +15,7 @@ import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.services.UserManagerService;
 import org.helmo.task.TaskContext;
+
 import java.util.List;
 
 /**
@@ -21,14 +24,15 @@ import java.util.List;
 public class OnboardingHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     private final UserManagerService userManagerService;
-
+    private final Config config;
     /**
      * Initialise le gestionnaire d'inscription avec le service de gestion des utilisateurs.
      *
      * @param userManagerService
      */
-    public OnboardingHandler(UserManagerService userManagerService) {
+    public OnboardingHandler(UserManagerService userManagerService, Config config) {
         this.userManagerService = userManagerService;
+        this.config = config;
     }
 
     /**
@@ -52,20 +56,30 @@ public class OnboardingHandler implements CommandHandler {
         }
         String name = args.getFirst();
 
-        int rotation = Integer.parseInt(args.get(2).split("\\$")[2]); // TODO supprimer les split, extraire via les pattern REGEX
-        var saltLength = Integer.parseInt(args.get(1));
-        var salt = args.get(2).split("\\$")[3].substring(0, saltLength);
-        var hashpassword = args.get(2).split("\\$")[3].substring(saltLength);
+        String bcrypt = args.get(2);
 
+        var matcher = Grammar.P_BCRYPT.matcher(bcrypt);
+
+        if (!matcher.matches()) {
+            throw new HandlerException("Format bcrypt invalide");
+        }
+
+        int rotation = Integer.parseInt(matcher.group(1));
+
+        String saltAndHash = matcher.group(2);
+        String salt = saltAndHash.substring(0, config.saltSizeInBytes());
+        String hashpassword = saltAndHash.substring(config.saltSizeInBytes());
+
+        String fullUsername = name + "@" + task.getDomain();
         try {
-            if(userManagerService.findUser(name) != null) {
+            if (userManagerService.findUser(fullUsername) != null) {
                 return MessageBuilder.buildError();
             }
             Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), session.getDomain());
             userManagerService.saveUser(client);
             session.setClient(client);
 
-            if(session.setAuthenticate()) {
+            if (session.setAuthenticate()) {
                 session.send(MessageBuilder.buildOk());
                 session.sendPastMessages();
                 LOGGER.info("L'utilisateur {} a bien été inscrit", session.getUserFullName());

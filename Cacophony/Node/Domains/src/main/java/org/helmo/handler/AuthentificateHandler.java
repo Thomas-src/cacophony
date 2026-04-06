@@ -41,16 +41,18 @@ public class AuthentificateHandler implements CommandHandler {
             return MessageBuilder.buildError();
         }
         String username = args.getFirst().trim();
-
+        String fullname = args.getFirst().trim()+"@"+task.getDomain();
+        LOGGER.info("test connexion :"+username);
         try {
-            Client user = userManagerService.findUser(username);
+            Client user = userManagerService.findUser(fullname);
             if(user == null) {
+                LOGGER.info("Utilisateur non trouvé lors de la connexion :"+username);
                 return MessageBuilder.buildError();
             }
 
             session.setClient(user);
             String challange = MessageBuilder.buildChallenge(String.valueOf(user.getHashPassword().bcryptRound()), user.getHashPassword().bcryptSalt());
-            LOGGER.error("Envoie du challange → {}", challange);
+            LOGGER.error("Envoie du challenge → {}", challange);
             return challange;
         } catch (UserReaderException e) {
             LOGGER.error("Erreur lors de la lecture des utilisateur : " + e.getMessage());

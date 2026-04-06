@@ -128,7 +128,7 @@ public class Grammar {
     /**
      * Expression régulière représentant un hash bcrypt au format $2b$counter$hash.
      */
-    public static final String BCRYPT = "\\$2b\\$" + COUNTER + "\\$" + DIGIT_LETTER_OR_SPECIAL + "{1,70}";
+    public static final String BCRYPT = "\\$2b\\$(" + COUNTER + ")\\$(" + DIGIT_LETTER_OR_SPECIAL + "{1,70})";;
 
     /**
      * Expression régulière représentant une chaîne hexadécimale SHA3 (30 à 200 caractères).

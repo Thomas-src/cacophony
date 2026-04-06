@@ -93,7 +93,7 @@ public class UserManagerService {
         if(transformToDomain(username).equals(config.currentDomain()))  {
             List<Client> users = getUsers();
             for (Client user : users) {
-                if (user.getName().equals(transformToName(username))) {
+                if (user.getFullName().equals(username)) {
                     return user;
                 }
             }

@@ -59,7 +59,7 @@ public class WestThread extends Thread implements IMessageSender {
             toClient = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
             LOGGER.info("Client connecté : {}", socket.getInetAddress().getHostAddress());
 
-            String randomChallenge = RandomService.generateRandomString(22);
+            String randomChallenge = RandomService.generateRandomString(config.saltSizeInBytes());
             toClient.println(MessageBuilder.buildWelcome(config.currentDomain(), randomChallenge));
 
             session = new ClientSession(randomChallenge, this, config.currentDomain(), activeSession);
@@ -90,11 +90,13 @@ public class WestThread extends Thread implements IMessageSender {
             }
 
             if (session != null) {
-                if(session.getUserFullName() != null && !session.getUserFullName().isBlank()) {
+                if (session.getUserFullName() != null && !session.getUserFullName().isBlank()) {
                     activeSession.remove(session.getUserFullName());
                 }
+                LOGGER.info("Fin de session pour {} : {} ", socket.getInetAddress(), session.getUsername());
+
             }
-            LOGGER.info("Fin de session pour {} : {} ", socket.getInetAddress(), session.getUsername());
+            LOGGER.info("Fin de session pour client non connecté {} ", socket.getInetAddress());
         }
     }
 

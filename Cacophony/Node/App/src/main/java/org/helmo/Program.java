@@ -59,7 +59,7 @@ public class Program {
 
             SubscriberService subscriberService = new SubscriberService(userManagerService,tagManagerService,speakerService,idGeneratorService);
             SubscribeHandler subscribeHandler = new SubscribeHandler(subscriberService);
-            menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService));
+            menu.add(Message.P_CMD_ONBOARDING, new OnboardingHandler(userManagerService, config));
             menu.add(Message.P_CMD_USER, new AuthentificateHandler(userManagerService));
             menu.add(Message.P_CMD_SEND, sendHandler);
             menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
