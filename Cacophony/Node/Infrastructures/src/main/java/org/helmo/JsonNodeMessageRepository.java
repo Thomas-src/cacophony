@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.MessageReaderException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.dto.MessagesDto;
-import org.helmo.dto.TagsDto;
 import org.helmo.repository.IMessageRepository;
 
 import java.io.BufferedReader;
@@ -122,7 +121,7 @@ public class JsonNodeMessageRepository implements IMessageRepository {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.writeString(messagePath, gson.toJson(new TagsDto(List.of())));
+            Files.writeString(messagePath, gson.toJson(new MessagesDto(List.of())));
         }
     }
 }
