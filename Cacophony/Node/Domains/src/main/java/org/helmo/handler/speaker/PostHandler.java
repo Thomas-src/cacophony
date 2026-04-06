@@ -134,11 +134,14 @@ public class PostHandler implements CommandHandler {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
+            LOGGER.info("Subscribers du tag {}: {}", toTag, subs.stream().map(s -> s.getFullName() + "(local=" + s.isLocal() + ")").toList());
+
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) {
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) {
                         List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain, toTag);
 
+                        LOGGER.info("relevant du tag {} pour {}",relevant, sub.getFullName());
                         if (relevant.isEmpty()) {
                             LOGGER.info("Livraison ignorée pour {} : aucune subscription pertinente", sub.getFullName());
                             continue;
