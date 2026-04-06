@@ -68,8 +68,11 @@ public class ActiveSession {
      */
     public void send(String fullName, String message) {
         if (fullName != null && !fullName.isBlank()) {
+            sessions.keySet().forEach(user -> LOGGER.info("{} est connecté", user));
             if (!sessions.containsKey(fullName)) {
                 try {
+                    LOGGER.info(fullName + ": n'est pas dispo");
+
                     userManagerService.saveMessageForUser(fullName, message);
                     LOGGER.info("Message crypté enregistré pour {}", fullName);
                 } catch (UserSaveException e) {

@@ -144,21 +144,23 @@ public class PostHandler implements CommandHandler {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
+            LOGGER.info("Subscribers du tag {}: {}", toTag, subs.stream().map(s -> s.getFullName() + "(local=" + s.isLocal() + ")").toList());
+
             if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) {
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) {
                         List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain, toTag);
-
-                        if (relevant.isEmpty()) {
-                            LOGGER.info("Livraison ignorée pour {} : aucune subscription pertinente", sub.getFullName());
-                            continue;
-                        }
-                        if (!relevant.getFirst().equals(toTag)) {
-                            LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst());
-                            continue;
-                        }
+                        LOGGER.info("relevant du tag {} pour {}",relevant, sub.getFullName());
 
                         if (sub.isLocal()) {
+                            if (relevant.isEmpty()) {
+                                LOGGER.info("Livraison ignorée pour {} : aucune subscription pertinente", sub.getFullName());
+                                continue;
+                            }
+                            if (!relevant.getFirst().equals(toTag)) {
+                                LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst());
+                                continue;
+                            }
                             LOGGER.info("Response from remote tag (internal user) : {}", msgToSend);
                             activeSession.send(sub.getFullName(), msgToSend);
                         } else {
@@ -216,7 +218,7 @@ public class PostHandler implements CommandHandler {
             // Règle 1 : abonné à l'expéditeur → jamais livrer car réalisé dans une autre méthode
             if (subscriptions.contains(fromUser)) {
                 LOGGER.info("Livraison autorisée pour {} : abonné à l'expéditeur {}", recipient, fromUser);
-                return List.of();
+                return List.of(fromUser);
             }
 
             // Règle 2 : tags du message auxquels le destinataire est abonné (ordre d'apparition)
