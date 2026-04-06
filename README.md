@@ -128,6 +128,51 @@ Speaker :
 - `Cacophony/Speaker/domains.json`
 
 
+## Exemples de configuration
+
+### Node
+
+```json
+{
+  "currentDomain": "node1.swilabus.xyz",
+  "saltSizeInBytes": 22,
+  "multicastAddress": "224.224.200.200",
+  "multicastPort": 13001,
+  "unicastPort": 5002,
+  "relayPort": 5003,
+  "networkInterface": "ethernet_32782",
+  "base64AES": "fpouKkNAWBor2NIVQLOyYTm90dYG9yCH/RMjHF1yaZA=",
+  "tls": true,
+  "certificateName": "certificat",
+  "certificatePassword": "mdp",
+  "id": 7
+}
+```
+
+### Speaker
+
+Config : 
+```json
+{
+  "multicastAddress": "224.224.200.200",
+  "multicastPort": 13001,
+  "networkInterface": "ethernet_32782",
+  "aesKey": "3zunznDN8TFdOXHRsl44CC8AdTktKpDWltduajMH28s="
+}
+```
+domains : 
+```json
+{
+  "domains": [
+    {
+      "domain": "node1.swilabus.xyz",
+      "base64AES": "fpouKkNAWBor2NIVQLOyYTm90dYG9yCH/RMjHF1yaZA=",
+      "messages": []
+    }
+    ]
+}
+```
+
 ## Journaux
 
 Les journaux sont produits notamment dans :
