@@ -53,9 +53,9 @@ public class PostHandler implements CommandHandler {
         if (!(task instanceof SpeakerTask speakerTask)) {
             throw new HandlerException("POST requires a speaker context");
         }
-        for (int i = 0; i < args.size(); i++) {
-            LOGGER.info("Args {}: {}", i, args.get(i));
-        }
+//        for (int i = 0; i < args.size(); i++) {
+//            LOGGER.debug("Args {}: {}", i, args.get(i));
+//        }
         String idAtDomain = args.get(0);
         String fromUserAtDomain = args.get(1);
 
@@ -74,9 +74,9 @@ public class PostHandler implements CommandHandler {
         if (matcherMSG.matches()) {
             String msgFrom = matcherMSG.group(1);
             String msgToSend = matcherMSG.group(0);
-            for (int i = 0; i < matcherMSG.groupCount(); i++) {
-                LOGGER.info("{} : {}", i, matcherMSG.group(i));
-            }
+//            for (int i = 0; i < matcherMSG.groupCount(); i++) {
+//                LOGGER.debug("{} : {}", i, matcherMSG.group(i));
+//            }
 
             String msgContent = matcherMSG.group(3);
 
@@ -94,13 +94,13 @@ public class PostHandler implements CommandHandler {
                 throw new HandlerException(e.getMessage());
             }
         } else {
-            LOGGER.info("ne matche pas msg");
+            LOGGER.info("Le message ne match pas");
         }
         var matcherSUB = Message.P_CMD_INNER_SUBSCRIBE.matcher(innerMessage);
         if (matcherSUB.matches()) {
-            for (int i = 0; i < matcherSUB.groupCount(); i++) {
-                LOGGER.info("Subcribe {}: {}", i, matcherSUB.group(i));
-            }
+//            for (int i = 0; i < matcherSUB.groupCount(); i++) {
+//                LOGGER.debug("Subcribe {}: {}", i, matcherSUB.group(i));
+//            }
             if (ids.contains(idAtDomain)) {
                 LOGGER.info("Msg subscribe déjà exécuté {}", idAtDomain);
                 return null;
@@ -117,7 +117,7 @@ public class PostHandler implements CommandHandler {
             }
 
         }else {
-            LOGGER.info("ne matche pas subscribe");
+            LOGGER.info("Pas de match subscribe");
         }
 
         return null;

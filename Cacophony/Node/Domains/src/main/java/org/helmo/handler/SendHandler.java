@@ -52,6 +52,8 @@ public class SendHandler implements CommandHandler {
         String message = args.getFirst();
         String username = session.getUserFullName();
 
+        LOGGER.info("Message reçu de {} : {}", username, message);
+
         try {
             SubscriberResultData result = messageService.getSubscribers(username, message, session.getDomain());
             // 2. Pour abonnés locaux appel via WestThread

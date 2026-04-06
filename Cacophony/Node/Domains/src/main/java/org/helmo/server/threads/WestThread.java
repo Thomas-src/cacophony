@@ -94,7 +94,7 @@ public class WestThread extends Thread implements IMessageSender {
                     activeSession.remove(session.getUserFullName());
                 }
             }
-            LOGGER.info("Fin de session pour {}", socket.getInetAddress());
+            LOGGER.info("Fin de session pour {} : {} ", socket.getInetAddress(), session.getUsername());
         }
     }
 
