@@ -1,4 +1,3 @@
-
 # Cacophony
 
 
@@ -58,6 +57,9 @@ Ouvrez deux terminaux depuis la racine du projet.
 ```powershell
 cd Cacophony
 .\gradlew :Node:run
+
+# Alternative si Gradle est installe globalement
+gradle :Node:run
 ```
 
 Configuration utilisee : `Cacophony/Node/config-node.json`
@@ -68,9 +70,27 @@ Configuration utilisee : `Cacophony/Node/config-node.json`
 ```powershell
 cd Cacophony
 .\gradlew :Speaker:run
+
+# Alternative si Gradle est installe globalement
+gradle :Speaker:run
 ```
 
 Configuration utilisee : `Cacophony/Speaker/config-speaker.json`
+
+
+## Captures d'écran de lancement
+
+### Configuration de lancement
+
+![Configuration de lancement](Cacophony/ressources/config-lancement.png)
+
+### Lancement avec `.\gradlew`
+
+![Lancement avec Gradle Wrapper](Cacophony/ressources/gradlew.png)
+
+### Lancement avec `gradle`
+
+![Lancement avec Gradle global](Cacophony/ressources/gradle.png)
 
 ## Exécuter les tests
 
