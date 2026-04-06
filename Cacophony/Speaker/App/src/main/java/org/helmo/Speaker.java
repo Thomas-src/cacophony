@@ -10,6 +10,10 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 
+/**
+ * Représente le composant Speaker qui écoute les messages multicast UDP et gère les commandes reçues.
+ */
+
 public class Speaker extends Thread {
     private static final Logger LOGGER = LogManager.getLogger();
     private final SpeakerConfig speakerConfig;
@@ -18,6 +22,13 @@ public class Speaker extends Thread {
     private boolean groupJoined = false;
     private final CommandMenu commandMenu;
 
+    /**
+     * Initialise une nouvelle instance de Speaker.
+     *
+     * @param speakerConfig Configuration contenant les adresses et ports.
+     * @param commandMenu Le menu de commandes pour traiter les messages reçus.
+     * @param connector Le connecteur TCP pour les communications sortantes.
+     */
     public Speaker(SpeakerConfig speakerConfig, CommandMenu commandMenu, SpeakerTcpConnector connector) {
         this.speakerConfig = speakerConfig;
         this.commandMenu = commandMenu;
@@ -25,9 +36,13 @@ public class Speaker extends Thread {
         setName("UDP:R");
     }
 
+    /**
+     * Démarre la boucle d'écoute UDP sur le groupe multicast spécifié.
+     */
+
     @Override
     public void run() {
-        LOGGER.info(listNetworkInterfaces());
+        //LOGGER.info(listNetworkInterfaces());
         try (MulticastSocket socket = new MulticastSocket(speakerConfig.multicastPort())) {
             InetAddress group = InetAddress.getByName(speakerConfig.multicastAdress());
             NetworkInterface networkInterface = getValidNetworkInterface(speakerConfig.networkInterface());

@@ -5,6 +5,8 @@ import org.helmo.exceptions.ConfigReaderException;
 
 /**
  * Interface définissant le dépôt pour la lecture de la configuration.
+ * <br>
+ * généré par ia
  */
 public interface IConfigReaderRepository {
     /**

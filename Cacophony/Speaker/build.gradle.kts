@@ -1,6 +1,5 @@
 plugins {
     id("java")
-    id("application")
 }
 
 group = "org.helmo"
@@ -21,8 +20,11 @@ dependencies {
 }
 
 
-application {
-    mainClass.set("org.helmo.Program")
+// `Speaker` est un module agrégateur; l'application exécutable est dans `Speaker:App`.
+tasks.register("run") {
+    group = "application"
+    description = "Alias vers :Speaker:App:run"
+    dependsOn(":Speaker:App:run")
 }
 
 tasks.named("run") {
