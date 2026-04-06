@@ -230,3 +230,77 @@ La configuration est gérée via des fichiers JSON :
 - [Gradle](https://gradle.org/) **v8.x** : build multi-modules
 
 > Les dépendances Java sont gérées dans les fichiers `build.gradle.kts` de chaque module.
+
+
+## Exemple d'utilisation de l'IA pour générer une classe
+
+Voici un exemple concret d'utilisation de l'IA pour générer une classe Java du projet :
+
+**Prompt envoyé à l'IA :**
+
+> Voici un repository avec un Node Java. Génère une classe utilitaire `ListNetworkInterface` qui affiche la liste des interfaces réseau disponibles sur la machine.
+
+**Réponse de l'IA :**
+
+```java
+package org.helmo.network;
+
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
+public class ListNetworkInterface {
+    public static void main(String[] args) {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface ni = interfaces.nextElement();
+                System.out.println("Interface : " + ni.getName() + " (" + ni.getDisplayName() + ")");
+            }
+        } catch (SocketException e) {
+            System.err.println("Erreur lors de la récupération des interfaces réseau : " + e.getMessage());
+        }
+    }
+}
+```
+
+---
+
+### Exemple IA : méthode utilitaire pour la gestion des chemins dans le dépôt
+
+**Prompt envoyé à l'IA :**
+
+> Génère une méthode Java qui retrouve le bon chemin d'un fichier Node/messages.json, que l'exécution se fasse depuis le dossier Node (Gradle run) ou depuis la racine du projet (IDE), avec fallback.
+
+**Réponse de l'IA :**
+
+```java
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class PathUtils {
+    /**
+     * Retourne le chemin du fichier Node/messages.json, compatible exécution depuis Node/ ou la racine.
+     */
+    public static Path resolveNodeFile(String fileName) {
+        // Cas 1 : exécution depuis le dossier Node (ex: Gradle run)
+        Path pathFromNodeDir = Paths.get(fileName);
+        if (Files.exists(pathFromNodeDir)) {
+            return pathFromNodeDir;
+        }
+
+        // Cas 2 : exécution depuis la racine du projet (ex: IDE)
+        Path pathFromRoot = Paths.get("Node", fileName);
+        if (Files.exists(pathFromRoot)) {
+            return pathFromRoot;
+        }
+
+        // Fallback : chemin relatif par défaut
+        return Paths.get("../Node/messages.json");
+    }
+}
+```
+
+Cette méthode permet de toujours retrouver le bon fichier de configuration, quel que soit le contexte d'exécution.
+
