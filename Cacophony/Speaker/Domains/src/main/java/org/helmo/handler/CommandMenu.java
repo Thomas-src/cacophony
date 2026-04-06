@@ -50,6 +50,10 @@ import java.util.regex.Pattern;
 
     /**
      * Parcourt les gestionnaires enregistrés pour trouver une correspondance.
+     *
+     * @param message Le message à tester par rapport aux motifs enregistrés.
+     * @return true si une commande correspondante a été trouvée et exécutée, sinon false.
+     * @throws HandlerException Si une erreur survient lors de l'exécution du gestionnaire de commande.
      */
     private boolean tryExecute(String message) throws HandlerException {
         for (var entry : handlers.entrySet()) {
@@ -67,6 +71,10 @@ import java.util.regex.Pattern;
 
     /**
      * Extrait les arguments des groupes de capture Regex et invoque le gestionnaire.
+     *
+     * @param handler Le gestionnaire de commande à invoquer.
+     * @param matcher L'objet Matcher contenant les groupes de capture.
+     * @throws HandlerException Si une erreur survient lors du traitement de la commande.
      */
     private void executeCommand(CommandHandler handler, Matcher matcher) throws HandlerException {
         List<String> args = new ArrayList<>();

@@ -41,11 +41,12 @@ public class SubscriberService {
     }
 
     /**
+     * Gère l'abonnement d'un utilisateur à un autre utilisateur.
      *
-     * @param targetfullName Nom d'utilisateur de l'abonnement
-     * @param domain         Domaine courant
-     * @param fullusername   Nom d'utilisateur de l'abonné
-     * @return
+     * @param targetfullName Nom complet de la cible de l'abonnement.
+     * @param domain         Domaine courant.
+     * @param fullusername   Nom complet de l'utilisateur qui s'abonne.
+     * @return Message de réponse (OK ou ERROR).
      */
     public String userSubscribe(String targetfullName, String domain, String fullusername) {
         LOGGER.info("SUBSCRIBE USER target : {}, to {}", targetfullName, fullusername);
@@ -72,6 +73,8 @@ public class SubscriberService {
      * Gère l'abonnement d'un utilisateur à un tag.
      *
      * @param fullTagName Nom du tag.
+     * @param domain      Domaine courant.
+     * @param fullUsername Nom complet de l'utilisateur.
      * @return Message de réponse (OK).
      * @throws HandlerException Si une erreur survient lors de la lecture ou sauvegarde.
      */
@@ -113,6 +116,14 @@ public class SubscriberService {
         return MessageBuilder.buildOk();
     }
 
+    /**
+     * Envoie une demande d'abonnement au service Speaker.
+     *
+     * @param session Session du client actuel.
+     * @param sub     Cible de l'abonnement (utilisateur ou tag).
+     * @param isUser  Vrai s'il s'agit d'un utilisateur, faux s'il s'agit d'un tag.
+     * @throws HandlerException Si une erreur survient lors du cryptage ou de la sauvegarde.
+     */
     public void sendToSpeaker(ClientSession session, String sub, boolean isUser) throws HandlerException {
         if (!isUser) {
             try {
@@ -144,6 +155,12 @@ public class SubscriberService {
         }
     }
 
+    /**
+     * Extrait le nom d'utilisateur d'un nom complet (user@domain).
+     *
+     * @param fullusername Nom complet.
+     * @return Le nom d'utilisateur extrait.
+     */
     private static String extractUsername(String fullusername) {
         var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullusername);
         if (matcher.matches()) {

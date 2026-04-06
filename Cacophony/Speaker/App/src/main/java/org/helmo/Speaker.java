@@ -57,27 +57,6 @@ public class Speaker extends Thread {
 
     }
 
-    /*
-    public void stop() {
-        isStarted = false;
-        if (socket != null && !socket.isClosed()) {
-            try {
-                if (groupJoined) {
-                    InetAddress group = InetAddress.getByName(multicastAddress);
-                    NetworkInterface networkInterface = NetworkInterface.getByName(networkInterfaceName);
-                    // : Gérer les exceptions spécifiques pour leaveGroup.
-                    socket.leaveGroup(new java.net.InetSocketAddress(group, multicastPort), networkInterface);
-                    groupJoined = false;
-                }
-                socket.close();
-            } catch (IOException e) {
-                // : Utiliser un logger au lieu de printStackTrace.
-                e.printStackTrace();
-            }
-        }
-    }
-*/
-
     /**
      * Obtient une interface réseau valide pour le multicast IPv4.
      * Tente d'utiliser l'interface spécifiée, sinon trouve automatiquement une interface appropriée.

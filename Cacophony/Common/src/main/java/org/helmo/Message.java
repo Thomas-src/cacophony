@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
  * de communication, ainsi que leurs patterns compilés pour la validation des messages.
  * Chaque commande est définie selon la grammaire du protocole et peut être validée
  * à l'aide des patterns compilés correspondants.
+ *
+ * Générée par ia puis modifiée
  */
 public class Message {
 

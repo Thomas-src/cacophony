@@ -10,6 +10,8 @@ import java.util.regex.Pattern;
  * différents formats de données tels que les noms d'utilisateur, les domaines, les messages,
  * et autres éléments de protocole. Elle inclut également des patterns précompilés pour
  * une utilisation optimisée lors de la validation.
+ *
+ * Générée par ia puis modifiée
  */
 public class Grammar {
 

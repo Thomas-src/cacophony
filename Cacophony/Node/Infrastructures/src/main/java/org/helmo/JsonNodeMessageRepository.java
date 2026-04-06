@@ -18,6 +18,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implémentation de {@link IMessageRepository} utilisant un fichier JSON pour le stockage local des messages.
+ * Cette classe gère la persistance des messages reçus par le nœud.
+ */
 public class JsonNodeMessageRepository implements IMessageRepository {
     private static final Path messagePath = findMessageFile();
     private static final Object TAGS_FILE_LOCK = new Object();
@@ -47,6 +51,12 @@ public class JsonNodeMessageRepository implements IMessageRepository {
     }
 
 
+    /**
+     * Sauvegarde un nouveau message dans le fichier JSON.
+     *
+     * @param message Le contenu du message à sauvegarder.
+     * @throws MessageSaveException Si une erreur survient lors de l'écriture ou de la lecture du fichier.
+     */
     @Override
     public void saveMessage(String message) throws MessageSaveException {
         synchronized (TAGS_FILE_LOCK) {
@@ -70,6 +80,12 @@ public class JsonNodeMessageRepository implements IMessageRepository {
         }
     }
 
+    /**
+     * Récupère tous les messages stockés et vide le fichier de stockage.
+     *
+     * @return Une liste contenant tous les messages précédemment stockés.
+     * @throws MessageReaderException Si le fichier est corrompu ou inaccessible.
+     */
     @Override
     public List<String> getAllAndDeleteMessages() throws MessageReaderException {
         synchronized (TAGS_FILE_LOCK) {
@@ -95,6 +111,11 @@ public class JsonNodeMessageRepository implements IMessageRepository {
         }
     }
 
+    /**
+     * S'assure que le fichier de stockage et ses répertoires parents existent.
+     * Initialise le fichier avec une structure JSON vide si nécessaire.
+     * @throws IOException Si la création du fichier ou des répertoires échoue.
+     */
     private void ensureStorage() throws IOException {
         if (Files.notExists(messagePath)) {
             Path parent = messagePath.getParent();

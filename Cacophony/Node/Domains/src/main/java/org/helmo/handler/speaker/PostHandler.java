@@ -130,6 +130,16 @@ public class PostHandler implements CommandHandler {
         activeSession.send(toUser, msgToSend);
     }
 
+    /**
+     * Gère la diffusion d'un message envoyé à un tag.
+     *
+     * @param fromUser      L'expéditeur du message.
+     * @param toTag         Le tag de destination.
+     * @param msgToSend     Le contenu du message.
+     * @param id            L'identifiant du message.
+     * @param msgTags       La liste des tags contenus dans le message.
+     * @param currentDomain Le domaine actuel.
+     */
     private void doTag(String fromUser, String toTag, String msgToSend, String id, List<ITag> msgTags, String currentDomain) throws HandlerException {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
@@ -179,6 +189,14 @@ public class PostHandler implements CommandHandler {
 
     /**
      * Résout les destinataires uniques selon l'ordre de priorité.
+     * Vérifie si la livraison via un tag spécifique est autorisée en fonction des abonnements du destinataire.
+     *
+     * @param recipient     Le destinataire potentiel.
+     * @param fromUser      L'expéditeur original.
+     * @param msgTags       Les tags présents dans le message.
+     * @param currentDomain Le domaine courant.
+     * @param toTag         Le tag via lequel on tente de livrer.
+     * @return Une liste contenant le tag prioritaire ou vide si la livraison doit être ignorée.
      */
     private List<String> getRelevantSubscriptions(String recipient, String fromUser, List<ITag> msgTags, String currentDomain, String toTag) {
         try {

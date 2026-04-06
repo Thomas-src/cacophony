@@ -26,6 +26,14 @@ public class SubscribeHandler implements CommandHandler {
         this.subscriberService = subscriberService;
     }
 
+    /**
+     * Traite la commande d'abonnement.
+     *
+     * @param args Les arguments de la commande (utilisateur ou tag).
+     * @param task Le contexte de la tâche, doit être une session client.
+     * @return La réponse suite à la tentative d'abonnement.
+     * @throws HandlerException Si la session est invalide ou les arguments insuffisants.
+     */
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof ClientSession session)) {

@@ -145,14 +145,4 @@ public class WestThread extends Thread implements IMessageSender {
         }
     }
 
-    /*
-    public void stopThread() {
-        try {
-            socket.close();
-        } catch (IOException e) {
-            LOGGER.error("Erreur fermeture socket", e);
-        }
-    }
-     */
-
 }

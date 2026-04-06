@@ -62,7 +62,14 @@ public class MessageService {
         return new SubscriberResultData(localSubscribers, remoteSubscribers, remoteTags);
     }
 
-
+    /**
+     * Ajoute les abonnés d'un utilisateur spécifique aux listes d'abonnés locaux et distants.
+     *
+     * @param username Le nom de l'utilisateur dont on récupère les abonnés.
+     * @param local    L'ensemble des abonnés locaux à compléter.
+     * @param remote   L'ensemble des abonnés distants à compléter.
+     * @throws UserReaderException Si une erreur survient lors de la lecture des utilisateurs.
+     */
     private void addUsers(String username, Set<String> local, Set<String> remote) throws UserReaderException {
         List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(username);
         if (subscribers != null) {
@@ -70,6 +77,15 @@ public class MessageService {
         }
     }
 
+    /**
+     * Traite une liste de tags pour identifier les abonnés locaux/distants et les tags distants.
+     *
+     * @param username   Le nom de l'utilisateur émetteur.
+     * @param tags       La liste des tags extraits du message.
+     * @param local      L'ensemble des abonnés locaux à compléter.
+     * @param remote     L'ensemble des abonnés distants à compléter.
+     * @param remoteTags L'ensemble des noms de tags distants à compléter.
+     */
     private void addTags(String username, List<ITag> tags, Set<String> local, Set<String> remote, Set<String> remoteTags)  {
         for (ITag tag : tags) {
             if (tag.isInternal()) {
@@ -85,6 +101,14 @@ public class MessageService {
         }
     }
 
+    /**
+     * Extrait les tags d'un message et détermine s'ils sont internes ou distants.
+     *
+     * @param message Le contenu du message à analyser.
+     * @param domain  Le domaine local pour la comparaison.
+     * @return Une liste d'objets {@link ITag} représentant les tags trouvés.
+     * @throws TagReaderException Si une erreur survient lors de la lecture des tags.
+     */
     public List<ITag> extractTags(String message, String domain) throws TagReaderException {
         List<ITag> tags = new ArrayList<>();
         Matcher m = Grammar.P_TAG_FULL.matcher(message);
@@ -104,6 +128,13 @@ public class MessageService {
         return tags;
     }
 
+    /**
+     * Répartit une liste d'abonnés dans les ensembles locaux ou distants selon leur type.
+     *
+     * @param subscribers La liste des abonnés à traiter.
+     * @param local       L'ensemble de destination pour les abonnés locaux.
+     * @param remote      L'ensemble de destination pour les abonnés distants.
+     */
     private void createUsers(List<IUserSubscriber> subscribers, Set<String> local, Set<String> remote) {
         for (IUserSubscriber sub : subscribers) {
             if (sub.isLocal()) {

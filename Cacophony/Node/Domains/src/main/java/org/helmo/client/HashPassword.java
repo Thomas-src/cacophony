@@ -26,6 +26,8 @@ public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcr
      * @param clientResponse Le hexadécimal que le client a envoyé en réponse au challenge.
      * @param challenge      Le challenge de 22 caractères envoyé au client.
      * @return vrai si la réponse du client est correcte, faux sinon.
+     *
+     * généré par ia
      */
     public boolean checkChallenge(String clientResponse, String challenge) {
         try {
@@ -53,6 +55,8 @@ public record HashPassword(String storedBcryptHash, int bcryptRound,  String bcr
 
     /**
      * Helper pour convertir un tableau de bytes en une chaîne hexadécimale.
+     *
+     * généré par ia
      */
     private String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);

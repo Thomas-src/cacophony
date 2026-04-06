@@ -20,17 +20,24 @@ public class SpeakerTcpConnector implements ConnectionListener {
     private final Map<String, NodeTCPConnection> connections = new ConcurrentHashMap<>();
     private final CryptoService cryptoService;
     private final CommandMenu tcpMenu;
+
+    /**
+     * Initialise un nouveau connecteur TCP pour le Speaker.
+     *
+     * @param cryptoService le service de cryptographie pour sécuriser les échanges
+     * @param tcpMenu le menu de commandes pour traiter les messages reçus
+     */
     public SpeakerTcpConnector(CryptoService cryptoService, CommandMenu tcpMenu) {
         this.cryptoService = cryptoService;
         this.tcpMenu = tcpMenu;
     }
 
     /**
-     * Ouvre une connexion TCP avec un Node.
+     * Ouvre une connexion TCP avec un Node distant.
      *
-     * @param domain
-     * @param ip
-     * @param port
+     * @param domain le domaine représentant le Node
+     * @param ip l'adresse IP du Node
+     * @param port le port d'écoute du Node
      */
     public void connectToNode(Domain domain, String ip, int port) {
         if (containsNode(domain)) {
@@ -47,6 +54,14 @@ public class SpeakerTcpConnector implements ConnectionListener {
         }
     }
 
+    /**
+     * Crée et démarre une nouvelle connexion TCP.
+     *
+     * @param domain le domaine associé
+     * @param socket le socket réseau ouvert
+     * @return la connexion NodeTCPConnection créée
+     * @throws IOException si une erreur d'entrée/sortie survient lors de la création
+     */
     private NodeTCPConnection create(Domain domain, Socket socket) throws IOException {
         NodeTCPConnection conn = new NodeTCPConnection(domain, socket, tcpMenu, cryptoService, this);
         conn.start();
@@ -56,8 +71,8 @@ public class SpeakerTcpConnector implements ConnectionListener {
     /**
      * Envoie un message à un Node via la connexion TCP.
      *
-     * @param domainName
-     * @param message
+     * @param domainName le nom du domaine destinataire
+     * @param message le contenu du message à envoyer
      */
     public void sendToNode(String domainName, String message) {
         NodeTCPConnection connection = connections.get(domainName);
@@ -69,12 +84,23 @@ public class SpeakerTcpConnector implements ConnectionListener {
         }
     }
 
+    /**
+     * Vérifie si un domaine est déjà connecté.
+     *
+     * @param domain le domaine à vérifier
+     * @return true si le domaine est présent dans les connexions actives, false sinon
+     */
     public boolean containsNode(Domain domain) {
         return connections.keySet()
                 .stream()
                 .anyMatch(d -> d.equals(domain.getName()));
     }
 
+    /**
+     * Gère la fermeture d'une connexion en la retirant de la liste des connexions actives.
+     *
+     * @param domainName le nom du domaine dont la connexion a été fermée
+     */
     @Override
     public void onConnectionClosed(String domainName) {
         connections.remove(domainName);
