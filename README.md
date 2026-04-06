@@ -82,7 +82,7 @@ Configuration utilisee : `Cacophony/Speaker/config-speaker.json`
 
 ### Configuration de lancement
 
-![Configuration de lancement](Cacophony/ressources/configLancement.png)
+![Configuration de lancement](Cacophony/ressources/ConfigLancement.png)
 
 ### Lancement avec `.\gradlew`
 
