@@ -24,7 +24,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("org.helmo.SpeakerApplication")
+    mainClass.set("org.helmo.Program")
 }
 
 tasks.named<JavaExec>("run") {

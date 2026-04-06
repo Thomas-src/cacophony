@@ -22,6 +22,11 @@ dependencies {
     implementation(project(":Common"))
 }
 
+application {
+    mainClass.set("org.helmo.Program")
+}
+
+
 
 tasks.test {
     useJUnitPlatform()

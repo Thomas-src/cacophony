@@ -22,7 +22,7 @@ dependencies {
 
 
 application {
-    mainClass.set("org.helmo.SpeakerApplication")
+    mainClass.set("org.helmo.Program")
 }
 
 tasks.test {

@@ -28,10 +28,9 @@ application {
     mainClass.set("org.helmo.Program")
 }
 
+tasks.named<JavaExec>("run") {
+    workingDir = file("../")
+}
 tasks.test {
     useJUnitPlatform()
-}
-
-tasks.named<JavaExec>("run") {
-    workingDir = file("../") // Répertoire contenant config-node.json
 }
