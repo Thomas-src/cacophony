@@ -1,6 +1,7 @@
 package org.helmo.services.handler;
 
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -13,5 +14,5 @@ import java.util.Set;
 public record SubscriberResultData(
         Set<String> localSubscribers,
         Set<String> remoteSubscribers,
-        Set<String> remoteTags
+        LinkedHashSet<String> remoteTags
 ) {}

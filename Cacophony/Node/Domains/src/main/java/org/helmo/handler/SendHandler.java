@@ -119,21 +119,27 @@ public class SendHandler implements CommandHandler {
 
     }
 
-    private void sendToRemoteTags(Set<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
-        LOGGER.info("NB de tags ditants : {} - {}", remoteTags.size(), remoteTags);
+    private void sendToRemoteTags(LinkedHashSet<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
+        LOGGER.info("NB de tags distants : {} - {}", remoteTags.size(), remoteTags);
+
+        if (remoteTags.isEmpty()) return;
+
         String domain = "@" + session.getDomain();
         String subMessage = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
-        for (String remoteTag : remoteTags) {
-            String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), remoteTag, subMessage);
-            try {
-                speakerService.sendCryptedMessage(messageToCrypt);
-            } catch (EncryptionException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new HandlerException("Impossible de crypter le message", e);
-            } catch (MessageSaveException e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new HandlerException("Impossible de sauvegarder le message", e);
-            }
+
+        // Seul le premier tag compte
+        String firstTag = remoteTags.getFirst();
+        LOGGER.info("Envoi uniquement vers le premier tag distant : {}", firstTag);
+
+        String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), firstTag, subMessage);
+        try {
+            speakerService.sendCryptedMessage(messageToCrypt);
+        } catch (EncryptionException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new HandlerException("Impossible de crypter le message", e);
+        } catch (MessageSaveException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new HandlerException("Impossible de sauvegarder le message", e);
         }
     }
 }

@@ -46,7 +46,7 @@ public class MessageService {
     public SubscriberResultData getSubscribers(String username, String message, String domain) throws UserReaderException, TagReaderException {
         Set<String> localSubscribers = new LinkedHashSet<>();
         Set<String> remoteSubscribers = new LinkedHashSet<>();
-        Set<String> remoteTags = new LinkedHashSet<>();
+        LinkedHashSet<String> remoteTags = new LinkedHashSet<>();
 
         // 1. abonnés user
         addUsers(username, localSubscribers, remoteSubscribers);

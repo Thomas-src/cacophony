@@ -195,26 +195,28 @@ public class PostHandler implements CommandHandler {
             LOGGER.info("Subscriptions for {}: {}", recipient, subscriptions);
             LOGGER.info("Looking for sender '{}' and tags {}", fromUser, msgTags.stream().map(ITag::getFullName).toList());
 
-            // Priorité 1 : abonné à l'expéditeur → ne pas livrer
+            // Règle 1 : abonné à l'expéditeur → jamais livrer car réalisé dans une autre méthode
             if (subscriptions.contains(fromUser)) {
-                LOGGER.info("Livraison ignorée pour {} : abonné à l'expéditeur {}", recipient, fromUser);
+                LOGGER.info("Livraison autorisée pour {} : abonné à l'expéditeur {}", recipient, fromUser);
                 return List.of();
             }
 
-            // Priorité 2 : tags du contenu du message auxquels le destinataire est abonné
-            List<String> relevant = new ArrayList<>();
+            // Règle 2 : tags du message auxquels le destinataire est abonné (ordre d'apparition)
+            List<String> matchedTags = new ArrayList<>();
             for (ITag tag : msgTags) {
                 String tagFullAddress = tag.getFullName();
                 if (subscriptions.contains(tagFullAddress)) {
-                    relevant.add(tagFullAddress);
+                    matchedTags.add(tagFullAddress);
                 }
             }
-            if (!relevant.isEmpty()) {
-                LOGGER.info("Relevant (message tags) for {}: {}", recipient, relevant);
-                return relevant.subList(0, 1); // seul le premier compte
+
+            if (!matchedTags.isEmpty()) {
+                // Livrer seulement si toTag est le premier tag matché
+                LOGGER.info("Tags matchés pour {}: {}", recipient, matchedTags);
+                return List.of(matchedTags.getFirst());
             }
 
-            // Priorité 3 : abonné au tag destination du POST
+            // Fallback : abonné au tag destination directement
             if (subscriptions.contains(toTag)) {
                 LOGGER.info("Relevant (destination tag) for {}: {}", recipient, toTag);
                 return List.of(toTag);
@@ -227,4 +229,5 @@ public class PostHandler implements CommandHandler {
             LOGGER.error("Error finding user {}: {}", recipient, e.getMessage());
         }
         return List.of();
-    }}
+    }
+}
