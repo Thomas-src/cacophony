@@ -293,10 +293,7 @@ public class JsonUserRepository implements IUserRepository {
                     }
                 }
 
-                String subName = transformToName(sub);
-                String subDomain = transformToDomain(sub);
                 boolean found = false;
-                boolean foundSub = false;
 
                 // 2. Trouver le bon utilisateur
                 for (int i = 0; i < existingUserDtos.size(); i++) {
@@ -307,8 +304,11 @@ public class JsonUserRepository implements IUserRepository {
                         List<String> subscriptions = user.subscriptionUsers() != null ? new ArrayList<>(user.subscriptionUsers()) : new ArrayList<>();
 
                         // 3. Ajouter le subscriber s'il n'existe pas déjà
-                        if (!subscriptions.contains(sub)) {
+                        if (subscriptions.contains(sub)) {
+                            LOGGER.info("Subscriber {} déjà présent pour l'utilisateur {}", sub, fullusername);
+                        } else {
                             subscriptions.add(sub);
+                            LOGGER.info("Subscriber {} ajouté pour l'utilisateur {}", sub, fullusername);
                         }
 
                         // 4. Recréer le UserDto (record = immuable)
