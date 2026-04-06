@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 
 /**
  * Implémentation de ITagRepository stockant les tags dans un fichier JSON local.
+ *
+ * Les méthodes createTag() et addUserToTag() ont été générées avec de l'ia
  */
 public class JsonTagRepository implements ITagRepository {
     private static final String FILE_NAME = "Node/tags.json";
@@ -90,7 +92,7 @@ public class JsonTagRepository implements ITagRepository {
 
     /**
      * Crée un nouveau tag et y abonne automatiquement son créateur.
-     *
+     * /!\ Utilisation de l'ia pour cette méthode
      * @param tag    Le nom du tag à créer.
      * @throws TagSaveException Si le tag ne peut pas être sauvegardé.
      */
@@ -144,6 +146,8 @@ public class JsonTagRepository implements ITagRepository {
 
     /**
      * Ajoute un utilisateur à la liste des abonnés d'un tag spécifique.
+     *
+     *      * /!\ Utilisation de l'ia pour cette méthode
      *
      * @param userFullName Le client à ajouter.
      * @param tag    Le nom du tag.

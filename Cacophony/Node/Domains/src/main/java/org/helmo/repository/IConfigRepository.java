@@ -17,5 +17,11 @@ public interface IConfigRepository {
      */
     Config getConfig() throws ConfigReaderException;
 
+    /**
+     * Sauvegarde l'identifiant actuel dans la configuration.
+     *
+     * @param currentId L'identifiant à sauvegarder.
+     * @throws ConfigSaveException Si une erreur survient lors de la sauvegarde de la configuration.
+     */
     void saveId(int currentId) throws ConfigSaveException;
 }

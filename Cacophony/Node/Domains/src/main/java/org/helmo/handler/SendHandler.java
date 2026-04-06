@@ -17,7 +17,7 @@ import org.helmo.task.TaskContext;
 import java.util.*;
 
 /**
- * Gère l'envoi de messages d'un utilisateur vers ses abonnés locaux et distants.
+ * Gère l'envoi de messages d'un utilisateur vers ses abonnés locaux, distants et les tags distants.
  */
 public class SendHandler implements CommandHandler {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -31,6 +31,8 @@ public class SendHandler implements CommandHandler {
      * Initialise le gestionnaire d'envoi.
      *
      * @param messageService Service pour récupérer les abonnés d'un message.
+     * @param speakerService Service pour l'envoi de messages cryptés vers l'extérieur.
+     * @param idGeneratorService Service de génération d'identifiants uniques pour les messages.
      * @param activeSession  Gestionnaire des sessions actives locales.
      */
     public SendHandler(MessageService messageService, ActiveSession activeSession, SpeakerService speakerService,IdGeneratorService idGeneratorService) {
@@ -41,6 +43,14 @@ public class SendHandler implements CommandHandler {
         this.speakerService = speakerService;
     }
 
+    /**
+     * Traite la commande d'envoi de message.
+     *
+     * @param args Liste d'arguments contenant le message à envoyer.
+     * @param task Contexte de la tâche (doit être une ClientSession).
+     * @return Réponse formatée indiquant le succès de l'opération.
+     * @throws HandlerException Si la session est invalide ou si une erreur survient lors de l'envoi.
+     */
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
         if (!(task instanceof ClientSession session)) {
@@ -97,6 +107,8 @@ public class SendHandler implements CommandHandler {
      * @param remoteSubscribers Liste des identifiants complets des abonnés distants.
      * @param session           Session de l'expéditeur.
      * @param message           Contenu du message.
+     * @param id                Identifiant unique du message.
+     * @throws HandlerException Si le cryptage ou la sauvegarde du message échoue.
      */
     private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message, String id) throws HandlerException {
         LOGGER.info("NB d'abonnés distants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
@@ -119,6 +131,15 @@ public class SendHandler implements CommandHandler {
 
     }
 
+    /**
+     * Envoie le message vers les tags distants via le EastThread.
+     *
+     * @param remoteTags Liste ordonnée des tags distants.
+     * @param session    Session de l'expéditeur.
+     * @param message    Contenu du message.
+     * @param id         Identifiant unique du message.
+     * @throws HandlerException Si le cryptage ou la sauvegarde du message échoue.
+     */
     private void sendToRemoteTags(LinkedHashSet<String> remoteTags, ClientSession session, String message, String id) throws HandlerException {
         LOGGER.info("NB de tags distants : {} - {}", remoteTags.size(), remoteTags);
 
@@ -143,4 +164,3 @@ public class SendHandler implements CommandHandler {
         }
     }
 }
-

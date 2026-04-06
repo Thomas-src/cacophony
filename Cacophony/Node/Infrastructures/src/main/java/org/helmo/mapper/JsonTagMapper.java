@@ -38,6 +38,10 @@ public class JsonTagMapper {
 
     /**
      * Crée un InternalTag à partir d'un TagDto en distinguant les utilisateurs natifs des distants.
+     *
+     * @param dto           Le DTO du tag à convertir.
+     * @param currentDomain Le domaine actuel du noeud pour déterminer le type d'utilisateur.
+     * @return Un objet InternalTag peuplé de ses abonnés.
      */
     private static InternalTag createTag(TagDto dto, String currentDomain) {
         List<IUserSubscriber> subscribers = new ArrayList<>();
@@ -67,6 +71,13 @@ public class JsonTagMapper {
         );
 
     }
+
+    /**
+     * Extrait le domaine à partir d'un nom d'utilisateur complet.
+     *
+     * @param fullUsername Le nom d'utilisateur complet (ex: user@domain).
+     * @return Le domaine extrait ou la chaîne originale si aucun domaine n'est trouvé.
+     */
     private static String transformToDomain(String fullUsername) {
         String domain = fullUsername;
 

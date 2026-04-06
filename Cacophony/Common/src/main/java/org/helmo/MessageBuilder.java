@@ -188,11 +188,4 @@ public class MessageBuilder {
         return "LEAVE" + NEWLINE;
     }
 
-//    // --- Exemple d'utilisation ---
-//    public static void main(String[] args) {
-//        System.out.print(buildWelcome("server.local", "aB3!eF8*xY9@qW2^mN5+vC"));
-//        System.out.print(buildOk());
-//        System.out.print(buildOk("User successfully registered"));
-//        System.out.print(buildMsg("alice@server.local", "Hello Bob!"));
-//    }
 }

@@ -20,11 +20,15 @@ public class Client {
     private final List<String> messages = new ArrayList<>();
     private final List<String> subscriptions = new ArrayList<>();
     /**
-     * Constructeur de l'objet User.
+     * Constructeur complet de l'objet Client.
      *
-     * @param name         Le nom du User.
-     * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
-     * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
+     * @param name          Le nom de l'utilisateur.
+     * @param hashPassword  L'objet contenant le mot de passe hashé.
+     * @param subscribers   La liste des abonnés à ce client.
+     * @param domain        Le domaine associé au client.
+     * @param internalTags  La liste des tags internes.
+     * @param messages      L'historique des messages.
+     * @param subscriptions La liste des abonnements du client.
      */
     public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags, List<String> messages, List<String> subscriptions) {
         this.name = name;
@@ -44,13 +48,24 @@ public class Client {
         }
     }
 
+    /**
+     * Constructeur simplifié de l'objet Client.
+     *
+     * @param name         Le nom de l'utilisateur.
+     * @param hashPassword L'objet contenant le mot de passe hashé.
+     * @param domain       Le domaine associé au client.
+     */
     public Client(String name, HashPassword hashPassword, String domain) {
         this.name = name;
         this.hashPassword = hashPassword;
         this.fullName = name + '@' + domain;
     }
 
-
+    /**
+     * Récupère la liste des messages du client.
+     *
+     * @return Une liste de chaînes de caractères représentant les messages.
+     */
     public List<String> getMessages() {
         return messages;
     }
@@ -59,11 +74,20 @@ public class Client {
         return name;
     }
 
+    /**
+     * Récupère le nom complet (nom@domaine) du client.
+     *
+     * @return Le nom complet.
+     */
     public String getFullName() {
         return fullName;
     }
 
-
+    /**
+     * Récupère l'objet de hachage du mot de passe.
+     *
+     * @return Le HashPassword du client.
+     */
     public HashPassword getHashPassword() {
         return hashPassword;
     }
@@ -92,14 +116,29 @@ public class Client {
         return name.hashCode();
     }
 
+    /**
+     * Récupère la liste des abonnés.
+     *
+     * @return Une liste d'objets IUserSubscriber.
+     */
     public List<IUserSubscriber> getSubscribers() {
         return subscribers;
     }
 
+    /**
+     * Récupère la liste des tags associés.
+     *
+     * @return Une liste d'objets ITag.
+     */
     public List<ITag> getTags() {
         return internalTags;
     }
 
+    /**
+     * Récupère la liste des abonnements du client.
+     *
+     * @return Une liste de chaînes de caractères représentant les abonnements.
+     */
     public List<String> getSubscribtions() {
         return  subscriptions;
     }

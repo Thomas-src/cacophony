@@ -98,6 +98,13 @@ public class JsonUserMapper {
         );
     }
 
+    /**
+     * Crée une copie d'un UserDto avec une nouvelle liste d'abonnés.
+     *
+     * @param user           Le DTO utilisateur original.
+     * @param newSubscribers La nouvelle liste des noms d'abonnés.
+     * @return Un nouveau UserDto mis à jour.
+     */
     public UserDto copyWithSubscribers(UserDto user, List<String> newSubscribers) {
         return new UserDto(
                 user.login(),
@@ -110,6 +117,14 @@ public class JsonUserMapper {
                 user.subscriptionUsers()
         );
     }
+
+    /**
+     * Crée une copie d'un UserDto avec une nouvelle liste d'abonnements.
+     *
+     * @param user             Le DTO utilisateur original.
+     * @param newSubscriptions La nouvelle liste des noms d'abonnements.
+     * @return Un nouveau UserDto mis à jour.
+     */
     public UserDto copyWithSubscriptions(UserDto user, List<String> newSubscriptions) {
         return new UserDto(
                 user.login(),
@@ -123,6 +138,13 @@ public class JsonUserMapper {
         );
     }
 
+    /**
+     * Crée une copie d'un UserDto avec une nouvelle liste de tags.
+     *
+     * @param user Le DTO utilisateur original.
+     * @param tags La nouvelle liste de tags.
+     * @return Un nouveau UserDto mis à jour.
+     */
     public UserDto copyWithTags(UserDto user, List<String> tags) {
         return new UserDto(
                 user.login(),

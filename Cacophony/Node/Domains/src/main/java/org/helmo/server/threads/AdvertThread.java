@@ -14,6 +14,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Thread responsable de la diffusion périodique (multicast) de l'existence du domaine sur le réseau.
+ * Permet aux autres nœuds de découvrir ce serveur automatiquement.
+ */
 public class AdvertThread extends Thread {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -21,6 +25,11 @@ public class AdvertThread extends Thread {
     private final Config config;
 
     private final String advert;
+
+    /**
+     * Initialise le thread d'annonce avec la configuration spécifiée.
+     * @param config La configuration contenant les paramètres réseau et du domaine.
+     */
     public AdvertThread(Config config) {
         this.config = config;
         this.advert =  MessageBuilder.buildAdvert(config.relayPort(), config.currentDomain());
@@ -113,6 +122,13 @@ public class AdvertThread extends Thread {
         }
     }
 
+    /**
+     * Résout l'interface réseau à utiliser pour le multicast.
+     * @param configuredName Le nom de l'interface configurée (peut être null).
+     * @return L'interface réseau sélectionnée ou null si aucune n'est trouvée.
+     * @throws SocketException En cas d'erreur lors de l'accès aux interfaces réseau.
+     *
+     */
     private static NetworkInterface resolveNetworkInterface(String configuredName) throws SocketException {
         NetworkInterface configured = null;
         if (configuredName != null && !configuredName.isBlank()) {
@@ -140,6 +156,13 @@ public class AdvertThread extends Thread {
         return null;
     }
 
+    /**
+     * Vérifie si une interface réseau est inutilisable pour le multicast.
+     * @param ni L'interface à tester.
+     * @return true si l'interface ne peut pas être utilisée.
+     * @throws SocketException En cas d'erreur d'accès aux propriétés de l'interface.
+     *
+     */
     private static boolean isNotUsableForMulticast(NetworkInterface ni) throws SocketException {
         if (ni == null) return true;
         if (!ni.isUp()) return true;
@@ -148,6 +171,13 @@ public class AdvertThread extends Thread {
         return ni.isVirtual();
     }
 
+    /**
+     * Sélectionne une adresse IPv4 valide sur une interface donnée.
+     * @param ni L'interface réseau.
+     * @return Une InetAddress IPv4, ou null si aucune n'est trouvée.
+     *
+     *
+     */
     private static InetAddress pickIpv4Address(NetworkInterface ni) {
         if (ni == null) return null;
         InetAddress best = null;

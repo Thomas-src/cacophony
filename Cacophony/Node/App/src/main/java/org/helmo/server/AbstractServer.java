@@ -80,24 +80,7 @@ public abstract class AbstractServer implements IServer {
         }
     }
 
-/* Méthode pour arrêter le message
-    public void stopServer() {
-        if (isStarted) {
-            stop = true;
-            this.westThreads.forEach(WestThread::stopThread);
-            LOGGER.info("Serveur fermé");
-            try {
-                if (listener != null) {
-                    listener.close();
-                }
-            } catch (IOException ex) {
-                LOGGER.error("Une erreur s'est produite lors de l'arrêt du serveur", ex);
-            }
-            isStarted = false;
-        }
 
-    }
-*/
 
     /**
      * Crée un socket serveur sur le port spécifié.
