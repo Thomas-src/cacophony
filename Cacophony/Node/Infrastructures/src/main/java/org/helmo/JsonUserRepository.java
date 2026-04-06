@@ -190,16 +190,17 @@ public class JsonUserRepository implements IUserRepository {
     /**
      * Ajoute un abonné à la liste des abonnés d'un utilisateur spécifique.
      *
-     * @param client L'utilisateur qui reçoit un nouvel abonné.
+     * @param fullusername L'utilisateur qui reçoit un nouvel abonné.
      * @param sub    L'identifiant de l'abonné à ajouter.
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
     @Override
-    public void addSubscribersFor(Client client, String sub, String domain) throws UserSaveException {
+    public void addSubscribersFor(String fullusername, String sub) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
 
+                String name = transformToName(fullusername);
                 List<UserDto> existingUserDtos;
 
                 // 1. Lire le fichier
@@ -222,7 +223,7 @@ public class JsonUserRepository implements IUserRepository {
                     UserDto user = existingUserDtos.get(i);
 
                     // On compare avec le login (attention: client.getName() sans domaine)
-                    if (user.login().equals(client.getName())) {
+                    if (user.login().equals(name)) {
                         List<String> subscribers = user.subscribers() != null ? new ArrayList<>(user.subscribers()) : new ArrayList<>();
 
                         // 3. Ajouter le subscriber s'il n'existe pas déjà
@@ -236,12 +237,12 @@ public class JsonUserRepository implements IUserRepository {
                         existingUserDtos.set(i, updatedUser);
                         found = true;
                     }
-                    else if (user.login().equals(subName) && subDomain.equals(domain)) {
+                    else if (user.login().equals(subName) && subDomain.equals(config.currentDomain())) {
                         List<String> subscriptions = user.subscriptionUsers() != null ? new ArrayList<>(user.subscriptionUsers()) : new ArrayList<>();
 
                         // 3. Ajouter le subscriber s'il n'existe pas déjà
                         if (!subscriptions.contains(sub)) {
-                            subscriptions.add(client.getFullName());
+                            subscriptions.add(fullusername);
                         }
                         foundSub = true;
                         // 4. Recréer le UserDto (record = immuable)
@@ -255,8 +256,72 @@ public class JsonUserRepository implements IUserRepository {
                 }
 
                 if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", client.getName());
-                    return;
+                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", fullusername);
+                }
+                if (!foundSub) {
+                    LOGGER.error("Utilisateur sub non trouvé pour ajout subscription : {}", sub);
+                }
+
+                // 5. Réécrire le fichier
+                UsersDto updatedDto = new UsersDto(existingUserDtos);
+                String json = gson.toJson(updatedDto);
+                Files.writeString(configPath, json);
+
+            } catch (IOException | JsonParseException ex) {
+                LOGGER.error("Erreur lors de l'ajout d'un subscriber", ex);
+                throw new UserSaveException("Erreur lors de l'ajout d'un subscriber");
+            }
+        }
+    }
+
+    @Override
+    public void addUserSubscriptionFor(String fullusername, String sub) throws UserSaveException {
+        synchronized (USERS_FILE_LOCK) {
+            try {
+                ensureStorage();
+
+                String name = transformToName(fullusername);
+                List<UserDto> existingUserDtos;
+
+                // 1. Lire le fichier
+                try (BufferedReader reader = Files.newBufferedReader(configPath)) {
+                    UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
+                    if (existingDto == null || existingDto.users() == null) {
+                        existingUserDtos = new ArrayList<>();
+                    } else {
+                        existingUserDtos = new ArrayList<>(existingDto.users());
+                    }
+                }
+
+                String subName = transformToName(sub);
+                String subDomain = transformToDomain(sub);
+                boolean found = false;
+                boolean foundSub = false;
+
+                // 2. Trouver le bon utilisateur
+                for (int i = 0; i < existingUserDtos.size(); i++) {
+                    UserDto user = existingUserDtos.get(i);
+
+                    // On compare avec le login (attention: client.getName() sans domaine)
+                    if (user.login().equals(name)) {
+                        List<String> subscriptions = user.subscriptionUsers() != null ? new ArrayList<>(user.subscriptionUsers()) : new ArrayList<>();
+
+                        // 3. Ajouter le subscriber s'il n'existe pas déjà
+                        if (!subscriptions.contains(sub)) {
+                            subscriptions.add(sub);
+                        }
+
+                        // 4. Recréer le UserDto (record = immuable)
+                        UserDto updatedUser = JsonUserMapper.copyWithSubscriptions(user, subscriptions);
+
+                        existingUserDtos.set(i, updatedUser);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    LOGGER.error("Utilisateur non trouvé pour ajout subscription : {}", fullusername);
                 }
 
                 // 5. Réécrire le fichier
@@ -343,12 +408,18 @@ public class JsonUserRepository implements IUserRepository {
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
     @Override
-    public void addTagFor(String username, String tag) throws UserSaveException {
+    public void addTagFor(String fullusername, String tag) throws UserSaveException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
+                String username = transformToName(fullusername);
 
                 List<UserDto> existingUserDtos;
+
+                if(!transformToDomain(fullusername).equals(config.currentDomain())) {
+                    LOGGER.info("Pas d'enregistrement dans user {} car distant", fullusername);
+                    return;
+                }
 
                 // 1. Lire le fichier
                 try (BufferedReader reader = Files.newBufferedReader(configPath)) {
@@ -368,9 +439,7 @@ public class JsonUserRepository implements IUserRepository {
 
                     if (user.login().equals(username)) {
 
-                        List<String> tags = user.userTags() != null
-                                ? new ArrayList<>(user.userTags())
-                                : new ArrayList<>();
+                        List<String> tags = user.userTags() != null ? new ArrayList<>(user.userTags()) : new ArrayList<>();
 
                         // 3. Ajouter le tag s'il n'existe pas déjà
                         if (!tags.contains(tag)) {
@@ -378,16 +447,7 @@ public class JsonUserRepository implements IUserRepository {
                         }
 
                         // 4. Recréer le UserDto (record immuable)
-                        UserDto updatedUser = new UserDto(
-                                user.login(),
-                                user.bcryptHash(),
-                                user.bcryptRound(),
-                                user.bcryptSalt(),
-                                user.subscribers(),
-                                tags,
-                                user.messages(),
-                                user.subscriptionUsers()
-                        );
+                        UserDto updatedUser = JsonUserMapper.copyWithTags(user, tags);
 
                         existingUserDtos.set(i, updatedUser);
                         found = true;

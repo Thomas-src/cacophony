@@ -17,7 +17,9 @@ public interface IUserRepository {
      * @throws UserReaderException Si une erreur survient lors de la lecture des données.
      */
     List<Client> getUsers() throws UserReaderException;
+
     void saveMessageForUser(String name, String message) throws UserSaveException;
+
     /**
      * Enregistre ou met à jour un utilisateur dans le dépôt.
      *
@@ -29,20 +31,22 @@ public interface IUserRepository {
     /**
      * Ajoute un abonné à un utilisateur spécifique.
      *
-     * @param name L'utilisateur qui reçoit un nouvel abonné.
-     * @param sub  Le nom de l'abonné à ajouter.
+     * @param fullusername L'utilisateur qui reçoit un nouvel abonné.
+     * @param sub          Le nom de l'abonné à ajouter.
      * @throws UserSaveException Si l'opération de mise à jour échoue.
      */
-    void addSubscribersFor(Client name, String sub, String domain) throws UserSaveException;
+    void addSubscribersFor(String fullusername, String sub) throws UserSaveException;
 
     List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException;
+
+    void addUserSubscriptionFor(String fullusername, String sub) throws UserSaveException;
 
     /**
      * Ajoute un tag (centre d'intérêt) à un utilisateur.
      *
      * @param username L'utilisateur concerné.
-     * @param tag    Le tag à ajouter.
+     * @param tag      Le tag à ajouter.
      * @throws UserSaveException Si l'opération de mise à jour échoue.
      */
-    void addTagFor(String username, String tag)throws UserSaveException;
+    void addTagFor(String username, String tag) throws UserSaveException;
 }

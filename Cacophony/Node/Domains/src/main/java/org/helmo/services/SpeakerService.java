@@ -1,13 +1,9 @@
 package org.helmo.services;
 
-import org.helmo.Exception.MessageReaderException;
 import org.helmo.Exception.MessageSaveException;
 import org.helmo.crypto.CryptoProvider;
 import org.helmo.crypto.exceptions.EncryptionException;
-import org.helmo.repository.IMessageRepository;
 import org.helmo.server.threads.EastThread;
-
-import java.util.List;
 
 
 public class SpeakerService {

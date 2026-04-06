@@ -2,7 +2,6 @@ package org.helmo.task;
 
 import org.helmo.client.Client;
 import org.helmo.server.ActiveSession;
-import org.helmo.server.threads.WestThread;
 
 /**
  * Représente une session client active au sein du système.
@@ -10,12 +9,12 @@ import org.helmo.server.threads.WestThread;
 public class ClientSession implements TaskContext {
 
     private final String randomString;
-    private Client client;
-    private IMessageSender thread;
+    private  Client client;
+    private final IMessageSender thread;
     private boolean authenticated = false;
     private boolean shouldKeepOpen = true;
     private String domain;
-    private ActiveSession activeSession;
+    private final ActiveSession activeSession;
 
     /**
      * Définit le client associé à cette session.
@@ -92,7 +91,7 @@ public class ClientSession implements TaskContext {
      * @return Le nom complet.
      */
     public String getUserFullName() {
-        return client.getFullName() != null ? client.getFullName() : "";
+        return client != null ? client.getFullName() : "";
     }
 
     /**

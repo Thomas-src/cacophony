@@ -7,7 +7,6 @@ import org.helmo.Exception.UserSaveException;
 import org.helmo.Grammar;
 import org.helmo.client.Client;
 import org.helmo.crypto.CryptoProvider;
-import org.helmo.crypto.CryptoService;
 import org.helmo.crypto.exceptions.DecryptionException;
 import org.helmo.crypto.exceptions.EncryptionException;
 import org.helmo.repository.IUserRepository;
@@ -24,6 +23,7 @@ public class UserManagerService {
 
     private final IUserRepository userRepository;
     private final CryptoProvider cryptoService;
+
     /**
      * Initialise le service avec le dépôt d'utilisateurs spécifié.
      *
@@ -62,22 +62,22 @@ public class UserManagerService {
     /**
      * Ajoute un abonné pour un utilisateur donné.
      *
-     * @param client   Le client qui s'abonne.
-     * @param username Le nom de l'utilisateur auquel s'abonner.
+     * @param fullusername Le client qui s'abonne.
+     * @param username     Le nom de l'utilisateur auquel s'abonner.
      * @throws UserSaveException Si une erreur survient lors de l'enregistrement.
      */
-    public void addSubscribersFor(Client client, String username, String domain) throws UserSaveException {
-        userRepository.addSubscribersFor(client, username, domain);
+    public void addSubscribersFor(String fullusername, String username) throws UserSaveException {
+        userRepository.addSubscribersFor(fullusername, username);
     }
 
     /**
      * Ajoute un tag pour un client spécifique.
      *
-     * @param tag    Le tag à ajouter.
+     * @param fulltagname Le tag à ajouter.
      * @throws UserSaveException Si une erreur survient lors de l'enregistrement.
      */
-    public void addTagFor(String username, String tag) throws UserSaveException {
-        userRepository.addTagFor(username, tag);
+    public void addTagFor(String fullUsername, String fulltagname) throws UserSaveException {
+        userRepository.addTagFor(fullUsername, fulltagname);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserManagerService {
     public Client findUser(String username) throws UserReaderException {
         List<Client> users = getUsers();
         for (Client user : users) {
-            if (user.getName().equals(username)) {
+            if (user.getName().equals(transformToName(username))) {
                 return user;
             }
         }
@@ -109,12 +109,16 @@ public class UserManagerService {
 
     public void saveMessageForUser(String username, String message) throws UserSaveException {
         try {
-           String cryptedMessage = cryptoService.encrypt(message);
-           String name = transformToName(username);
-           userRepository.saveMessageForUser(name, cryptedMessage);
-       } catch (EncryptionException e) {
-           throw new UserSaveException("Impossible de crypter le message");
-       }
+            String cryptedMessage = cryptoService.encrypt(message);
+            String name = transformToName(username);
+            userRepository.saveMessageForUser(name, cryptedMessage);
+        } catch (EncryptionException e) {
+            throw new UserSaveException("Impossible de crypter le message");
+        }
+    }
+
+    public void addSubscribtionFor(String fullusername, String username) throws UserSaveException {
+        userRepository.addUserSubscriptionFor(fullusername, username);
     }
 
     public List<String> getUserMessagesAndEmpty(String username) throws UserReaderException, UserSaveException {

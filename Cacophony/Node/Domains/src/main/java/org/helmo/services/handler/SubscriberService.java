@@ -1,4 +1,4 @@
-package org.helmo.services;
+package org.helmo.services.handler;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -7,14 +7,14 @@ import org.helmo.Grammar;
 import org.helmo.MessageBuilder;
 import org.helmo.client.Client;
 import org.helmo.crypto.exceptions.EncryptionException;
-import org.helmo.subscriber.IUserSubscriber;
-import org.helmo.tag.ITag;
+import org.helmo.services.IdGeneratorService;
+import org.helmo.services.SpeakerService;
+import org.helmo.services.TagManagerService;
+import org.helmo.services.UserManagerService;
 import org.helmo.tag.InternalTag;
-import org.helmo.tag.TagReference;
 import org.helmo.task.ClientSession;
 
 import java.util.*;
-import java.util.regex.Matcher;
 
 /**
  * Service responsable de la gestion et de la récupération des abonnés pour un utilisateur ou un message donné.
@@ -43,8 +43,8 @@ public class SubscriberService {
     /**
      *
      * @param targetfullName Nom d'utilisateur de l'abonnement
-     * @param domain Domaine courant
-     * @param fullusername Nom d'utilisateur de l'abonné
+     * @param domain         Domaine courant
+     * @param fullusername   Nom d'utilisateur de l'abonné
      * @return
      */
     public String userSubscribe(String targetfullName, String domain, String fullusername) {
@@ -59,7 +59,7 @@ public class SubscriberService {
             for (Client client : clients) {
                 if (targetName.equals(client.getName())) {
                     LOGGER.info("========{} est désormais abonné========", fullusername);
-                    userManagerService.addSubscribersFor(client, fullusername, domain);
+                    userManagerService.addSubscribersFor(client.getFullName(), fullusername);
                 }
             }
         } catch (UserReaderException | UserSaveException e) {
@@ -71,13 +71,12 @@ public class SubscriberService {
     /**
      * Gère l'abonnement d'un utilisateur à un tag.
      *
-     * @param tagName Nom du tag.
+     * @param fullTagName Nom du tag.
      * @return Message de réponse (OK).
      * @throws HandlerException Si une erreur survient lors de la lecture ou sauvegarde.
      */
-    public String tagSubscribe(String tagName, String domain, String fullUsername) throws HandlerException {
+    public String tagSubscribe(String fullTagName, String domain, String fullUsername) throws HandlerException {
         List<InternalTag> tags;
-        String fullTagName = tagName + "@" + domain;
         try {
             tags = tagManagerService.getTags();
         } catch (TagReaderException e) {
@@ -85,12 +84,12 @@ public class SubscriberService {
         }
         String username = extractUsername(fullUsername);
         for (InternalTag tag : tags) {
-            if (tag.getFullName().equals(tagName)) {
+            if (tag.getFullName().equals(fullTagName)) {
                 // Si le tag existe deja
                 // Ajouter le tags pour le client dans la session
                 try {
-                    tagManagerService.addUserToTag(fullUsername, tagName);
-                    userManagerService.addTagFor(username, fullTagName);
+                    tagManagerService.addUserToTag(fullUsername, fullTagName);
+                    userManagerService.addTagFor(fullUsername, fullTagName);
                     LOGGER.info(username + " s'est abonné à : " + fullTagName);
                 } catch (UserSaveException | TagSaveException e) {
                     throw new HandlerException("Impossible d'ajouter le tags :'" + fullTagName + "'  pour l'utilisateur : " + username);
@@ -103,8 +102,8 @@ public class SubscriberService {
 
         // Creer le tag
         try {
-            tagManagerService.createTag(fullUsername, tagName);
-            userManagerService.addTagFor(username, fullTagName);
+            tagManagerService.createTag(fullUsername, fullTagName);
+            userManagerService.addTagFor(fullUsername, fullTagName);
             LOGGER.info(fullUsername + " a créé le tag : " + fullTagName);
         } catch (TagSaveException | UserSaveException e) {
             throw new HandlerException("Impossible de creer le tag :" + fullTagName);
@@ -113,12 +112,26 @@ public class SubscriberService {
         return MessageBuilder.buildOk();
     }
 
-    public void sendToSpeaker(ClientSession session, List<String> args) throws HandlerException {
-        String toSubscribe = args.get(0) != null ? args.getFirst() + "@" + args.get(1) : args.get(2) + "@" + args.getLast();
+    public void sendToSpeaker(ClientSession session, String sub, boolean isUser) throws HandlerException {
+        if (!isUser) {
+            try {
+                LOGGER.info("subscribe vers le speaker enregistré :" + sub);
+                userManagerService.addTagFor(session.getUserFullName(), sub);
+            } catch (UserSaveException e) {
+                LOGGER.error("Erreur lors de la lecture du tag " + e.getMessage());
+            }
+        } else {
+            try {
+                LOGGER.info("subscribe vers le speaker enregistré :" + sub);
+                userManagerService.addSubscribtionFor(session.getUserFullName(), sub);
+            } catch (UserSaveException e) {
+                LOGGER.error("Erreur lors de l'enregistrement du tag " + e.getMessage());
+            }
+        }
 
-        String subMessage = MessageBuilder.buildInnerSubscribe(toSubscribe);
-        String  id= idGeneratorService.getNextCountString();
-        String messageToCrypt = MessageBuilder.buildPost(id + "@"+ session.getDomain(), session.getUserFullName(), toSubscribe, subMessage);
+        String subMessage = MessageBuilder.buildInnerSubscribe(sub);
+        String id = idGeneratorService.getNextCountString();
+        String messageToCrypt = MessageBuilder.buildPost(id + "@" + session.getDomain(), session.getUserFullName(), sub, subMessage);
         try {
             speakerService.sendCryptedMessage(messageToCrypt);
         } catch (EncryptionException e) {
@@ -129,6 +142,7 @@ public class SubscriberService {
             throw new HandlerException("Impossible de sauvegarder le message", e);
         }
     }
+
     private static String extractUsername(String fullusername) {
         var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullusername);
         if (matcher.matches()) {
