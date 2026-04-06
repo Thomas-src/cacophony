@@ -1,15 +1,1 @@
-{
-  "users": [
-    {
-      "login": "thomas",
-      "bcryptHash": "w1Pw8HwH3iZWXNC2VOU4h6g2e/mnCf6q",
-      "bcryptRound": 14,
-      "bcryptSalt": "633oIT5hoSMKauo7Tdn5cO",
-      "subscribers": [
-      ],
-      "userTags": [
-      ],
-      "messages": []
-    }
-    ]
-}
+{"users":[{"login":"thomas","bcryptHash":"w1Pw8HwH3iZWXNC2VOU4h6g2e/mnCf6q","bcryptRound":14,"bcryptSalt":"633oIT5hoSMKauo7Tdn5cO","subscribers":[],"userTags":[],"messages":[]},{"login":"rootroot","bcryptHash":"vRxSWXoCAGHZxEyxlQb45bJZesxQoj6","bcryptRound":14,"bcryptSalt":"cXvg3el8BeNgN2dRDJ/Bze","subscribers":[],"userTags":[],"messages":[],"subscriptionUsers":[]},{"login":"qsdqsdqsd","bcryptHash":"WUupQGpChMueUIZzG2vNOoxRtKgzI3m","bcryptRound":14,"bcryptSalt":"Qao4BMYVqXTCkVuceFmxI.","subscribers":[],"userTags":[],"messages":[],"subscriptionUsers":[]}]}

@@ -40,12 +40,14 @@ public class OnboardingHandler implements CommandHandler {
      */
     @Override
     public String handle(List<String> args, TaskContext task) throws HandlerException {
-        LOGGER.info("New Onboarding request received with args: {}", args);
+        LOGGER.info("Nouvelle tentative d'inscription");
         if (!(task instanceof ClientSession session)) {
             throw new HandlerException("Task onboarding nécessite une session client");
         }
 
         if (session.isAuthenticated()) {
+            LOGGER.error("Utilisateur déjà authentifié");
+            LOGGER.error("Inscription terminée (Echec)");
             return MessageBuilder.buildError();
         }
         String name = args.getFirst();
@@ -66,12 +68,17 @@ public class OnboardingHandler implements CommandHandler {
             if(session.setAuthenticate()) {
                 session.send(MessageBuilder.buildOk());
                 session.sendPastMessages();
+                LOGGER.info("L'utilisateur {} a bien été inscrit", session.getUserFullName());
+                LOGGER.info("Inscirption terminée (Réussite)");
                 return null;
             } else {
+                LOGGER.error("Inscription terminée (Echec)");
                 return MessageBuilder.buildError();
             }
         } catch (UserReaderException | UserSaveException e) {
-            throw new HandlerException("Impossible d'inscrire l'utilisateur" + name + "\nException enfant => " + e);
+            LOGGER.error("Erreur lors de la lecture ou ecriture des/de l'utilisateur(s), ", e);
+            LOGGER.error("Inscription terminée (Echec)");
+            throw new HandlerException("Impossible d'inscrire l'utilisateur " + name + "\nException enfant => " + e);
         }
 
     }
