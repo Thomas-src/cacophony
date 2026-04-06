@@ -36,6 +36,7 @@ public class PostHandler implements CommandHandler {
     private final SpeakerService speakerService;
     private final UserManagerService userManagerService;
     private final MessageService messageService;
+
     /**
      * Initialise le gestionnaire de POST.
      *
@@ -56,9 +57,6 @@ public class PostHandler implements CommandHandler {
         if (!(task instanceof SpeakerTask speakerTask)) {
             throw new HandlerException("POST requires a speaker context");
         }
-        for (int i = 0; i < args.size(); i++) {
-            LOGGER.info("Args {}: {}", i, args.get(i));
-        }
         String idAtDomain = args.get(0);
         String fromUserAtDomain = args.get(1);
 
@@ -77,15 +75,16 @@ public class PostHandler implements CommandHandler {
         if (matcherMSG.matches()) {
             String msgFrom = matcherMSG.group(1);
             String msgToSend = matcherMSG.group(0);
+
+            String msgContent = matcherMSG.group(matcherMSG.groupCount());
             for (int i = 0; i < matcherMSG.groupCount(); i++) {
-                LOGGER.info("{} : {}", i, matcherMSG.group(i));
+                LOGGER.info("{} - {} ", i, msgContent);
             }
-
-            String msgContent = matcherMSG.group(3);
-
             try {
                 List<ITag> msgTags = messageService.extractTags(msgContent, task.getDomain());
-
+                for (ITag tag : msgTags) {
+                    LOGGER.info(tag.toString());
+                }
                 if (toUser != null && !toUser.isBlank()) {
                     doMsg(msgFrom, toFullAddress, msgToSend);
                 } else if (toTag != null && !toTag.isBlank()) {
@@ -119,7 +118,7 @@ public class PostHandler implements CommandHandler {
                 subscriberService.tagSubscribe(tagName, task.getDomain(), fromUserAtDomain);
             }
 
-        }else {
+        } else {
             LOGGER.info("ne matche pas subscribe");
         }
 
@@ -131,20 +130,21 @@ public class PostHandler implements CommandHandler {
         activeSession.send(toUser, msgToSend);
     }
 
-    private void doTag(String fromUser, String toTag, String msgToSend, String id, List<ITag> msgTags, String currentDomain ) throws HandlerException {
+    private void doTag(String fromUser, String toTag, String msgToSend, String id, List<ITag> msgTags, String currentDomain) throws HandlerException {
         LOGGER.info("doTag: {} → {}", fromUser, toTag);
         try {
             List<IUserSubscriber> subs = tagManagerService.getTagSubscriber(toTag);
-            if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) { // 1. vérifier si l'envoyeur est abonné au tag
+            if (subs.stream().anyMatch(sub -> sub.getFullName().equals(fromUser))) {
                 for (IUserSubscriber sub : subs) {
-                    if (!sub.getFullName().equals(fromUser)) { // supprimer pour ne pas envoyer à l'expéditeur
-                        List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain);
-                        if (relevant.isEmpty() ) {
-                            LOGGER.info("Livraison ignorée pour {} : vide: {}", sub.getFullName(), toTag);
+                    if (!sub.getFullName().equals(fromUser)) {
+                        List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain, toTag);
+
+                        if (relevant.isEmpty()) {
+                            LOGGER.info("Livraison ignorée pour {} : aucune subscription pertinente", sub.getFullName());
                             continue;
                         }
                         if (!relevant.getFirst().equals(toTag)) {
-                            LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst().toString());
+                            LOGGER.info("Livraison ignorée pour {} : priorité supérieure à {} existe: {}", sub.getFullName(), toTag, relevant.getFirst());
                             continue;
                         }
 
@@ -156,7 +156,7 @@ public class PostHandler implements CommandHandler {
                             String messageToCrypt = MessageBuilder.buildPost(id, fromUser, sub.getFullName(), msgToSend);
                             LOGGER.info("Resend post to speaker {}", messageToCrypt);
                             try {
-                                speakerService.sendCryptedMessage(messageToCrypt); // envoyer vers le speaker
+                                speakerService.sendCryptedMessage(messageToCrypt);
                             } catch (MessageSaveException e) {
                                 LOGGER.error("Error sending Crypted Message", e);
                                 throw new HandlerException("Impossible de sauvegarder le message");
@@ -177,35 +177,54 @@ public class PostHandler implements CommandHandler {
         }
     }
 
-
     /**
      * Résout les destinataires uniques selon l'ordre de priorité.
      */
-    private List<String> getRelevantSubscriptions(String recipient, String fromUser, List<ITag> msgTags, String currentdomain) {
-
+    private List<String> getRelevantSubscriptions(String recipient, String fromUser, List<ITag> msgTags, String currentDomain, String toTag) {
         try {
+            LOGGER.info("Looking up recipient: '{}'", recipient);
             Client user = userManagerService.findUser(recipient);
-            List<String> subscriptions = user.getSubscribtions(); // retourne des String
-            subscriptions.add(user.getTags().stream().toString());
-            List<String> relevant = new ArrayList<>();
-
-            // 1. Est-il abonné à l'expéditeur ?
-            if (subscriptions.contains(fromUser)) {
-                relevant.add(fromUser);
+            if (user == null) {
+                LOGGER.warn("User not found: {}", recipient);
+                return List.of();
             }
 
-            // 2. Est-il abonné à un des tags du message ?
+            List<String> subscriptions = new ArrayList<>(user.getSubscribtions());
+            user.getTags().stream().map(ITag::getFullName).forEach(subscriptions::add);
+
+            LOGGER.info("Subscriptions for {}: {}", recipient, subscriptions);
+            LOGGER.info("Looking for sender '{}' and tags {}", fromUser, msgTags.stream().map(ITag::getFullName).toList());
+
+            // Priorité 1 : abonné à l'expéditeur → ne pas livrer
+            if (subscriptions.contains(fromUser)) {
+                LOGGER.info("Livraison ignorée pour {} : abonné à l'expéditeur {}", recipient, fromUser);
+                return List.of();
+            }
+
+            // Priorité 2 : tags du contenu du message auxquels le destinataire est abonné
+            List<String> relevant = new ArrayList<>();
             for (ITag tag : msgTags) {
-                String tagFullAddress = tag.getFullName(); // adapter selon ce que getSubscriptions retourne
+                String tagFullAddress = tag.getFullName();
                 if (subscriptions.contains(tagFullAddress)) {
                     relevant.add(tagFullAddress);
                 }
             }
+            if (!relevant.isEmpty()) {
+                LOGGER.info("Relevant (message tags) for {}: {}", recipient, relevant);
+                return relevant.subList(0, 1); // seul le premier compte
+            }
 
-            return relevant;
+            // Priorité 3 : abonné au tag destination du POST
+            if (subscriptions.contains(toTag)) {
+                LOGGER.info("Relevant (destination tag) for {}: {}", recipient, toTag);
+                return List.of(toTag);
+            }
+
+            LOGGER.info("Aucune subscription pertinente pour {}", recipient);
+            return List.of();
+
         } catch (UserReaderException e) {
-            LOGGER.error(e);
+            LOGGER.error("Error finding user {}: {}", recipient, e.getMessage());
         }
         return List.of();
-    }
-}
+    }}

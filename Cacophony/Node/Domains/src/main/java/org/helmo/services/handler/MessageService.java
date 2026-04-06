@@ -92,6 +92,7 @@ public class MessageService {
         while (m.find()) {
             String tagName = m.group(1);
             String tagDomain = m.group(2);
+            LOGGER.debug("tagName={}, tagDomain={}", tagName, tagDomain);
 
             if (tagDomain == null || tagDomain.equalsIgnoreCase(domain)) {
                 List<IUserSubscriber> subscribers = tagManagerService.getTagSubscriber(tagName);

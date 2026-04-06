@@ -38,7 +38,7 @@ public class Program {
             CryptoService cryptoService = new CryptoService(config.base64AES());
 
             IUserRepository userRepository = new JsonUserRepository(config);
-            UserManagerService userManagerService = new UserManagerService(userRepository, cryptoService);
+            UserManagerService userManagerService = new UserManagerService(userRepository, cryptoService, config);
             ActiveSession activeSession = new ActiveSession(userManagerService);
             ITagRepository tagRepository = new JsonTagRepository(config, userManagerService);
             TagManagerService tagManagerService = new TagManagerService(tagRepository);

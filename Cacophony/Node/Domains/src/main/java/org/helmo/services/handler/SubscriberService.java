@@ -104,6 +104,7 @@ public class SubscriberService {
         try {
             tagManagerService.createTag(fullUsername, fullTagName);
             userManagerService.addTagFor(fullUsername, fullTagName);
+            tagManagerService.addUserToTag(fullUsername, fullTagName);
             LOGGER.info(fullUsername + " a créé le tag : " + fullTagName);
         } catch (TagSaveException | UserSaveException e) {
             throw new HandlerException("Impossible de creer le tag :" + fullTagName);

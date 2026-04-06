@@ -2,6 +2,7 @@ package org.helmo.services;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.helmo.Config;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.Grammar;
@@ -23,15 +24,16 @@ public class UserManagerService {
 
     private final IUserRepository userRepository;
     private final CryptoProvider cryptoService;
-
+    private final Config config;
     /**
      * Initialise le service avec le dépôt d'utilisateurs spécifié.
      *
      * @param userRepository Le dépôt d'utilisateurs à utiliser.
      */
-    public UserManagerService(IUserRepository userRepository, CryptoProvider cryptoService) {
+    public UserManagerService(IUserRepository userRepository, CryptoProvider cryptoService, Config config) {
         this.userRepository = userRepository;
         this.cryptoService = cryptoService;
+        this.config = config;
     }
 
     /**
@@ -88,10 +90,12 @@ public class UserManagerService {
      * @throws UserReaderException Si une erreur survient lors de la lecture.
      */
     public Client findUser(String username) throws UserReaderException {
-        List<Client> users = getUsers();
-        for (Client user : users) {
-            if (user.getName().equals(transformToName(username))) {
-                return user;
+        if(transformToDomain(username).equals(config.currentDomain()))  {
+            List<Client> users = getUsers();
+            for (Client user : users) {
+                if (user.getName().equals(transformToName(username))) {
+                    return user;
+                }
             }
         }
         return null;
@@ -150,6 +154,16 @@ public class UserManagerService {
         var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullUsername);
         if (matcher.matches()) {
             name = matcher.group(1);
+        }
+        return name;
+    }
+
+    private String transformToDomain(String fullUsername) {
+        String name = fullUsername;
+
+        var matcher = Grammar.P_USER_AT_DOMAIN.matcher(fullUsername);
+        if (matcher.matches()) {
+            name = matcher.group(2);
         }
         return name;
     }
