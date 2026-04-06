@@ -29,6 +29,7 @@ public class AdvertThread extends Thread {
     /**
      * Initialise le thread d'annonce avec la configuration spécifiée.
      * @param config La configuration contenant les paramètres réseau et du domaine.
+     * Généré par ia
      */
     public AdvertThread(Config config) {
         this.config = config;
@@ -106,7 +107,7 @@ public class AdvertThread extends Thread {
 
                 };
 
-                scheduler.scheduleAtFixedRate(task, 15, 30, TimeUnit.SECONDS);
+                scheduler.scheduleAtFixedRate(task, 30, 30, TimeUnit.SECONDS);
 
                 CountDownLatch latch = new CountDownLatch(1);
                 try {
