@@ -25,6 +25,8 @@ import java.util.Objects;
 /**
  * Implémentation de {@link IUserRepository} utilisant un fichier JSON pour le stockage persistant.
  * Cette classe gère la lecture et l'écriture des utilisateurs et de leurs métadonnées (abonnés, tags).
+ *
+ * La méthode addTagFor() à été générée avec IA
  */
 public class JsonUserRepository implements IUserRepository {
     private final Config config;
@@ -404,7 +406,7 @@ public class JsonUserRepository implements IUserRepository {
 
     /**
      * Ajoute un tag à la liste des tags d'un utilisateur spécifique.
-     *
+     * /!\ Utilisation de l'ia pour cette méthodes
      * @param tag Le tag à ajouter.
      * @throws UserSaveException Si l'utilisateur n'est pas trouvé ou en cas d'erreur E/S.
      */
