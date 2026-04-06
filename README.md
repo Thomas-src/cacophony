@@ -217,3 +217,16 @@ La configuration est gérée via des fichiers JSON :
 
 - `Cacophony/Node/config-node.json`
 - `Cacophony/Speaker/config-speaker.json`
+
+## Librairies utilisées
+
+### Java
+
+- [Gson](https://github.com/google/gson) **v2.13.2** : sérialisation/désérialisation JSON
+- [SLF4J](http://www.slf4j.org/) + [Logback](https://logback.qos.ch/) **(v1.7.x / v1.2.x)** : logging (utilisé dans certains modules)
+- [Log4j](https://logging.apache.org/log4j/2.x/) **v2.23.1** : logging (utilisé dans certains modules)
+- [JUnit Jupiter](https://junit.org/junit5/) **v5.10.0** : tests unitaires
+- [JUnit Platform Launcher](https://junit.org/junit5/docs/current/user-guide/#launcher-api) **v1.10.0** : exécution des tests
+- [Gradle](https://gradle.org/) **v8.x** : build multi-modules
+
+> Les dépendances Java sont gérées dans les fichiers `build.gradle.kts` de chaque module.
