@@ -5,8 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.helmo.Exception.TagReaderException;
 import org.helmo.Exception.UserReaderException;
 import org.helmo.Grammar;
-import org.helmo.repository.IMessageRepository;
-import org.helmo.server.threads.EastThread;
 import org.helmo.subscriber.IUserSubscriber;
 import org.helmo.tag.ITag;
 import org.helmo.tag.InternalTag;
@@ -62,6 +60,7 @@ public class MessageService {
         return new SubscriberResultData(localSubscribers, remoteSubscribers, remoteTags);
     }
 
+
     private void addUsers(String username, Set<String> local, Set<String> remote) throws UserReaderException {
         List<IUserSubscriber> subscribers = userManagerService.getUserSubscribers(username);
         if (subscribers != null) {
@@ -69,7 +68,7 @@ public class MessageService {
         }
     }
 
-    private void addTags(String username, List<ITag> tags, Set<String> local, Set<String> remote, Set<String> remoteTags) throws TagReaderException {
+    private void addTags(String username, List<ITag> tags, Set<String> local, Set<String> remote, Set<String> remoteTags)  {
         for (ITag tag : tags) {
             if (tag.isInternal()) {
                 InternalTag internal = (InternalTag) tag;
@@ -84,7 +83,7 @@ public class MessageService {
         }
     }
 
-    private List<ITag> extractTags(String message, String domain) throws TagReaderException {
+    public List<ITag> extractTags(String message, String domain) throws TagReaderException {
         List<ITag> tags = new ArrayList<>();
         Matcher m = Grammar.P_TAG_FULL.matcher(message);
 
@@ -111,5 +110,4 @@ public class MessageService {
             }
         }
     }
-
 }

@@ -13,8 +13,6 @@ import org.helmo.Exception.UserReaderException;
 import org.helmo.Exception.UserSaveException;
 import org.helmo.services.UserManagerService;
 import org.helmo.task.TaskContext;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +59,7 @@ public class OnboardingHandler implements CommandHandler {
             if(userManagerService.findUser(name) != null) {
                 return MessageBuilder.buildError();
             }
-            Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), new ArrayList<>(), session.getDomain(), new ArrayList<>(), new ArrayList<>());
+            Client client = new Client(name, new HashPassword(hashpassword, rotation, salt), session.getDomain());
             userManagerService.saveUser(client);
             session.setClient(client);
 

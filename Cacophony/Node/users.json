@@ -1,1 +1,15 @@
-{"users":[{"login":"thomas","bcryptHash":"Ug0vkBLUjrAdPDEGUJzHK/Uoy3OvQ.W","bcryptRound":14,"bcryptSalt":"5u4pcJaHAh3kpiIA8tvo4O","subscribers":["clement@node2.swilabus.xyz","thomas@node2.swilabus.xyz"],"userTags":["#monTag1@node1.swilabus.xyz","#test1@node2.swilabus.xyz"],"messages":[]},{"login":"tomsy","bcryptHash":"M/UcWL6rLsadfj7HPVCI4OXBxImqcKm","bcryptRound":14,"bcryptSalt":"8uPghkd3g45aFzyOSjqmru","subscribers":["thomas@node1.swilabus.xyz","louis@node2.swilabus.xyz"],"userTags":["#monTag1@node1.swilabus.xyz","#monTag2@node1.swilabus.xyz"],"messages":[]},{"login":"rootroot","bcryptHash":"sGKzLpYG.6G6nQtTa5IZbO3f1uhQxau","bcryptRound":14,"bcryptSalt":"2qMETAG98f4yMsShPItipe","subscribers":["thomas@node2.swilabus.xyz","tomsy@node1.swilabus.xyz"],"userTags":["#monTag1@node1.swilabus.xyz","#voiture@node1.swilabus.xyz","#maison@node1.swilabus.xyz"],"messages":[]},{"login":"TiboRR","bcryptHash":"zfJ.tS69BnbTVuhafcXuID5rl/zNrnm","bcryptRound":14,"bcryptSalt":"NugT6ky9OSqlzKx6QR4nY.","subscribers":[],"userTags":["#voiture@node1.swilabus.xyz","#maison@node1.swilabus.xyz"]},{"login":"clement","bcryptHash":"5l7/TdXkp7DSfP.M1ulA5w.WHdtvVXi","bcryptRound":14,"bcryptSalt":"8I4qOA2LsEJ2mHNDhE7ka.","subscribers":[],"userTags":["#test1@node2.swilabus.xyz"],"messages":["hMBTyFvRSs/PESuC7RahaitSpy07ioeI9xtkiZQQeUbMW87KqhQQ93R2+zZGoHEQA5RuZmxj+bGTvE5HLqQTQM5L6reQYgMg","dhfrslui883qiOWa5v9ZwYGjbV35X1oBUXqoaY4qemy5Mt42twxHDEgMnQAFn2yPGdz73ZU9EmHWnV2IlVs\u003d","gllc5NhrJdbTI1V0iVCyd8tVdDLXAL3A/GmotrcZ4LENpFf6qxY/jH+WOD9BIDf7QuT2LxVYC4gcrBkaXc9+CDT6QgCr2FE5hybUNIeoxe3+REs\u003d"]},{"login":"louis","bcryptHash":"5l7/TdXkp7DSfP.M1ulA5w.WHdtvVXi","bcryptRound":14,"bcryptSalt":"8I4qOA2LsEJ2mHNDhE7ka.","subscribers":[],"userTags":[],"messages":["zqmocUXgvs0mVQb03Ie/hA8f5SsJNXmG1hzc8LctCbZYw8MGRb1y0Bsefj5F7yUj+uI7WhCa+PLz/olTxg\u003d\u003d","+gBMRO3+uvX7FSNk+ivV/jGR7s6YTPybbt+ipYZo8WIDp9Pop7+tHOYIEoOm2U3GUIgJh11t+E6/y8ohEw2NMolt6cm2fp564RDbDFtqS6YXSMyM/Z/TjCYkpw\u003d\u003d","44g2lWD13uw5FAicsnQHu4+MFjyFMP5hd6TyHzh34IcyGIZxRO+wGQ5620NrWhrQ7B2Jmiu9owyBpQwwyLW6C5f/ViILwTsQ"]},{"login":"clement2","bcryptHash":"zJdzPuIOohupoUvJp4E6c1wNXCznWVy","bcryptRound":14,"bcryptSalt":"u1aREaAgZy53YB9jPT2tIO","subscribers":[],"userTags":[],"messages":[]},{"login":"samuel","bcryptHash":"hV2MpK5VgEGvX9Yky4.LSYpFmgSsxne","bcryptRound":14,"bcryptSalt":"YX4932xRCatxGa/A35Eyx.","subscribers":[],"userTags":[],"messages":[]}]}
+{
+  "users": [
+    {
+      "login": "thomas",
+      "bcryptHash": "w1Pw8HwH3iZWXNC2VOU4h6g2e/mnCf6q",
+      "bcryptRound": 14,
+      "bcryptSalt": "633oIT5hoSMKauo7Tdn5cO",
+      "subscribers": [
+      ],
+      "userTags": [
+      ],
+      "messages": []
+    }
+    ]
+}

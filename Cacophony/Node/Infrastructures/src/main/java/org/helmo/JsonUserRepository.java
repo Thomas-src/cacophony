@@ -113,7 +113,8 @@ public class JsonUserRepository implements IUserRepository {
                                 user.bcryptSalt(),
                                 user.subscribers(),
                                 user.userTags(),
-                                messages
+                                messages,
+                                user.subscriptionUsers()
                         );
 
                         existingUserDtos.set(i, updatedUser);
@@ -204,57 +205,70 @@ public class JsonUserRepository implements IUserRepository {
                 // 1. Lire le fichier
                 try (BufferedReader reader = Files.newBufferedReader(configPath)) {
                     UsersDto existingDto = gson.fromJson(reader, UsersDto.class);
-                    if (existingDto == null || existingDto.users() == null) {
-                        existingUserDtos = new ArrayList<>();
-                    } else {
-                        existingUserDtos = new ArrayList<>(existingDto.users());
-                    }
+                    existingUserDtos = (existingDto != null && existingDto.users() != null) ? new ArrayList<>(existingDto.users()) : new ArrayList<>();
                 }
 
-                boolean found = false;
+                UserDto subscriberUser = null;
+                UserDto subscribedToUser = null;
 
-                // 2. Trouver le bon utilisateur
-                for (int i = 0; i < existingUserDtos.size(); i++) {
-                    UserDto user = existingUserDtos.get(i);
-
-                    // On compare avec le login (attention: client.getName() sans domaine)
+                // 2. Trouver les deux utilisateurs
+                for (UserDto user : existingUserDtos) {
+                    LOGGER.info("Checking {} for: {}", user.login(), client.getName());
                     if (user.login().equals(client.getName())) {
-
-                        List<String> subscribers = user.subscribers() != null
-                                ? new ArrayList<>(user.subscribers())
-                                : new ArrayList<>();
-
-                        // 3. Ajouter le subscriber s'il n'existe pas déjà
-                        if (!subscribers.contains(sub)) {
-                            subscribers.add(sub);
-                        }
-
-                        // 4. Recréer le UserDto (record = immuable)
-                        UserDto updatedUser = new UserDto(
-                                user.login(),
-                                user.bcryptHash(),
-                                user.bcryptRound(),
-                                user.bcryptSalt(),
-                                subscribers,
-                                user.userTags(),
-                                user.messages()
-                        );
-
-                        existingUserDtos.set(i, updatedUser);
-                        found = true;
-                        break;
+                        subscriberUser = user;
+                    }
+                    if (user.login().equals(sub)) {
+                        subscribedToUser = user;
                     }
                 }
 
-                if (!found) {
-                    LOGGER.error("Utilisateur non trouvé pour ajout subscriber : {}", client.getName());
+                if (subscriberUser == null) {
+                    LOGGER.error("Utilisateur abonné non trouvé : {}", client.getName());
                     return;
                 }
 
+
+                // 3. Mettre à jour la liste des subscriptions de Thomas
+                List<String> subscriptions = subscriberUser.subscriptionUsers() != null ? new ArrayList<>(subscriberUser.subscriptionUsers()) : new ArrayList<>();
+                if (!subscriptions.contains(sub)) {
+                    subscriptions.add(sub);
+                }
+
+                UserDto updatedSubscriber = new UserDto(
+                        subscriberUser.login(),
+                        subscriberUser.bcryptHash(),
+                        subscriberUser.bcryptRound(),
+                        subscriberUser.bcryptSalt(),
+                        subscriberUser.subscribers(),
+                        subscriberUser.userTags(),
+                        subscriberUser.messages(),
+                        subscriptions
+                );
+
+                existingUserDtos.set(existingUserDtos.indexOf(subscriberUser), updatedSubscriber);
+                if (subscribedToUser != null) {
+                    // 4. Mettre à jour la liste des subscribers de Tom
+                    List<String> subscribers = subscribedToUser.subscribers() != null ? new ArrayList<>(subscribedToUser.subscribers()) : new ArrayList<>();
+                    if (!subscribers.contains(client.getName())) {
+                        subscribers.add(client.getName());
+                    }
+
+                    UserDto updatedSubscribedTo = new UserDto(
+                            subscribedToUser.login(),
+                            subscribedToUser.bcryptHash(),
+                            subscribedToUser.bcryptRound(),
+                            subscribedToUser.bcryptSalt(),
+                            subscribers,
+                            subscribedToUser.userTags(),
+                            subscribedToUser.messages(),
+                            subscribedToUser.subscriptionUsers()
+                    );
+
+                    existingUserDtos.set(existingUserDtos.indexOf(subscribedToUser), updatedSubscribedTo);
+                }
                 // 5. Réécrire le fichier
                 UsersDto updatedDto = new UsersDto(existingUserDtos);
-                String json = gson.toJson(updatedDto);
-                Files.writeString(configPath, json);
+                Files.writeString(configPath, gson.toJson(updatedDto));
 
             } catch (IOException | JsonParseException ex) {
                 LOGGER.error("Erreur lors de l'ajout d'un subscriber", ex);
@@ -264,7 +278,7 @@ public class JsonUserRepository implements IUserRepository {
     }
 
     @Override
-    public List<String> getUserMessagesAndEmpty(String name) throws UserReaderException, UserSaveException {
+    public List<String> getUserMessagesAndEmpty(String name) throws UserReaderException {
         synchronized (USERS_FILE_LOCK) {
             try {
                 ensureStorage();
@@ -299,7 +313,8 @@ public class JsonUserRepository implements IUserRepository {
                                 user.bcryptSalt(),
                                 user.subscribers(),
                                 user.userTags(),
-                                new ArrayList<>()
+                                new ArrayList<>(),
+                                user.subscriptionUsers()
                         );
                         existingUserDtos.set(i, updatedUser);
                         found = true;
@@ -375,7 +390,8 @@ public class JsonUserRepository implements IUserRepository {
                                 user.bcryptSalt(),
                                 user.subscribers(),
                                 tags,
-                                user.messages()
+                                user.messages(),
+                                user.subscriptionUsers()
                         );
 
                         existingUserDtos.set(i, updatedUser);

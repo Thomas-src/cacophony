@@ -63,7 +63,7 @@ public class Program {
             menu.add(Message.P_CMD_SUBSCRIBE, subscribeHandler);
             menu.add(Message.P_CMD_RESPONSE, new ResponseChallengeHandler());
             menu.add(Message.P_CMD_LEAVE, new LeaveHandler());
-            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, tagManagerService, speakerService));
+            menu.add(Message.P_POST, new PostHandler(activeSession, subscriberService, tagManagerService, speakerService,userManagerService, messageService));
 
             taskthread.start();
             eastThread.start();

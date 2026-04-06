@@ -23,7 +23,6 @@ import org.helmo.tag.TagReference;
  * Mapper responsable de la conversion entre les objets DTO JSON et les entités Client.
  */
 public class JsonUserMapper {
-    private static final List<String> EMPTY_TAGS = List.of();
     private static final Logger LOGGER = LogManager.getLogger();
     /**
      * Mappe une liste d'utilisateurs DTO vers une liste d'objets Client.
@@ -75,7 +74,8 @@ public class JsonUserMapper {
                     subscribers,
                     currentDomain,
                     userInternalTags,
-                    dto.messages()
+                    dto.messages(),
+                    dto.subscriptionUsers()
             );
         }
         return null;
@@ -97,7 +97,8 @@ public class JsonUserMapper {
                 hashPassword.bcryptSalt(),
                 client.getSubscribers().stream().map(IUserSubscriber::getFullName).toList(),
                 client.getTags().stream().map(ITag::getFullName).toList(),
-                client.getMessages()
+                client.getMessages(),
+                client.getSubscribtions()
         );
     }
 }

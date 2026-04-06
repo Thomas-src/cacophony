@@ -19,5 +19,6 @@ public record UserDto(
         String bcryptSalt,
         List<String> subscribers,
         List<String> userTags,
-        List<String> messages
+        List<String> messages,
+        List<String> subscriptionUsers
 ) {}

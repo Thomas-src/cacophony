@@ -5,7 +5,6 @@ import org.helmo.tag.ITag;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -19,6 +18,7 @@ public class Client {
     private final List<ITag> internalTags = new ArrayList<>();
     private final String fullName;
     private final List<String> messages = new ArrayList<>();
+    private final List<String> subscriptions = new ArrayList<>();
     /**
      * Constructeur de l'objet User.
      *
@@ -26,7 +26,7 @@ public class Client {
      * @param hashPassword Le HashPassword du User, qui contient le mot de passe hashé et les méthodes pour vérifier les challenges.
      * @param subscribers  Une liste de Subscribers qui sont déjà abonnés à ce User. Si null, la liste des subscribers sera initialisée comme vide.
      */
-    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags, List<String> messages) {
+    public Client(String name, HashPassword hashPassword, List<IUserSubscriber> subscribers, String domain, List<ITag> internalTags, List<String> messages, List<String> subscriptions) {
         this.name = name;
         this.hashPassword = hashPassword;
         this.fullName = name + '@' + domain;
@@ -39,8 +39,17 @@ public class Client {
         if (messages != null) {
             this.messages.addAll(messages);
         }
-
+        if (subscriptions != null) {
+            this.messages.addAll(subscriptions);
+        }
     }
+
+    public Client(String name, HashPassword hashPassword, String domain) {
+        this.name = name;
+        this.hashPassword = hashPassword;
+        this.fullName = name + '@' + domain;
+    }
+
 
     public List<String> getMessages() {
         return messages;
@@ -70,10 +79,6 @@ public class Client {
         return hashPassword.checkChallenge(clientResponse, challenge);
     }
 
-    public void subscribe(IUserSubscriber subscriber) {
-        Objects.requireNonNull(subscriber);
-        subscribers.add(subscriber);
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -95,6 +100,9 @@ public class Client {
         return internalTags;
     }
 
+    public List<String> getSubscribtions() {
+        return  subscriptions;
+    }
 
     /**
      * Généré par ia
