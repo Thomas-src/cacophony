@@ -44,11 +44,10 @@ public class SubscriberService {
      * Gère l'abonnement d'un utilisateur à un autre utilisateur.
      *
      * @param targetfullName Nom complet de la cible de l'abonnement.
-     * @param domain         Domaine courant.
      * @param fullusername   Nom complet de l'utilisateur qui s'abonne.
      * @return Message de réponse (OK ou ERROR).
      */
-    public String userSubscribe(String targetfullName, String domain, String fullusername) {
+    public String userSubscribe(String targetfullName, String fullusername) {
         List<Client> clients;
         String targetName = extractUsername(targetfullName);
         if (targetName.equals(fullusername)) {
@@ -126,7 +125,7 @@ public class SubscriberService {
     public void sendToSpeaker(ClientSession session, String sub, boolean isUser) throws HandlerException {
         if (!isUser) {
             try {
-                LOGGER.info("subscribe tag vers le speaker enregistré :");
+                LOGGER.info("subscribe tag vers le speaker enregistré");
                 userManagerService.addTagFor(session.getUserFullName(), sub);
             } catch (UserSaveException e) {
                 LOGGER.error("Erreur lors de la lecture du tag " + e.getMessage());

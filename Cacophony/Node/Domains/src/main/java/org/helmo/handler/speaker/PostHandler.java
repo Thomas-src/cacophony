@@ -79,7 +79,7 @@ public class PostHandler implements CommandHandler {
                 List<ITag> msgTags = messageService.extractTags(msgContent, task.getDomain());
 
                 if (toUser != null && !toUser.isBlank()) {
-                    doMsg(msgFrom, toFullAddress, msgToSend);
+                    doMsg(toFullAddress, msgToSend);
                 } else if (toTag != null && !toTag.isBlank()) {
                     doTag(msgFrom, toFullAddress, msgToSend, idAtDomain, msgTags, task.getDomain());
                 }
@@ -103,7 +103,7 @@ public class PostHandler implements CommandHandler {
             String userName = matcherSUB.group(1) + "@" + task.getDomain();
             boolean isUser = matcherSUB.group(1) != null;
             if (isUser) {
-                subscriberService.userSubscribe(userName, task.getDomain(), fromUserAtDomain);
+                subscriberService.userSubscribe(userName, fromUserAtDomain);
             } else {
                 subscriberService.tagSubscribe(tagName, task.getDomain(), fromUserAtDomain);
             }
@@ -115,8 +115,8 @@ public class PostHandler implements CommandHandler {
         return null;
     }
 
-    private void doMsg(String fromUser, String toUser, String msgToSend) {
-        LOGGER.info("Envoi vers utilisateur: {} → {}", fromUser, toUser);
+    private void doMsg(String toUser, String msgToSend) {
+        LOGGER.info("Envoi vers utilisateur");
         activeSession.send(toUser, msgToSend);
     }
 
@@ -138,7 +138,7 @@ public class PostHandler implements CommandHandler {
                 for (IUserSubscriber sub : subs) {
                     if (!sub.getFullName().equals(fromUser)) {
                         List<String> relevant = getRelevantSubscriptions(sub.getFullName(), fromUser, msgTags, currentDomain, toTag);
-                        LOGGER.info("relevant du tag {} pour {}",relevant, sub.getFullName());
+                        LOGGER.info("relevant du tag {} pour {}", relevant, sub.getFullName());
 
                         if (sub.isLocal()) {
                             if (relevant.isEmpty()) {

@@ -49,12 +49,12 @@ public class SubscribeHandler implements CommandHandler {
 
         if (domain.equalsIgnoreCase(session.getDomain())) {
             if (isUser) {
-                response = subscriberService.userSubscribe(sub, session.getDomain(), session.getUserFullName());
+                response = subscriberService.userSubscribe(sub, session.getUserFullName());
             } else {
                 response = subscriberService.tagSubscribe(toSubscribe, session.getDomain(), session.getUserFullName());
             }
         } else {
-           subscriberService.sendToSpeaker(session, toSubscribe, isUser);
+            subscriberService.sendToSpeaker(session, toSubscribe, isUser);
 
         }
 

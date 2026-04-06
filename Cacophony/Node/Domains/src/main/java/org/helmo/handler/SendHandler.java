@@ -109,7 +109,7 @@ public class SendHandler implements CommandHandler {
      * @throws HandlerException Si le cryptage ou la sauvegarde du message échoue.
      */
     private void sendPostSubscribers(Set<String> remoteSubscribers, ClientSession session, String message, String id) throws HandlerException {
-        LOGGER.info("NB d'abonnés distants : {} - {}", remoteSubscribers.size(), remoteSubscribers);
+        LOGGER.info("NB d'abonnés distants : {}", remoteSubscribers.size());
 
         String domain = "@" + session.getDomain();
         String subMessage = MessageBuilder.buildMsgInner(session.getUserFullName(), message);
@@ -148,7 +148,7 @@ public class SendHandler implements CommandHandler {
 
         // Seul le premier tag compte
         String firstTag = remoteTags.getFirst();
-        LOGGER.info("Envoi uniquement vers le premier tag distant : {}", firstTag);
+        LOGGER.info("Envoi uniquement vers le premier tag distant : ");
 
         String messageToCrypt = MessageBuilder.buildPost(id + domain, session.getUserFullName(), firstTag, subMessage);
         try {
