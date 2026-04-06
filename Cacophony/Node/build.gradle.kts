@@ -26,7 +26,9 @@ application {
     mainClass.set("org.helmo.Program")
 }
 
-
+tasks.named("run") {
+    dependsOn(":Node:App:run")
+}
 
 tasks.test {
     useJUnitPlatform()
